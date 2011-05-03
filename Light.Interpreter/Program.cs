@@ -13,6 +13,7 @@ namespace Light.Interpreter {
         }
 
         private static bool InterpretLoop(Parser parser) {
+            Console.Write("beam> ");
             var line = Console.ReadLine();
             if (line == "exit")
                 return false;
@@ -26,7 +27,9 @@ namespace Light.Interpreter {
             var func = Expression.Lambda<Func<object>>(
                 Expression.Convert(expression, typeof(object))
             ).Compile();
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(func());
+            Console.ResetColor();
 
             return true;
         }
@@ -34,13 +37,13 @@ namespace Light.Interpreter {
         private static void WriteMessages(ParseTree parsed) {
             foreach (var message in parsed.ParserMessages) {
                 if (message.Level == ParserErrorLevel.Error) {
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.ForegroundColor = ConsoleColor.Red;
                 }
                 else if (message.Level == ParserErrorLevel.Warning) {
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
                 }
 
-                Console.WriteLine(message.Message);
+                Console.WriteLine("{0} at {1}.", message.Message, message.Location.Column);
                 Console.ResetColor();
             }
         }

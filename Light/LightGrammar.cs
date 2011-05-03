@@ -9,7 +9,8 @@ namespace Light {
     public class LightGrammar : Grammar {
         public LightGrammar() {
             var operators = new Dictionary<string, ExpressionType> {
-                { "+", ExpressionType.Add }
+                { "+", ExpressionType.Add },
+                { "-", ExpressionType.Subtract }
             };
 
             // Literals
