@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Irony.Parsing;
+
+using Light.Parsing;
 
 namespace Light.Interpreter {
-    public class Program {
+    public static class Program {
         public static void Main() {
-            var parser = new Parser(new LightGrammar());
+            var parser = new LightParser();
 
             while (InterpretLoop(parser)) { /* think about world */ }
         }
 
-        private static bool InterpretLoop(Parser parser) {
+        private static bool InterpretLoop(LightParser parser) {
             Console.Write("beam> ");
             var line = Console.ReadLine();
             if (line == "exit")
@@ -20,10 +21,10 @@ namespace Light.Interpreter {
 
             var parsed = parser.Parse(line);
             WriteMessages(parsed);
-            if (parsed.HasErrors())
+            if (parsed.HasErrors)
                 return true;
 
-            var expression = (Expression)parsed.Root.AstNode;
+            var expression = parsed.Tree;
             var func = Expression.Lambda<Func<object>>(
                 Expression.Convert(expression, typeof(object))
             ).Compile();
@@ -34,16 +35,16 @@ namespace Light.Interpreter {
             return true;
         }
 
-        private static void WriteMessages(ParseTree parsed) {
-            foreach (var message in parsed.ParserMessages) {
-                if (message.Level == ParserErrorLevel.Error) {
+        private static void WriteMessages(ParsingResult parsed) {
+            foreach (var message in parsed.Messages) {
+                if (message.IsError) {
                     Console.ForegroundColor = ConsoleColor.Red;
                 }
-                else if (message.Level == ParserErrorLevel.Warning) {
+                else if (message.IsWarning) {
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
                 }
 
-                Console.WriteLine("{0} at {1}.", message.Message, message.Location.Column);
+                Console.WriteLine("{0} at {1}.", message.Text, message.Location.Column);
                 Console.ResetColor();
             }
         }

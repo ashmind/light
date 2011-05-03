@@ -45,6 +45,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LightGrammar.cs" />
+    <Compile Include="LightParser.cs" />
+    <Compile Include="Parsing\ParsingMessageKind.cs" />
+    <Compile Include="Parsing\ParsingResult.cs" />
+    <Compile Include="Parsing\ParsingMessage.cs" />
+    <Compile Include="Parsing\SourceLocation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
