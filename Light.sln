@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light", "Light\Light.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Interpreter", "Light.Interpreter\Light.Interpreter.csproj", "{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Tests", "Light.Tests\Light.Tests.csproj", "{9BD63839-5A33-470E-B550-7DD93667AB87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,16 @@ Global
 		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Release|Mixed Platforms.Build.0 = Release|x86
 		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Release|x86.ActiveCfg = Release|x86
 		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Release|x86.Build.0 = Release|x86
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

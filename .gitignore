@@ -7,3 +7,5 @@ Obj
 *.vs10x
 /$libraries/Irony/
 _ReSharper.*
+*.ncrunchproject
+*.ncrunchsolution

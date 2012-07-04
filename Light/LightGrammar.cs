@@ -14,7 +14,7 @@ namespace Light {
             };
 
             // Literals
-            var number = new NumberLiteral("number", NumberOptions.Default, (c, node) => node.AstNode = Expression.Constant(node.Token.Value));
+            var number = new NumberLiteral("number", NumberOptions.AllowSign, (c, node) => node.AstNode = Expression.Constant(node.Token.Value));
             
             // NonTerminals
             var expression = NonTerminal("expression", node => node.FirstChild.AstNode);
