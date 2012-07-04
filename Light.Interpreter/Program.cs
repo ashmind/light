@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
+using Light.Interpretation;
 using Light.Parsing;
 
 namespace Light.Interpreter {
     public static class Program {
         public static void Main() {
             var parser = new LightParser();
+            var interpreter = new LightInterpreter();
 
-            while (InterpretLoop(parser)) { /* think about world */ }
+            while (InterpretLoop(parser, interpreter)) { /* think about world */ }
         }
 
-        private static bool InterpretLoop(LightParser parser) {
+        private static bool InterpretLoop(LightParser parser, LightInterpreter interpreter) {
             Console.Write("beam> ");
             var line = Console.ReadLine();
             if (line == "exit")
@@ -25,11 +26,15 @@ namespace Light.Interpreter {
                 return true;
 
             var expression = parsed.Tree;
-            var func = Expression.Lambda<Func<object>>(
-                Expression.Convert(expression, typeof(object))
-            ).Compile();
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(func());
+            try {
+                var result = interpreter.Evaluate(expression);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(result);
+            }
+            catch (Exception ex) {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex);
+            }
             Console.ResetColor();
 
             return true;
