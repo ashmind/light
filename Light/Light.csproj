@@ -48,6 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ast\AstVisitor.cs" />
+    <Compile Include="Ast\BinaryExpression.cs" />
+    <Compile Include="Ast\IAstElement.cs" />
+    <Compile Include="Ast\Literals\PrimitiveValue.cs" />
+    <Compile Include="Ast\BinaryOperator.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />
     <Compile Include="LightGrammar.cs" />
     <Compile Include="LightParser.cs" />

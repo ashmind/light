@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+
 using Irony.Parsing;
+
+using Light.Ast;
 using Light.Parsing;
 
 namespace Light {
@@ -16,7 +18,7 @@ namespace Light {
         public ParsingResult Parse(string source) {
             var parsed = this.parser.Parse(source);
             return new ParsingResult(
-                parsed.Root != null ? (Expression)parsed.Root.AstNode : null,
+                parsed.Root != null ? (IAstElement)parsed.Root.AstNode : null,
                 parsed.ParserMessages.Select(ToParsingMessage)
             );
         }

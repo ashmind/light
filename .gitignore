@@ -9,3 +9,4 @@ Obj
 _ReSharper.*
 *.ncrunchproject
 *.ncrunchsolution
+*.crunchsolution.cache

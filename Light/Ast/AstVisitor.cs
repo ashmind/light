@@ -1,37 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using AshMind.Extensions;
+using Light.Ast.Literals;
 
 namespace Light.Ast {
-    public abstract class AstVisitor {
-        private readonly IDictionary<Type, Func<Expression, object>> visitMethods = new Dictionary<Type, Func<Expression, object>>();
+    public abstract class AstVisitor<TContext> {
+        private readonly IDictionary<Type, Func<IAstElement, TContext, object>> visitMethods = new Dictionary<Type, Func<IAstElement, TContext, object>>();
 
         protected AstVisitor() {
-            Register<ConstantExpression>(VisitConstant);
-            Register<BinaryExpression>(VisitBinary);
+            Register<PrimitiveValue>(VisitPrimitiveValue);
+            Register<BinaryExpression>(VisitBinaryExpression);
         }
 
-        protected void Register<TExpression>(Func<TExpression, object> visit)
-            where TExpression : Expression
+        protected void Register<TAstElement>(Func<TAstElement, TContext, object> visit)
+            where TAstElement : IAstElement
         {
-            this.visitMethods.Add(typeof(TExpression), o => visit((TExpression)o));
+            this.visitMethods.Add(typeof(TAstElement), (o, c) => visit((TAstElement)o, c));
         }
 
-        protected object Visit(Expression expression) {
-            var visit = this.visitMethods.GetValueOrDefault(expression.GetType());
+        protected object Visit(IAstElement element, TContext context) {
+            var visit = this.visitMethods.GetValueOrDefault(element.GetType());
             if (visit == null)
-                throw new NotSupportedException("Expression type " + expression.GetType() + " is not supported.");
+                throw new NotSupportedException("Expression type " + element.GetType() + " is not supported.");
 
-            return visit(expression);
+            return visit(element, context);
         }
 
-        protected virtual object VisitConstant(ConstantExpression constant) {
+        protected virtual object VisitPrimitiveValue(PrimitiveValue value, TContext context) {
             return null;
         }
 
-        protected virtual object VisitBinary(BinaryExpression binary) {
+        protected virtual object VisitBinaryExpression(BinaryExpression binary, TContext context) {
             return null;
         }
     }

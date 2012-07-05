@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 using Light.Ast;
+using Light.Ast.Literals;
 
 namespace Light.Interpretation {
-    public class LightInterpreter : AstVisitor {
-        public object Evaluate(Expression expression) {
-            return this.Visit(expression);
+    public class LightInterpreter : AstVisitor<object> {
+        public object Evaluate(IAstElement element) {
+            return this.Visit(element, null);
         }
 
-        protected override object VisitBinary(BinaryExpression binary) {
-            return base.VisitBinary(binary);
+        protected override object VisitBinaryExpression(BinaryExpression binary, object context) {
+            return base.VisitBinaryExpression(binary, context);
         }
 
-        protected override object VisitConstant(ConstantExpression constant) {
-            return constant.Value;
+        protected override object VisitPrimitiveValue(PrimitiveValue value, object context) {
+            return value.Value;
         }
     }
 }
