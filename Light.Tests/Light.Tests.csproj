@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="OfParsing\LiteralTests.cs" />
     <Compile Include="OfParsing\OperatorTests.cs" />
+    <Compile Include="OfParsing\ProgramTests.cs" />
+    <Compile Include="Resource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestAstVisitor.cs" />
   </ItemGroup>
@@ -61,6 +63,9 @@
       <Project>{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}</Project>
       <Name>Light</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="OfParsing\Programs\Question.light" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

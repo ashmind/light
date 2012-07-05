@@ -25,9 +25,9 @@ namespace Light.Interpreter {
             if (parsed.HasErrors)
                 return true;
 
-            var element = parsed.Tree;
+            var elements = parsed.Tree;
             try {
-                var result = interpreter.Evaluate(element);
+                var result = interpreter.Evaluate(elements);
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine(result);
             }

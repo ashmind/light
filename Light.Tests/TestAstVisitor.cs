@@ -9,9 +9,11 @@ namespace Light.Tests {
     public class TestAstVisitor : AstVisitor<StringBuilder> {
         public bool IncludesTypesOfValues { get; set; }
 
-        public string Describe(IAstElement element) {
+        public string Describe(IEnumerable<IAstElement> elements) {
             var builder = new StringBuilder();
-            this.Visit(element, builder);
+            foreach (var element in elements) {
+                this.Visit(element, builder);
+            }
             return builder.ToString();
         }
 

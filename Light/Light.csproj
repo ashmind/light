@@ -50,8 +50,11 @@
     <Compile Include="Ast\AstVisitor.cs" />
     <Compile Include="Ast\BinaryExpression.cs" />
     <Compile Include="Ast\IAstElement.cs" />
+    <Compile Include="Ast\Statements\VariableDefinition.cs" />
+    <Compile Include="Ast\Statements\ImportStatement.cs" />
     <Compile Include="Ast\Literals\PrimitiveValue.cs" />
     <Compile Include="Ast\BinaryOperator.cs" />
+    <Compile Include="Ast\Names\CompositeName.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />
     <Compile Include="LightGrammar.cs" />
     <Compile Include="LightParser.cs" />

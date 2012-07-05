@@ -19,5 +19,9 @@ namespace Light.Parsing {
         public bool IsWarning {
             get { return this.Kind == ParsingMessageKind.Warning; }
         }
+
+        public override string ToString() {
+            return this.Kind + ": " + this.Text + " at " + this.Location;
+        }
     }
 }

@@ -19,6 +19,10 @@ namespace Light.Ast {
             this.visitMethods.Add(typeof(TAstElement), (o, c) => visit((TAstElement)o, c));
         }
 
+        protected IEnumerable<object> Visit(IEnumerable<IAstElement> elements, TContext context) {
+            return elements.Select(element => Visit(element, context));
+        }
+
         protected object Visit(IAstElement element, TContext context) {
             var visit = this.visitMethods.GetValueOrDefault(element.GetType());
             if (visit == null)

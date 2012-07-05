@@ -18,7 +18,7 @@ namespace Light {
         public ParsingResult Parse(string source) {
             var parsed = this.parser.Parse(source);
             return new ParsingResult(
-                parsed.Root != null ? (IAstElement)parsed.Root.AstNode : null,
+                parsed.Root != null ? (IAstElement[])parsed.Root.AstNode : new IAstElement[0],
                 parsed.ParserMessages.Select(ToParsingMessage)
             );
         }
@@ -27,7 +27,7 @@ namespace Light {
             return new ParsingMessage(
                 ironyMessage.Message,
                 (ParsingMessageKind)ironyMessage.Level,
-                new Parsing.SourceLocation(ironyMessage.Location.Column)
+                new Parsing.SourceLocation(ironyMessage.Location.Line, ironyMessage.Location.Column)
             );
         }
     }
