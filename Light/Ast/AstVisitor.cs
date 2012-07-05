@@ -11,6 +11,7 @@ namespace Light.Ast {
         protected AstVisitor() {
             Register<PrimitiveValue>(VisitPrimitiveValue);
             Register<BinaryExpression>(VisitBinaryExpression);
+            Register<ListInitializer>(VisitListInitializer);
         }
 
         protected void Register<TAstElement>(Func<TAstElement, TContext, object> visit)
@@ -36,6 +37,10 @@ namespace Light.Ast {
         }
 
         protected virtual object VisitBinaryExpression(BinaryExpression binary, TContext context) {
+            return null;
+        }
+
+        protected virtual object VisitListInitializer(ListInitializer initializer, TContext context) {
             return null;
         }
     }

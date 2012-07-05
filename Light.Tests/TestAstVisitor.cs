@@ -30,17 +30,32 @@ namespace Light.Tests {
 
         protected override object VisitPrimitiveValue(PrimitiveValue value, StringBuilder builder) {
             if (!this.IncludesTypesOfValues) {
-                builder.Append(value.Value);
+                builder.Append(value);
                 return value;
             }
 
             builder.Append("{")
-                   .Append(value.Value)
+                   .Append(value)
                    .Append(": ")
                    .Append(value.Type.Name)
                    .Append("}");
 
             return value;
+        }
+
+        protected override object VisitListInitializer(ListInitializer initializer, StringBuilder builder) {
+            builder.Append("[");
+            var first = true;
+            foreach (var element in initializer.Elements) {
+                if (!first)
+                    builder.Append(", ");
+
+                Visit(element, builder);
+                first = false;
+            }
+            builder.Append("]");
+
+            return initializer;
         }
     }
 }

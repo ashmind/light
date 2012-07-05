@@ -14,5 +14,12 @@ namespace Light.Ast.Literals {
         }
 
         public object Value { get; private set; }
+
+        public override string ToString() {
+            if (Value is string)
+                return "'" + Value + "'";
+
+            return Value.ToString();
+        }
     }
 }

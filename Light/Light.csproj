@@ -50,6 +50,7 @@
     <Compile Include="Ast\AstVisitor.cs" />
     <Compile Include="Ast\BinaryExpression.cs" />
     <Compile Include="Ast\IAstElement.cs" />
+    <Compile Include="Ast\Literals\ListInitializer.cs" />
     <Compile Include="Ast\Statements\VariableDefinition.cs" />
     <Compile Include="Ast\Statements\ImportStatement.cs" />
     <Compile Include="Ast\Literals\PrimitiveValue.cs" />

@@ -4,4 +4,4 @@ import System.IO
 import System.Linq
 import System.Text.RegularExpressions
 
-let punctuation
+let punctuation = [ ',', '.', '?', '!', ':', ';' ]

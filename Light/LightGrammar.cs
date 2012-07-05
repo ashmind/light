@@ -12,7 +12,6 @@ using Light.Ast.Statements;
 namespace Light {
     public class LightGrammar : Grammar {
         public Terminal Dot { get; private set; }
-        public NumberLiteral Number { get; private set; }
 
         // top level:
         public NonTerminal TopLevelElement { get; private set; }
@@ -22,13 +21,14 @@ namespace Light {
             ConstructAll();
             SetAllRules();
 
+            MarkPunctuation("[", "]");
+
             this.Root = TopLevelElementList;
             this.LanguageFlags = LanguageFlags.CreateAst;
         }
 
         private void ConstructAll() {
             Dot = new KeyTerm(".", ".");
-            Number = new NumberLiteral("Number", NumberOptions.AllowSign, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
 
             ConstructIdentifiers();
             ConstructExpressions();
@@ -65,12 +65,20 @@ namespace Light {
 
         #region Expressions
 
+        public NumberLiteral Number { get; private set; }
+        public StringLiteral SingleQuotedString { get; private set; }
+
         public NonTerminal Expression { get; private set; }
         public NonTerminal BinaryExpression { get; private set; }
         public NonTerminal BinaryOperator { get; private set; }
+        public NonTerminal CommaSeparatedExpressionListStar { get; private set; }
+        public NonTerminal ListInitializer { get; private set; }
 
         private void ConstructExpressions() {
-            Expression = NonTerminal("Expression", node => node.FirstChild.AstNode);
+            Number = new NumberLiteral("Number", NumberOptions.AllowSign, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
+            SingleQuotedString = new StringLiteral("SingleQuotedString", "'", StringOptions.None, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
+
+            Expression = Transient("Expression");
             BinaryExpression = NonTerminal("BinaryExpression", node => new BinaryExpression(
                 (IAstElement) node.ChildNodes[0].AstNode,
                 (BinaryOperator) node.ChildNodes[1].AstNode,
@@ -78,12 +86,20 @@ namespace Light {
             ));
 
             BinaryOperator = NonTerminal("BinaryOperator", node => new BinaryOperator(node.FindTokenAndGetText()));
+
+            CommaSeparatedExpressionListStar = Transient("CommaSeparatedExpressionListStar");
+            ListInitializer = NonTerminal("ListInitializer", node => new ListInitializer(
+                node.ChildNodes.Count > 0 ? node.FirstChild.ChildNodes.Select(c => (IAstElement)c.AstNode).ToArray() : new IAstElement[0]
+            ));
         }
 
         private void SetExpressionRules() {
-            Expression.Rule = Number | BinaryExpression;
+            Expression.Rule = SingleQuotedString | Number | BinaryExpression | ListInitializer;
             BinaryExpression.Rule = Expression + BinaryOperator + Expression;
             BinaryOperator.Rule = new[] {"+", "-", "*", "/"}.Select(k => (BnfExpression) ToTerm(k)).Aggregate((a, b) => a | b);
+
+            CommaSeparatedExpressionListStar.Rule = MakeStarRule(CommaSeparatedExpressionListStar, ToTerm(","), Expression);
+            ListInitializer.Rule = "[" + CommaSeparatedExpressionListStar + "]";
         }
 
         #endregion
@@ -95,7 +111,7 @@ namespace Light {
         public NonTerminal VariableDefinition { get; private set; }
 
         private void ConstructStatements() {
-            Statement = NonTerminal("Statement", node => node.FirstChild.AstNode);
+            Statement = Transient("Statement");
             ImportStatement = NonTerminal("ImportStatement", node => new ImportStatement((CompositeName)node.ChildNodes[1].AstNode));
             VariableDefinition = NonTerminal("VariableDefinition", node => new VariableDefinition(node.ChildNodes[1].Token.Text, null));
         }
@@ -110,6 +126,12 @@ namespace Light {
 
         private static NonTerminal NonTerminal(string name, Func<ParseTreeNode, object> getAstNode) {
             return new NonTerminal(name, (c, node) => node.AstNode = getAstNode(node));
+        }
+
+        private NonTerminal Transient(string name) {
+            var nonTerminal = new NonTerminal(name);
+            MarkTransient(nonTerminal);
+            return nonTerminal;
         }
 
         private object NotImplemented() {

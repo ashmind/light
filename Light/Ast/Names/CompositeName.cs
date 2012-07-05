@@ -9,7 +9,7 @@ namespace Light.Ast.Names {
     public class CompositeName {
         public ReadOnlyCollection<string> Parts { get; private set; }
 
-        public CompositeName(string[] parts) {
+        public CompositeName(params string[] parts) {
             Parts = parts.AsReadOnly();
         }
     }
