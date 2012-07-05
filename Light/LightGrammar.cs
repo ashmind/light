@@ -10,7 +10,9 @@ namespace Light {
         public LightGrammar() {
             var operators = new Dictionary<string, ExpressionType> {
                 { "+", ExpressionType.Add },
-                { "-", ExpressionType.Subtract }
+                { "-", ExpressionType.Subtract },
+                { "*", ExpressionType.Multiply },
+                { "/", ExpressionType.Divide }
             };
 
             // Literals

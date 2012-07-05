@@ -13,12 +13,14 @@ namespace Light.Tests.OfParsing {
         [Row("10", 10)]
         [Row("-1", -1)]
         [Row("10000000", 10000000)]
-        public void Number(string literal, int expectedResult) {
+        [Row("1.1", 1.1)]
+        [Row("1e3", 1e3)]
+        public void Number(string literal, decimal expectedResult) {
             var parser = new LightParser();
             var result = parser.Parse(literal);
 
             AssertEx.That(() => !result.HasErrors
-                             && (int)(result.Tree as ConstantExpression).Value == expectedResult);
+                             && Convert.ToDecimal((result.Tree as ConstantExpression).Value) == expectedResult);
         }
     }
 }

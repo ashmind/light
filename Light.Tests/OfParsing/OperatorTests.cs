@@ -10,6 +10,9 @@ namespace Light.Tests.OfParsing {
     public class OperatorTests {
         [Test]
         [Row("1+2", ExpressionType.Add)]
+        [Row("1-2", ExpressionType.Subtract)]
+        [Row("1*2", ExpressionType.Multiply)]
+        [Row("1/2", ExpressionType.Divide)]
         public void Binary(string code, ExpressionType expectedNodeType) {
             var parser = new LightParser();
             var result = parser.Parse(code);
