@@ -19,15 +19,20 @@ namespace Light {
             var parsed = this.parser.Parse(source);
             return new ParsingResult(
                 parsed.Root != null ? (IAstElement[])parsed.Root.AstNode : new IAstElement[0],
-                parsed.ParserMessages.Select(ToParsingMessage)
+                parsed.ParserMessages.Select(m => ToParsingMessage(m, source))
             );
         }
 
-        private static ParsingMessage ToParsingMessage(ParserMessage ironyMessage) {
+        private static ParsingMessage ToParsingMessage(ParserMessage ironyMessage, string source) {
             return new ParsingMessage(
                 ironyMessage.Message,
                 (ParsingMessageKind)ironyMessage.Level,
-                new Parsing.SourceLocation(ironyMessage.Location.Line, ironyMessage.Location.Column)
+                new Parsing.SourceLocation(
+                    ironyMessage.Location.Line,
+                    ironyMessage.Location.Column,
+                    ironyMessage.Location.Position,
+                    source
+                )
             );
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Light.Ast;
@@ -17,7 +18,7 @@ namespace Light.Tests {
             return builder.ToString();
         }
 
-        protected override object VisitBinaryExpression(BinaryExpression binary, StringBuilder builder) {
+        protected override void VisitBinaryExpression(BinaryExpression binary, StringBuilder builder) {
             builder.Append("{");
 
             this.Visit(binary.Left, builder);
@@ -25,13 +26,12 @@ namespace Light.Tests {
             this.Visit(binary.Right, builder);
 
             builder.Append("}");
-            return binary;
         }
 
-        protected override object VisitPrimitiveValue(PrimitiveValue value, StringBuilder builder) {
+        protected override void VisitPrimitiveValue(PrimitiveValue value, StringBuilder builder) {
             if (!this.IncludesTypesOfValues) {
                 builder.Append(value);
-                return value;
+                return;
             }
 
             builder.Append("{")
@@ -39,23 +39,34 @@ namespace Light.Tests {
                    .Append(": ")
                    .Append(value.Type.Name)
                    .Append("}");
-
-            return value;
         }
 
-        protected override object VisitListInitializer(ListInitializer initializer, StringBuilder builder) {
+        protected override void VisitListInitializer(ListInitializer initializer, StringBuilder builder) {
             builder.Append("[");
+            AppendCommaSeparatedElements(builder, initializer.Elements);
+            builder.Append("]");
+        }
+
+        protected override void VisitObjectInitializer(ObjectInitializer initializer, StringBuilder builder) {
+            builder.Append("{");
+            AppendCommaSeparatedElements(builder, initializer.Elements);
+            builder.Append("}");
+        }
+
+        protected override void VisitObjectInitializerEntry(ObjectInitializerEntry entry, StringBuilder builder) {
+            builder.Append(entry.Name).Append(": ");
+            Visit(entry.Value, builder);
+        }
+
+        private void AppendCommaSeparatedElements(StringBuilder builder, IEnumerable<IAstElement> elements) {
             var first = true;
-            foreach (var element in initializer.Elements) {
+            foreach (var element in elements) {
                 if (!first)
                     builder.Append(", ");
 
                 Visit(element, builder);
                 first = false;
             }
-            builder.Append("]");
-
-            return initializer;
         }
     }
 }

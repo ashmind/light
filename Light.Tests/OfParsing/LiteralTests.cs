@@ -31,6 +31,15 @@ namespace Light.Tests.OfParsing {
             AssertIsParsedTo(literal, expectedResult);
         }
 
+        [Test]
+        [Row("{}",              "{}")]
+        [Row("{a: 1}",          "{a: 1}")]
+        [Row("{a: 'a'}",        "{a: 'a'}")]
+        [Row("{a: [{x: 'y'}]}", "{a: [{x: 'y'}]}")]
+        public void Object(string literal, string expectedResult) {
+            AssertIsParsedTo(literal, expectedResult);
+        }
+
         private static void AssertIsParsedTo(string literal, string expectedResult, bool includeTypesOfValues = false) {
             var parser = new LightParser();
             var result = parser.Parse(literal);

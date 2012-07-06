@@ -51,7 +51,10 @@
     <Compile Include="Ast\AstVisitor.cs" />
     <Compile Include="Ast\BinaryExpression.cs" />
     <Compile Include="Ast\IAstElement.cs" />
+    <Compile Include="Ast\IdentifierExpression.cs" />
+    <Compile Include="Ast\Literals\ObjectInitializer.cs" />
     <Compile Include="Ast\Literals\ListInitializer.cs" />
+    <Compile Include="Ast\Literals\ObjectInitializerEntry.cs" />
     <Compile Include="Ast\Literals\StringWithInterpolation.cs" />
     <Compile Include="Ast\NewExpression.cs" />
     <Compile Include="Ast\Statements\VariableDefinition.cs" />
@@ -59,6 +62,8 @@
     <Compile Include="Ast\Literals\PrimitiveValue.cs" />
     <Compile Include="Ast\BinaryOperator.cs" />
     <Compile Include="Ast\Names\CompositeName.cs" />
+    <Compile Include="Common\DictionaryExtensions.cs" />
+    <Compile Include="Common\ReadOnlyDictionary.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />
     <Compile Include="LightGrammar.cs" />
     <Compile Include="LightParser.cs" />

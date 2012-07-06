@@ -18,10 +18,13 @@ namespace Light {
         public NonTerminal TopLevelElementList { get; private set; }
 
         public LightGrammar() {
+            var lineComment = new CommentTerminal("line_comment", "#", "\n", "\r\n");
+            NonGrammarTerminals.Add(lineComment);
+
             ConstructAll();
             SetAllRules();
 
-            MarkPunctuation("[", "]", "(", ")");
+            MarkPunctuation("[", "]", "(", ")", "{", "}", ":");
 
             this.Root = TopLevelElementList;
             this.LanguageFlags = LanguageFlags.CreateAst;
@@ -70,10 +73,14 @@ namespace Light {
         public StringLiteral DoubleQuotedString { get; private set; }
 
         public NonTerminal Expression { get; private set; }
+        public NonTerminal IdentifierExpression { get; private set; }
         public NonTerminal BinaryExpression { get; private set; }
         public NonTerminal BinaryOperator { get; private set; }
         public NonTerminal CommaSeparatedExpressionListStar { get; private set; }
         public NonTerminal ListInitializer { get; private set; }
+        public NonTerminal ObjectInitializer { get; private set; }
+        public NonTerminal ObjectInitializerElementList { get; private set; }
+        public NonTerminal ObjectInitializerElement { get; private set; }
         public NonTerminal NewExpression { get; private set; }
 
         private void ConstructExpressions() {
@@ -82,6 +89,7 @@ namespace Light {
             DoubleQuotedString = new StringLiteral("DoubleQuotedString", "\"", StringOptions.None, (c, node) => node.AstNode = new StringWithInterpolation((string)node.Token.Value));
 
             Expression = Transient("Expression");
+            IdentifierExpression = NonTerminal("Identifier", node => new IdentifierExpression((CompositeName)node.ChildNodes[0].AstNode));
             BinaryExpression = NonTerminal("BinaryExpression", node => new BinaryExpression(
                 (IAstElement) node.ChildNodes[0].AstNode,
                 (BinaryOperator) node.ChildNodes[1].AstNode,
@@ -90,20 +98,36 @@ namespace Light {
 
             BinaryOperator = NonTerminal("BinaryOperator", node => new BinaryOperator(node.FindTokenAndGetText()));
 
-            CommaSeparatedExpressionListStar = Transient("CommaSeparatedExpressionListStar");
+            CommaSeparatedExpressionListStar = new NonTerminal("CommaSeparatedExpressionListStar");
             ListInitializer = NonTerminal("ListInitializer", node => new ListInitializer(AstElementsInStarChild(node, 0)));
-            NewExpression = NonTerminal("NewExpression", node => new NewExpression(node.ChildNodes[1].Token.Text, AstElementsInStarChild(node, 2)));
+            ObjectInitializer = NonTerminal("ObjectInitializer", node => new ObjectInitializer(AstElementsInStarChild(node, 0)));
+            ObjectInitializerElementList = new NonTerminal("ObjectInitializerElementList");
+            ObjectInitializerElement = NonTerminal("ObjectInitializerElement", node => new ObjectInitializerEntry(
+                node.ChildNodes[0].Token.Text,
+                (IAstElement)node.ChildNodes[1].AstNode
+            ));
+
+            NewExpression = NonTerminal(
+                "NewExpression",
+                node => new NewExpression(node.ChildNodes[1].Token.Text, AstElementsInStarChild(node, 2), (IAstElement)node.ChildNodes[3].AstNode)
+            );
         }
 
         private void SetExpressionRules() {
-            Expression.Rule = SingleQuotedString | DoubleQuotedString | Number | BinaryExpression | ListInitializer | NewExpression;
+            Expression.Rule = SingleQuotedString | DoubleQuotedString | Number | BinaryExpression | ListInitializer | ObjectInitializer | NewExpression | IdentifierExpression;
+            IdentifierExpression.Rule = DotSeparatedName;
+
             BinaryExpression.Rule = Expression + BinaryOperator + NewLineStar + Expression;
             BinaryOperator.Rule = new[] {"+", "-", "*", "/"}.Select(k => (BnfExpression) ToTerm(k)).Aggregate((a, b) => a | b);
 
-            CommaSeparatedExpressionListStar.Rule = MakeStarRule(CommaSeparatedExpressionListStar, ToTerm(",") + NewLineStar, Expression);
             ListInitializer.Rule = "[" + NewLineStar + CommaSeparatedExpressionListStar + NewLineStar + "]";
+            CommaSeparatedExpressionListStar.Rule = MakeStarRule(CommaSeparatedExpressionListStar, ToTerm(",") + NewLineStar, Expression);
 
-            NewExpression.Rule = "new" + Name + "(" + CommaSeparatedExpressionListStar + ")";
+            ObjectInitializer.Rule = "{" + NewLineStar + ObjectInitializerElementList + NewLineStar + "}";
+            ObjectInitializerElementList.Rule = MakeStarRule(ObjectInitializerElementList, ToTerm(",") + NewLineStar, ObjectInitializerElement);
+            ObjectInitializerElement.Rule = Name + ":" + Expression;
+
+            NewExpression.Rule = "new" + Name + "(" + CommaSeparatedExpressionListStar + ")" + (ObjectInitializer | Empty);
         }
 
         #endregion
@@ -131,6 +155,18 @@ namespace Light {
         private static NonTerminal NonTerminal(string name, Func<ParseTreeNode, object> getAstNode) {
             return new NonTerminal(name, (c, node) => node.AstNode = getAstNode(node));
         }
+
+        //private static NonTerminal NonTerminalPlus(string name, BnfExpression listMember, Func<ParseTreeNode, object> getAstNode) {
+        //    var nonTerminal = NonTerminalWithoutRule(name, getAstNode);
+        //    MakePlusRule(nonTerminal, listMember);
+        //    return nonTerminal;
+        //}
+
+        //private static NonTerminal NonTerminalPlus(string name, BnfExpression listMember, BnfExpression delimiter, Func<ParseTreeNode, object> getAstNode) {
+        //    var nonTerminal = NonTerminalWithoutRule(name, getAstNode);
+        //    MakePlusRule(nonTerminal, delimiter, listMember);
+        //    return nonTerminal;
+        //}
 
         private NonTerminal Transient(string name) {
             var nonTerminal = new NonTerminal(name);

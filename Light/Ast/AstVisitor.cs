@@ -6,42 +6,54 @@ using Light.Ast.Literals;
 
 namespace Light.Ast {
     public abstract class AstVisitor<TContext> {
-        private readonly IDictionary<Type, Func<IAstElement, TContext, object>> visitMethods = new Dictionary<Type, Func<IAstElement, TContext, object>>();
+        private readonly IDictionary<Type, Action<IAstElement, TContext>> visitMethods = new Dictionary<Type, Action<IAstElement, TContext>>();
 
         protected AstVisitor() {
             Register<PrimitiveValue>(VisitPrimitiveValue);
             Register<BinaryExpression>(VisitBinaryExpression);
             Register<ListInitializer>(VisitListInitializer);
+            Register<ObjectInitializer>(VisitObjectInitializer);
+            Register<ObjectInitializerEntry>(VisitObjectInitializerEntry);
         }
 
-        protected void Register<TAstElement>(Func<TAstElement, TContext, object> visit)
+        protected void Register<TAstElement>(Action<TAstElement, TContext> visit)
             where TAstElement : IAstElement
         {
             this.visitMethods.Add(typeof(TAstElement), (o, c) => visit((TAstElement)o, c));
         }
 
-        protected IEnumerable<object> Visit(IEnumerable<IAstElement> elements, TContext context) {
-            return elements.Select(element => Visit(element, context));
+        protected void Visit(IEnumerable<IAstElement> elements, TContext context) {
+            foreach (var element in elements) {
+                Visit(element, context);
+            }
         }
 
-        protected object Visit(IAstElement element, TContext context) {
+        protected void Visit(IAstElement element, TContext context) {
             var visit = this.visitMethods.GetValueOrDefault(element.GetType());
             if (visit == null)
                 throw new NotSupportedException("Expression type " + element.GetType() + " is not supported.");
 
-            return visit(element, context);
+            visit(element, context);
         }
 
-        protected virtual object VisitPrimitiveValue(PrimitiveValue value, TContext context) {
-            return null;
+        protected virtual void VisitPrimitiveValue(PrimitiveValue value, TContext context) {
+            throw new NotImplementedException();
         }
 
-        protected virtual object VisitBinaryExpression(BinaryExpression binary, TContext context) {
-            return null;
+        protected virtual void VisitBinaryExpression(BinaryExpression binary, TContext context) {
+            throw new NotImplementedException();
         }
 
-        protected virtual object VisitListInitializer(ListInitializer initializer, TContext context) {
-            return null;
+        protected virtual void VisitListInitializer(ListInitializer initializer, TContext context) {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void VisitObjectInitializer(ObjectInitializer initializer, TContext context) {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void VisitObjectInitializerEntry(ObjectInitializerEntry entry, TContext context) {
+            throw new NotImplementedException();
         }
     }
 }

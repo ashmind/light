@@ -6,17 +6,19 @@ using Light.Ast;
 using Light.Ast.Literals;
 
 namespace Light.Interpretation {
-    public class LightInterpreter : AstVisitor<object> {
+    public class LightInterpreter : AstVisitor<LightInterpreter.Reference> {
+        public class Reference {
+            public object Value { get; set; }
+        }
+
         public object Evaluate(IEnumerable<IAstElement> elements) {
-            return this.Visit(elements, null);
+            var result = new Reference();
+            this.Visit(elements, result);
+            return result.Value;
         }
 
-        protected override object VisitBinaryExpression(BinaryExpression binary, object context) {
-            return base.VisitBinaryExpression(binary, context);
-        }
-
-        protected override object VisitPrimitiveValue(PrimitiveValue value, object context) {
-            return value.Value;
+        protected override void VisitPrimitiveValue(PrimitiveValue value, Reference context) {
+            context.Value = value.Value;
         }
     }
 }
