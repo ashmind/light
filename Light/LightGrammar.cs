@@ -21,7 +21,7 @@ namespace Light {
             ConstructAll();
             SetAllRules();
 
-            MarkPunctuation("[", "]");
+            MarkPunctuation("[", "]", "(", ")");
 
             this.Root = TopLevelElementList;
             this.LanguageFlags = LanguageFlags.CreateAst;
@@ -67,16 +67,19 @@ namespace Light {
 
         public NumberLiteral Number { get; private set; }
         public StringLiteral SingleQuotedString { get; private set; }
+        public StringLiteral DoubleQuotedString { get; private set; }
 
         public NonTerminal Expression { get; private set; }
         public NonTerminal BinaryExpression { get; private set; }
         public NonTerminal BinaryOperator { get; private set; }
         public NonTerminal CommaSeparatedExpressionListStar { get; private set; }
         public NonTerminal ListInitializer { get; private set; }
+        public NonTerminal NewExpression { get; private set; }
 
         private void ConstructExpressions() {
             Number = new NumberLiteral("Number", NumberOptions.AllowSign, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
             SingleQuotedString = new StringLiteral("SingleQuotedString", "'", StringOptions.None, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
+            DoubleQuotedString = new StringLiteral("DoubleQuotedString", "\"", StringOptions.None, (c, node) => node.AstNode = new StringWithInterpolation((string)node.Token.Value));
 
             Expression = Transient("Expression");
             BinaryExpression = NonTerminal("BinaryExpression", node => new BinaryExpression(
@@ -88,18 +91,19 @@ namespace Light {
             BinaryOperator = NonTerminal("BinaryOperator", node => new BinaryOperator(node.FindTokenAndGetText()));
 
             CommaSeparatedExpressionListStar = Transient("CommaSeparatedExpressionListStar");
-            ListInitializer = NonTerminal("ListInitializer", node => new ListInitializer(
-                node.ChildNodes.Count > 0 ? node.FirstChild.ChildNodes.Select(c => (IAstElement)c.AstNode).ToArray() : new IAstElement[0]
-            ));
+            ListInitializer = NonTerminal("ListInitializer", node => new ListInitializer(AstElementsInStarChild(node, 0)));
+            NewExpression = NonTerminal("NewExpression", node => new NewExpression(node.ChildNodes[1].Token.Text, AstElementsInStarChild(node, 2)));
         }
 
         private void SetExpressionRules() {
-            Expression.Rule = SingleQuotedString | Number | BinaryExpression | ListInitializer;
-            BinaryExpression.Rule = Expression + BinaryOperator + Expression;
+            Expression.Rule = SingleQuotedString | DoubleQuotedString | Number | BinaryExpression | ListInitializer | NewExpression;
+            BinaryExpression.Rule = Expression + BinaryOperator + NewLineStar + Expression;
             BinaryOperator.Rule = new[] {"+", "-", "*", "/"}.Select(k => (BnfExpression) ToTerm(k)).Aggregate((a, b) => a | b);
 
-            CommaSeparatedExpressionListStar.Rule = MakeStarRule(CommaSeparatedExpressionListStar, ToTerm(","), Expression);
-            ListInitializer.Rule = "[" + CommaSeparatedExpressionListStar + "]";
+            CommaSeparatedExpressionListStar.Rule = MakeStarRule(CommaSeparatedExpressionListStar, ToTerm(",") + NewLineStar, Expression);
+            ListInitializer.Rule = "[" + NewLineStar + CommaSeparatedExpressionListStar + NewLineStar + "]";
+
+            NewExpression.Rule = "new" + Name + "(" + CommaSeparatedExpressionListStar + ")";
         }
 
         #endregion
@@ -132,6 +136,14 @@ namespace Light {
             var nonTerminal = new NonTerminal(name);
             MarkTransient(nonTerminal);
             return nonTerminal;
+        }
+
+        private IAstElement[] AstElementsInStarChild(ParseTreeNode parent, int index) {
+            var child = parent.ChildNodes.ElementAtOrDefault(index);
+            if (child == null)
+                return new IAstElement[0];
+
+            return child.ChildNodes.Select(n => (IAstElement)n.AstNode).ToArray();
         }
 
         private object NotImplemented() {

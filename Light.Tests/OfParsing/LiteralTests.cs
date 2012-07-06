@@ -4,7 +4,7 @@ using MbUnit.Framework;
 
 namespace Light.Tests.OfParsing {
     [TestFixture]
-    public partial class LiteralTests {
+    public class LiteralTests {
         [Test]
         [Row( "1",       "{1: Int32}")]
         [Row("10",       "{10: Int32}")]
