@@ -50,6 +50,7 @@
     <Compile Include="Argument.cs" />
     <Compile Include="Ast\AstVisitor.cs" />
     <Compile Include="Ast\BinaryExpression.cs" />
+    <Compile Include="Ast\CallExpression.cs" />
     <Compile Include="Ast\IAstElement.cs" />
     <Compile Include="Ast\IdentifierExpression.cs" />
     <Compile Include="Ast\Literals\ObjectInitializer.cs" />

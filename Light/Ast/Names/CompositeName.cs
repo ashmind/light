@@ -10,6 +10,9 @@ namespace Light.Ast.Names {
         public ReadOnlyCollection<string> Parts { get; private set; }
 
         public CompositeName(params string[] parts) {
+            Argument.RequireNotNullOrEmpty("parts", parts);
+            Argument.RequireAllNotNull("parts", parts);
+
             Parts = parts.AsReadOnly();
         }
     }

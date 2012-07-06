@@ -25,3 +25,5 @@ let rules = [
         ]
     }
 ]
+
+let files = Directory.GetFiles("d:\Development\VS 2010\HtmlToText\bin\Debug\text\", "*.*", SearchOption.AllDirectories)
