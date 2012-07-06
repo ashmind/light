@@ -5,6 +5,7 @@ using System.Linq;
 using Irony.Parsing;
 
 using Light.Ast;
+using Light.Ast.Expressions;
 using Light.Ast.Literals;
 using Light.Ast.Names;
 using Light.Ast.Statements;
@@ -25,7 +26,7 @@ namespace Light {
             ConstructAll();
             SetAllRules();
 
-            MarkPunctuation("[", "]", "(", ")", "{", "}", ":");
+            MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>");
 
             this.Root = TopLevelElementList;
             this.LanguageFlags = LanguageFlags.CreateAst;
@@ -37,6 +38,7 @@ namespace Light {
             ConstructIdentifiers();
             ConstructExpressions();
             ConstructStatements();
+            ConstructDefinitions();
 
             TopLevelElement = Transient("TopLevelElement");
             TopLevelElementList = NonTerminal("TopLevelElementList", node => node.ChildNodes.Select(n => (IAstElement)n.AstNode).ToArray());
@@ -46,6 +48,7 @@ namespace Light {
             SetExpressionRules();
             SetStatementRules();
             SetIdentifierRules();
+            SetDefinitionRules();
 
             TopLevelElement.Rule = Statement;
             TopLevelElementList.Rule = MakePlusRule(TopLevelElementList, NewLinePlus, TopLevelElement);
@@ -86,6 +89,8 @@ namespace Light {
         public NonTerminal NewExpression { get; private set; }
         public NonTerminal CallExpression { get; private set; }
 
+        public NonTerminal LambdaExpression { get; private set; }
+
         private void ConstructExpressions() {
             Number = new NumberLiteral("Number", NumberOptions.AllowSign, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
             SingleQuotedString = new StringLiteral("SingleQuotedString", "'", StringOptions.NoEscapes, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
@@ -110,10 +115,22 @@ namespace Light {
                 (IAstElement)node.ChildNodes[1].AstNode
             ));
 
-            CallExpression = NonTerminal("CallExpression", node => new CallExpression(
-                (CompositeName)node.ChildAst(0),
-                ((IAstElement[])node.ChildAst(CommaSeparatedExpressionListStar)) ?? new IAstElement[0]
-            ));
+            CallExpression = NonTerminal("Call", node => {
+                var arguments = ((IAstElement[])node.ChildAst(CommaSeparatedExpressionListStar)) ?? new IAstElement[0];
+
+                var first = node.FirstChild;
+                var dotSeparatedName = (CompositeName)first.ChildAst(DotSeparatedName);
+                if (dotSeparatedName != null) {
+                    var parts = dotSeparatedName.Parts;
+                    if (parts.Count == 1)
+                        return new CallExpression(null, parts[0], arguments);
+
+                    var targetName = new CompositeName(parts.Take(parts.Count - 1).ToArray());
+                    return new CallExpression(new IdentifierExpression(targetName), parts[parts.Count - 1], arguments);
+                }
+
+                return new CallExpression((IAstElement)first.ChildAst(Expression), first.Child(Name).Token.Text, arguments);
+            });
 
             NewExpression = NonTerminal(
                 "NewExpression",
@@ -123,6 +140,10 @@ namespace Light {
                     (IAstElement)node.ChildAst(ObjectInitializer) 
                 )
             );
+
+            LambdaExpression = NonTerminal(
+                "Lambda", node => new LambdaExpression(new[] { (IAstElement)node.ChildAst(0) }, (IAstElement)node.ChildAst(1))
+            );
         }
 
         private void SetExpressionRules() {
@@ -130,7 +151,8 @@ namespace Light {
                             | Number | BinaryExpression
                             | ListInitializer | ObjectInitializer
                             | CallExpression | NewExpression
-                            | IdentifierExpression;
+                            | IdentifierExpression
+                            | LambdaExpression;
 
             IdentifierExpression.Rule = DotSeparatedName;
 
@@ -144,8 +166,10 @@ namespace Light {
             ObjectInitializerElementList.Rule = MakeStarRule(ObjectInitializerElementList, ToTerm(",") + NewLineStar, ObjectInitializerElement);
             ObjectInitializerElement.Rule = Name + ":" + Expression;
 
-            CallExpression.Rule = DotSeparatedName + "(" + CommaSeparatedExpressionListStar + ")";
+            CallExpression.Rule = (Expression + NewLineStar + "." + NewLineStar + Name | DotSeparatedName) + "(" + CommaSeparatedExpressionListStar + ")";
             NewExpression.Rule = "new" + Name + (("(" + CommaSeparatedExpressionListStar + ")") | Empty) + (ObjectInitializer | Empty);
+
+            LambdaExpression.Rule = Parameter + "=>" + Expression;
         }
 
         #endregion
@@ -166,6 +190,20 @@ namespace Light {
             ImportStatement.Rule = "import" + DotSeparatedName;
             VariableDefinition.Rule = "let" + Name + (Empty | "=" + Expression);
             Statement.Rule = ImportStatement | VariableDefinition | Expression;
+        }
+
+        #endregion
+
+        #region Definitions
+
+        public NonTerminal Parameter { get; private set; }
+
+        public void ConstructDefinitions() {
+            Parameter = NonTerminal("Parameter", node => new ParameterDefinition(node.FindTokenAndGetText(), null));
+        }
+
+        public void SetDefinitionRules() {
+            Parameter.Rule = Name;
         }
 
         #endregion

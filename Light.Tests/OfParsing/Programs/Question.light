@@ -27,3 +27,4 @@ let rules = [
 ]
 
 let files = Directory.GetFiles("d:\Development\VS 2010\HtmlToText\bin\Debug\text\", "*.*", SearchOption.AllDirectories)
+let sentences = files.Select(f => File.ReadAllText(f)).SelectMany(t => t.Split('.')).Select(s => s.Trim())
