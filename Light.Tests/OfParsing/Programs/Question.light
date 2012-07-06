@@ -13,14 +13,15 @@ let rules = [
     new RegexRule("(?:.*)if (.+), you (must|can|should) (.+)", "What $2 you do when $1?|$3"),
     new RegexRule("(?:.*)you (must|can|should) (.+) (?<!see )if (.+)", "What $1 you do when $3?|$2"),
     new RegexRule("(.+) are (\w+)d by (.+)",  "Who $2s $1?|$3"),
-    new RegexRule("(?:.*)when ((?:[^,]|, or)+),(?! it)(?! the) ([^,]+)",  "What should be done when $1?|$2")
-]
+    new RegexRule("(?:.*)when ((?:[^,]|, or)+),(?! it)(?! the) ([^,]+)",  "What should be done when $1?|$2"),
 
-let numberRule = new Alternative() {
-    Rules : [ 
-        new RegexRule("(.+) period of (" + number + " " + time + ").*", "$1 what period?|$2"),
-        # new RegexRule("(.+) (" + number + " " + time + ").*", "$1 how long?|$2"),
-        new RegexRule("(.+) (" + number + " " + distance + ") (.+)", "$1 how far $3?|$2"),
-        new RegexRule("(.+) (" + number + "(?: or more)?) (.+)", "$1 how many $3?|$2")
-    ]
-}
+    # numbers:
+    new Alternative {
+        Rules : [ 
+            new RegexRule("(.+) period of (" + number + " " + time + ").*", "$1 what period?|$2"),
+            # new RegexRule("(.+) (" + number + " " + time + ").*", "$1 how long?|$2"),
+            new RegexRule("(.+) (" + number + " " + distance + ") (.+)", "$1 how far $3?|$2"),
+            new RegexRule("(.+) (" + number + "(?: or more)?) (.+)", "$1 how many $3?|$2")
+        ]
+    }
+]

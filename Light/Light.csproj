@@ -64,6 +64,7 @@
     <Compile Include="Ast\Names\CompositeName.cs" />
     <Compile Include="Common\DictionaryExtensions.cs" />
     <Compile Include="Common\ReadOnlyDictionary.cs" />
+    <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />
     <Compile Include="LightGrammar.cs" />
     <Compile Include="LightParser.cs" />

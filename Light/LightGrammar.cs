@@ -8,6 +8,7 @@ using Light.Ast;
 using Light.Ast.Literals;
 using Light.Ast.Names;
 using Light.Ast.Statements;
+using Light.Internal;
 
 namespace Light {
     public class LightGrammar : Grammar {
@@ -37,7 +38,7 @@ namespace Light {
             ConstructExpressions();
             ConstructStatements();
 
-            TopLevelElement = NonTerminal("TopLevelElement", node => node.FirstChild.AstNode);
+            TopLevelElement = Transient("TopLevelElement");
             TopLevelElementList = NonTerminal("TopLevelElementList", node => node.ChildNodes.Select(n => (IAstElement)n.AstNode).ToArray());
         }
 
@@ -98,7 +99,7 @@ namespace Light {
 
             BinaryOperator = NonTerminal("BinaryOperator", node => new BinaryOperator(node.FindTokenAndGetText()));
 
-            CommaSeparatedExpressionListStar = new NonTerminal("CommaSeparatedExpressionListStar");
+            CommaSeparatedExpressionListStar = NonTerminal("CommaSeparatedExpressionListStar", node => node.ChildAsts().ToArray());
             ListInitializer = NonTerminal("ListInitializer", node => new ListInitializer(AstElementsInStarChild(node, 0)));
             ObjectInitializer = NonTerminal("ObjectInitializer", node => new ObjectInitializer(AstElementsInStarChild(node, 0)));
             ObjectInitializerElementList = new NonTerminal("ObjectInitializerElementList");
@@ -109,7 +110,11 @@ namespace Light {
 
             NewExpression = NonTerminal(
                 "NewExpression",
-                node => new NewExpression(node.ChildNodes[1].Token.Text, AstElementsInStarChild(node, 2), (IAstElement)node.ChildNodes[3].AstNode)
+                node => new NewExpression(
+                    node.ChildNodes[1].Token.Text,
+                    ((IAstElement[])node.ChildAst(CommaSeparatedExpressionListStar)) ?? new IAstElement[0],
+                    (IAstElement)node.ChildAst(ObjectInitializer) 
+                )
             );
         }
 
@@ -127,7 +132,7 @@ namespace Light {
             ObjectInitializerElementList.Rule = MakeStarRule(ObjectInitializerElementList, ToTerm(",") + NewLineStar, ObjectInitializerElement);
             ObjectInitializerElement.Rule = Name + ":" + Expression;
 
-            NewExpression.Rule = "new" + Name + "(" + CommaSeparatedExpressionListStar + ")" + (ObjectInitializer | Empty);
+            NewExpression.Rule = "new" + Name + (("(" + CommaSeparatedExpressionListStar + ")") | Empty) + (ObjectInitializer | Empty);
         }
 
         #endregion
