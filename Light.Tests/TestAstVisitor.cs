@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Light.Ast;
@@ -11,11 +10,9 @@ namespace Light.Tests {
     public class TestAstVisitor : AstVisitor<StringBuilder> {
         public bool IncludesTypesOfValues { get; set; }
 
-        public string Describe(IEnumerable<IAstElement> elements) {
+        public string Describe(IAstElement element) {
             var builder = new StringBuilder();
-            foreach (var element in elements) {
-                this.Visit(element, builder);
-            }
+            this.Visit(element, builder);
             return builder.ToString();
         }
 
@@ -71,11 +68,11 @@ namespace Light.Tests {
             builder.Append(")");
         }
 
-        protected override void VisitNotRecognized(IAstElement element, StringBuilder builder) {
-            builder.Append(element);
+        protected override void VisitIdentifierExpression(IdentifierExpression identifier, StringBuilder builder) {
+            builder.Append(identifier.Name);
         }
 
-        protected override void VisitNotOverriden(IAstElement element, StringBuilder builder) {
+        protected override void VisitNotRecognized(IAstElement element, StringBuilder builder) {
             builder.Append(element);
         }
 

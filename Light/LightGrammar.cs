@@ -38,20 +38,20 @@ namespace Light {
             ConstructDefinitions();
 
             TopLevelRoot = NonTerminal("TopLevelRoot", node => {
-                var list = node.ChildAst(TopLevelElementList);
+                var list = (IAstElement[])node.ChildAst(TopLevelElementList);
                 if (list != null)
-                    return list;
+                    return new AstRoot(list);
 
-                return new[] { (IAstElement)node.ChildAst(0) };
+                return (IAstElement)node.ChildAst(0);
             });
             TopLevelElement = Transient("TopLevelElement");
             TopLevelElementList = NonTerminal("TopLevelElementList", node => node.ChildNodes.Select(n => (IAstElement)n.AstNode).ToArray());
         }
 
         private void SetAllRules() {
+            SetIdentifierRules();
             SetExpressionRules();
             SetStatementRules();
-            SetIdentifierRules();
             SetDefinitionRules();
 
             TopLevelRoot.Rule = TopLevelElementList | Expression;

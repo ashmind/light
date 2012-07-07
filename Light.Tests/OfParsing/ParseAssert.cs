@@ -12,7 +12,7 @@ namespace Light.Tests.OfParsing {
 
             var visitor = new TestAstVisitor { IncludesTypesOfValues = includeTypesOfValues };
             AssertEx.That(() => !result.HasErrors);
-            Assert.AreEqual(expectedResult, visitor.Describe(result.Tree));
+            Assert.AreEqual(expectedResult, visitor.Describe(result.Root));
         }
     }
 }

@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Argument.cs" />
+    <Compile Include="Ast\AstRoot.cs" />
     <Compile Include="Ast\AstVisitor.cs" />
     <Compile Include="Ast\Expressions\BinaryExpression.cs" />
     <Compile Include="Ast\Expressions\CallExpression.cs" />
@@ -74,8 +75,10 @@
     <Compile Include="Common\ReadOnlyDictionary.cs" />
     <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />
+    <Compile Include="Processing\IProcessingStep.cs" />
     <Compile Include="LightGrammar.cs" />
     <Compile Include="LightParser.cs" />
+    <Compile Include="LightProcessor.cs" />
     <Compile Include="Parsing\ParsingMessageKind.cs" />
     <Compile Include="Parsing\ParsingResult.cs" />
     <Compile Include="Parsing\ParsingMessage.cs" />

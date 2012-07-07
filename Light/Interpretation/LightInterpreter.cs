@@ -11,9 +11,9 @@ namespace Light.Interpretation {
             public object Value { get; set; }
         }
 
-        public object Evaluate(IEnumerable<IAstElement> elements) {
+        public object Evaluate(IAstElement root) {
             var result = new Reference();
-            this.Visit(elements, result);
+            this.Visit(root, result);
             return result.Value;
         }
 

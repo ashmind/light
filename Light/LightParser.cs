@@ -18,7 +18,7 @@ namespace Light {
         public ParsingResult Parse(string source) {
             var parsed = this.parser.Parse(source);
             return new ParsingResult(
-                parsed.Root != null ? (IAstElement[])parsed.Root.AstNode : new IAstElement[0],
+                parsed.Root != null ? (IAstElement)parsed.Root.AstNode : null,
                 parsed.ParserMessages.Select(m => ToParsingMessage(m, source))
             );
         }
