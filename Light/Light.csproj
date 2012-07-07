@@ -53,6 +53,7 @@
     <Compile Include="Ast\Definitions\FunctionDefinition.cs" />
     <Compile Include="Ast\Expressions\BinaryExpression.cs" />
     <Compile Include="Ast\Expressions\CallExpression.cs" />
+    <Compile Include="Ast\Expressions\IndexerExpression.cs" />
     <Compile Include="Ast\Expressions\LambdaExpression.cs" />
     <Compile Include="Ast\Expressions\MemberExpression.cs" />
     <Compile Include="Ast\IAstElement.cs" />
@@ -73,8 +74,6 @@
     <Compile Include="Ast\Literals\PrimitiveValue.cs" />
     <Compile Include="Ast\Expressions\BinaryOperator.cs" />
     <Compile Include="Ast\Names\CompositeName.cs" />
-    <Compile Include="Common\DictionaryExtensions.cs" />
-    <Compile Include="Common\ReadOnlyDictionary.cs" />
     <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Internal\NonTerminal.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />

@@ -92,6 +92,7 @@ namespace Light.Parsing {
 
         public NonTerminal<IAstElement> NewExpression { get; private set; }
         public NonTerminal<IAstElement> SimpleCallExpression { get; private set; }
+        public NonTerminal<IAstElement> SimpleIndexerExpression { get; private set; }
         public NonTerminal<IAstElement> SimpleIdentifierExpression { get; private set; }
         public NonTerminal<IAstElement> MemberAccessOrCallExpression { get; private set; }
         public NonTerminal<IAstElement> MemberPathRoot { get; private set; }
@@ -139,6 +140,14 @@ namespace Light.Parsing {
                         result = new MemberExpression(result, identifier.Name);
                         continue;
                     }
+
+                    var indexer = item as IndexerExpression;
+                    if (indexer != null) {
+                        result = new IndexerExpression(new MemberExpression(result, ((IdentifierExpression)indexer.Target).Name), indexer.Arguments.ToArray());
+                        continue;
+                    }
+
+                    throw new NotImplementedException();
                 }
 
                 return result;
@@ -146,8 +155,9 @@ namespace Light.Parsing {
             MemberPathRoot = Transient("MemberPathRoot");
             MemberPathElement = Transient("MemberPathElement");
             MemberPathElementListPlus = NonTerminal("MemberPathElementListPlus", node => node.ChildAsts().Cast<IAstElement>().ToArray());
-            SimpleCallExpression = NonTerminal("CallElement", node => new CallExpression(null, node.Child(0).Token.Text, AstElementsInStarChild(node, 2)));
-            SimpleIdentifierExpression = NonTerminal("IdentifierElement", node => new IdentifierExpression(node.Child(0).Token.Text));
+            SimpleCallExpression = NonTerminal("Call (Simple)", node => new CallExpression(null, node.Child(0).Token.Text, AstElementsInStarChild(node, 1)));
+            SimpleIdentifierExpression = NonTerminal("Identifier", node => new IdentifierExpression(node.Child(0).Token.Text));
+            SimpleIndexerExpression = NonTerminal("Indexer (Simple)", node => new IndexerExpression(node.ChildAst(SimpleIdentifierExpression), AstElementsInStarChild(node, 1)));
 
             NewExpression = NonTerminal(
                 "NewExpression",
@@ -166,7 +176,7 @@ namespace Light.Parsing {
         private void SetExpressionRules() {
             Literal.Rule = SingleQuotedString | DoubleQuotedString | Number | ListInitializer | ObjectInitializer;
             Expression.Rule = Literal | BinaryExpression
-                            | SimpleCallExpression | SimpleIdentifierExpression | MemberAccessOrCallExpression
+                            | SimpleCallExpression | SimpleIdentifierExpression | SimpleIndexerExpression | MemberAccessOrCallExpression
                             | NewExpression | LambdaExpression;
 
             BinaryExpression.Rule = Expression + BinaryOperator + NewLineStar + Expression;
@@ -185,10 +195,11 @@ namespace Light.Parsing {
 
             MemberAccessOrCallExpression.Rule = MemberPathRoot + "." + MemberPathElementListPlus;
             MemberPathRoot.Rule = Literal | MemberPathElement;
-            MemberPathElement.Rule = SimpleIdentifierExpression | SimpleCallExpression;
+            MemberPathElement.Rule = SimpleIdentifierExpression | SimpleCallExpression | SimpleIndexerExpression;
             MemberPathElementListPlus.Rule = MakeStarRule(MemberPathElementListPlus, ToTerm("."), MemberPathElement);
             SimpleCallExpression.Rule = Name + "(" + CommaSeparatedExpressionListStar + ")";
             SimpleIdentifierExpression.Rule = Name;
+            SimpleIndexerExpression.Rule = SimpleIdentifierExpression + "[" + CommaSeparatedExpressionListStar + "]";
  
             NewExpression.Rule = "new" + Name + (("(" + CommaSeparatedExpressionListStar + ")") | Empty) + (ObjectInitializer | Empty);
 
@@ -259,7 +270,7 @@ namespace Light.Parsing {
         public NonTerminal<IAstElement> UntypedParameter { get; private set; }
         public NonTerminal<IAstElement[]> ParameterList { get; private set; }
 
-        public void ConstructDefinitions() {
+        private void ConstructDefinitions() {
             Definition = Transient("Definition");
             Import = NonTerminal("Import", node => new ImportDefinition((CompositeName)node.ChildAst(1)));
             Function = NonTerminal(
@@ -276,7 +287,7 @@ namespace Light.Parsing {
             UntypedParameter = NonTerminal("UntypedParameter", node => new ParameterDefinition(node.FindTokenAndGetText(), null));
         }
 
-        public void SetDefinitionRules() {
+        private void SetDefinitionRules() {
             Definition.Rule = Import | Function;
             Import.Rule = "import" + DotSeparatedName;
             Function.Rule = "function" + Name + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";

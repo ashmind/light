@@ -72,6 +72,19 @@ namespace Light.Tests {
             builder.Append(identifier.Name);
         }
 
+        protected override void VisitMemberExpression(MemberExpression member, StringBuilder builder) {
+            Visit(member.Target, builder);
+            builder.Append(".");
+            builder.Append(member.Name);
+        }
+
+        protected override void VisitIndexerExpression(IndexerExpression indexer, StringBuilder builder) {
+            Visit(indexer.Target, builder);
+            builder.Append("[");
+            AppendCommaSeparatedElements(builder, indexer.Arguments);
+            builder.Append("]");
+        }
+
         protected override void VisitNotRecognized(IAstElement element, StringBuilder builder) {
             builder.Append(element);
         }

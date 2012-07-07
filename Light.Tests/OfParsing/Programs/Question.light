@@ -50,5 +50,5 @@ end
 
 function ToSentenceCase(string value)
     value = value.Trim()
-    #return Char.ToUpperInvariant(value[0]) + value.Substring(1, value.Length - 1).ToLowerInvariant()
+    return Char.ToUpperInvariant(value[0]) + value.Substring(1, value.Length - 1).ToLowerInvariant()
 end

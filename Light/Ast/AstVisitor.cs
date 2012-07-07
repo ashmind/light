@@ -18,6 +18,8 @@ namespace Light.Ast {
             Register<ObjectInitializer>(VisitObjectInitializer);
             Register<ObjectInitializerEntry>(VisitObjectInitializerEntry);
             Register<CallExpression>(VisitCallExpression);
+            Register<IndexerExpression>(VisitIndexerExpression);
+            Register<MemberExpression>(VisitMemberExpression);
         }
 
         protected void Register<TAstElement>(Action<TAstElement, TContext> visit)
@@ -60,7 +62,13 @@ namespace Light.Ast {
         protected virtual void VisitCallExpression(CallExpression call, TContext context) {
         }
 
+        protected virtual void VisitIndexerExpression(IndexerExpression indexer, TContext context) {
+        }
+
         protected virtual void VisitIdentifierExpression(IdentifierExpression identifier, TContext context) {
+        }
+
+        protected virtual void VisitMemberExpression(MemberExpression member, TContext context) {
         }
 
         protected virtual void VisitNotRecognized(IAstElement element, TContext context) {
