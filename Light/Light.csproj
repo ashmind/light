@@ -52,6 +52,7 @@
     <Compile Include="Ast\Expressions\BinaryExpression.cs" />
     <Compile Include="Ast\Expressions\CallExpression.cs" />
     <Compile Include="Ast\Expressions\LambdaExpression.cs" />
+    <Compile Include="Ast\Expressions\MemberExpression.cs" />
     <Compile Include="Ast\IAstElement.cs" />
     <Compile Include="Ast\Expressions\IdentifierExpression.cs" />
     <Compile Include="Ast\Literals\ObjectInitializer.cs" />
@@ -60,6 +61,10 @@
     <Compile Include="Ast\Literals\StringWithInterpolation.cs" />
     <Compile Include="Ast\Expressions\NewExpression.cs" />
     <Compile Include="Ast\ParameterDefinition.cs" />
+    <Compile Include="Ast\Statements\Assignment.cs" />
+    <Compile Include="Ast\Statements\ContinueStatement.cs" />
+    <Compile Include="Ast\Statements\IfStatement.cs" />
+    <Compile Include="Ast\Statements\ForStatement.cs" />
     <Compile Include="Ast\Statements\VariableDefinition.cs" />
     <Compile Include="Ast\Statements\ImportStatement.cs" />
     <Compile Include="Ast\Literals\PrimitiveValue.cs" />

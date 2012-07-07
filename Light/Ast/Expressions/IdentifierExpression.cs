@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Light.Ast.Names;
 
-namespace Light.Ast {
+namespace Light.Ast.Expressions {
     public class IdentifierExpression : IAstElement {
-        public CompositeName Name { get; private set; }
+        public string Name { get; private set; }
 
-        public IdentifierExpression(CompositeName name) {
-            Argument.RequireNotNull("name", name);
+        public IdentifierExpression(string name) {
+            Argument.RequireNotNullOrEmpty("name", name);
             this.Name = name;
+        }
+
+        public override string ToString() {
+            return this.Name;
         }
     }
 }

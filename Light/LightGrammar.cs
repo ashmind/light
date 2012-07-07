@@ -13,33 +13,37 @@ using Light.Internal;
 
 namespace Light {
     public class LightGrammar : Grammar {
-        public Terminal Dot { get; private set; }
-
         // top level:
+        public NonTerminal TopLevelRoot { get; private set; }
         public NonTerminal TopLevelElement { get; private set; }
         public NonTerminal TopLevelElementList { get; private set; }
 
         public LightGrammar() {
-            var lineComment = new CommentTerminal("line_comment", "#", "\n", "\r\n");
+            var lineComment = new CommentTerminal("LineComment", "#", "\n", "\r\n");
             NonGrammarTerminals.Add(lineComment);
 
             ConstructAll();
             SetAllRules();
 
-            MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>");
+            MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>", ".");
 
-            this.Root = TopLevelElementList;
+            this.Root = TopLevelRoot;
             this.LanguageFlags = LanguageFlags.CreateAst;
         }
 
         private void ConstructAll() {
-            Dot = new KeyTerm(".", ".");
-
             ConstructIdentifiers();
             ConstructExpressions();
             ConstructStatements();
             ConstructDefinitions();
 
+            TopLevelRoot = NonTerminal("TopLevelRoot", node => {
+                var list = node.ChildAst(TopLevelElementList);
+                if (list != null)
+                    return list;
+
+                return new[] { (IAstElement)node.ChildAst(0) };
+            });
             TopLevelElement = Transient("TopLevelElement");
             TopLevelElementList = NonTerminal("TopLevelElementList", node => node.ChildNodes.Select(n => (IAstElement)n.AstNode).ToArray());
         }
@@ -50,8 +54,9 @@ namespace Light {
             SetIdentifierRules();
             SetDefinitionRules();
 
-            TopLevelElement.Rule = Statement;
+            TopLevelRoot.Rule = TopLevelElementList | Expression;
             TopLevelElementList.Rule = MakePlusRule(TopLevelElementList, NewLinePlus, TopLevelElement);
+            TopLevelElement.Rule = Statement;
         }
 
         #region Identifiers
@@ -65,7 +70,7 @@ namespace Light {
         }
 
         public void SetIdentifierRules() {
-            DotSeparatedName.Rule = MakePlusRule(DotSeparatedName, Dot, Name);
+            DotSeparatedName.Rule = MakePlusRule(DotSeparatedName, ToTerm("."), Name);
         }
 
         #endregion
@@ -77,7 +82,7 @@ namespace Light {
         public StringLiteral DoubleQuotedString { get; private set; }
 
         public NonTerminal Expression { get; private set; }
-        public NonTerminal IdentifierExpression { get; private set; }
+        public NonTerminal Literal { get; private set; }
         public NonTerminal BinaryExpression { get; private set; }
         public NonTerminal BinaryOperator { get; private set; }
         public NonTerminal CommaSeparatedExpressionListStar { get; private set; }
@@ -87,17 +92,22 @@ namespace Light {
         public NonTerminal ObjectInitializerElement { get; private set; }
 
         public NonTerminal NewExpression { get; private set; }
-        public NonTerminal CallExpression { get; private set; }
+        public NonTerminal SimpleCallExpression { get; private set; }
+        public NonTerminal SimpleIdentifierExpression { get; private set; }
+        public NonTerminal MemberAccessOrCallExpression { get; private set; }
+        public NonTerminal MemberPathRoot { get; private set; }
+        public NonTerminal MemberPathElement { get; private set; }
+        public NonTerminal MemberPathElementListPlus { get; private set; }
 
         public NonTerminal LambdaExpression { get; private set; }
 
         private void ConstructExpressions() {
-            Number = new NumberLiteral("Number", NumberOptions.AllowSign, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
+            Number = new NumberLiteral("Number", NumberOptions.Default, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
             SingleQuotedString = new StringLiteral("SingleQuotedString", "'", StringOptions.NoEscapes, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
             DoubleQuotedString = new StringLiteral("DoubleQuotedString", "\"", StringOptions.NoEscapes, (c, node) => node.AstNode = new StringWithInterpolation((string)node.Token.Value));
 
+            Literal = Transient("Literal");
             Expression = Transient("Expression");
-            IdentifierExpression = NonTerminal("Identifier", node => new IdentifierExpression((CompositeName)node.ChildNodes[0].AstNode));
             BinaryExpression = NonTerminal("BinaryExpression", node => new BinaryExpression(
                 (IAstElement) node.ChildNodes[0].AstNode,
                 (BinaryOperator) node.ChildNodes[1].AstNode,
@@ -115,22 +125,30 @@ namespace Light {
                 (IAstElement)node.ChildNodes[1].AstNode
             ));
 
-            CallExpression = NonTerminal("Call", node => {
-                var arguments = ((IAstElement[])node.ChildAst(CommaSeparatedExpressionListStar)) ?? new IAstElement[0];
+            MemberAccessOrCallExpression = NonTerminal("MemberAccessOrCall", node => {
+                var path = (IAstElement[])node.ChildAst(1);
+                var result = (IAstElement)node.ChildAst(0);
+                foreach (var item in path) {
+                    var call = item as CallExpression;
+                    if (call != null) {
+                        result = new CallExpression(result, call.MethodName, call.Arguments);
+                        continue;
+                    }
 
-                var first = node.FirstChild;
-                var dotSeparatedName = (CompositeName)first.ChildAst(DotSeparatedName);
-                if (dotSeparatedName != null) {
-                    var parts = dotSeparatedName.Parts;
-                    if (parts.Count == 1)
-                        return new CallExpression(null, parts[0], arguments);
-
-                    var targetName = new CompositeName(parts.Take(parts.Count - 1).ToArray());
-                    return new CallExpression(new IdentifierExpression(targetName), parts[parts.Count - 1], arguments);
+                    var identifier = item as IdentifierExpression;
+                    if (identifier != null) {
+                        result = new MemberExpression(result, identifier.Name);
+                        continue;
+                    }
                 }
 
-                return new CallExpression((IAstElement)first.ChildAst(Expression), first.Child(Name).Token.Text, arguments);
+                return result;
             });
+            MemberPathRoot = Transient("MemberPathRoot");
+            MemberPathElement = Transient("MemberPathElement");
+            MemberPathElementListPlus = NonTerminal("MemberPathElementListPlus", node => node.ChildAsts().Cast<IAstElement>().ToArray());
+            SimpleCallExpression = NonTerminal("CallElement", node => new CallExpression(null, node.Child(0).Token.Text, AstElementsInStarChild(node, 2)));
+            SimpleIdentifierExpression = NonTerminal("IdentifierElement", node => new IdentifierExpression(node.Child(0).Token.Text));
 
             NewExpression = NonTerminal(
                 "NewExpression",
@@ -147,17 +165,17 @@ namespace Light {
         }
 
         private void SetExpressionRules() {
-            Expression.Rule = SingleQuotedString | DoubleQuotedString
-                            | Number | BinaryExpression
-                            | ListInitializer | ObjectInitializer
-                            | CallExpression | NewExpression
-                            | IdentifierExpression
-                            | LambdaExpression;
-
-            IdentifierExpression.Rule = DotSeparatedName;
+            Literal.Rule = SingleQuotedString | DoubleQuotedString | Number | ListInitializer | ObjectInitializer;
+            Expression.Rule = Literal | BinaryExpression
+                            | SimpleCallExpression | SimpleIdentifierExpression | MemberAccessOrCallExpression
+                            | NewExpression | LambdaExpression;
 
             BinaryExpression.Rule = Expression + BinaryOperator + NewLineStar + Expression;
-            BinaryOperator.Rule = new[] {"+", "-", "*", "/"}.Select(k => (BnfExpression) ToTerm(k)).Aggregate((a, b) => a | b);
+            BinaryOperator.Rule = new[] {"+", "-", "*", "/", "==", "==="}.Select(k => {
+                var @operator = (BnfExpression)ToTerm(k);
+                @operator.SetFlag(TermFlags.IsOperator);
+                return @operator;
+            }).Aggregate((a, b) => a | b);
 
             ListInitializer.Rule = "[" + NewLineStar + CommaSeparatedExpressionListStar + NewLineStar + "]";
             CommaSeparatedExpressionListStar.Rule = MakeStarRule(CommaSeparatedExpressionListStar, ToTerm(",") + NewLineStar, Expression);
@@ -166,7 +184,13 @@ namespace Light {
             ObjectInitializerElementList.Rule = MakeStarRule(ObjectInitializerElementList, ToTerm(",") + NewLineStar, ObjectInitializerElement);
             ObjectInitializerElement.Rule = Name + ":" + Expression;
 
-            CallExpression.Rule = (Expression + NewLineStar + "." + NewLineStar + Name | DotSeparatedName) + "(" + CommaSeparatedExpressionListStar + ")";
+            MemberAccessOrCallExpression.Rule = MemberPathRoot + "." + MemberPathElementListPlus;
+            MemberPathRoot.Rule = Literal | MemberPathElement;
+            MemberPathElement.Rule = SimpleIdentifierExpression | SimpleCallExpression;
+            MemberPathElementListPlus.Rule = MakeStarRule(MemberPathElementListPlus, ToTerm("."), MemberPathElement);
+            SimpleCallExpression.Rule = Name + "(" + CommaSeparatedExpressionListStar + ")";
+            SimpleIdentifierExpression.Rule = Name;
+ 
             NewExpression.Rule = "new" + Name + (("(" + CommaSeparatedExpressionListStar + ")") | Empty) + (ObjectInitializer | Empty);
 
             LambdaExpression.Rule = Parameter + "=>" + Expression;
@@ -177,19 +201,48 @@ namespace Light {
         #region Statements
 
         public NonTerminal Statement { get; private set; }
+        public NonTerminal StatementListStar { get; private set; }
+        public NonTerminal StatementListPlus { get; private set; }
         public NonTerminal ImportStatement { get; private set; }
+        public NonTerminal ForStatement { get; private set; }
+        public NonTerminal ContinueStatement { get; private set; }
+        public NonTerminal IfStatement { get; private set; }
         public NonTerminal VariableDefinition { get; private set; }
+        public NonTerminal Assignment { get; private set; }
 
         private void ConstructStatements() {
             Statement = Transient("Statement");
-            ImportStatement = NonTerminal("ImportStatement", node => new ImportStatement((CompositeName)node.ChildNodes[1].AstNode));
+            StatementListStar = new NonTerminal("StatementListStar");
+            StatementListPlus = NonTerminal("StatementListPlus", node => node.ChildAsts().Cast<IAstElement>().ToArray());
+            ImportStatement = NonTerminal("ImportStatement", node => new ImportStatement((CompositeName)node.ChildAst(1)));
+            ForStatement = NonTerminal("ForStatement", node => new ForStatement(
+                // for <1> in <3> do <5> end
+                node.Child(1).Token.Text,
+                (IAstElement)node.ChildAst(3),
+                AstElementsInStarChild(node.Child(5), 0)
+            ));
+            ContinueStatement = NonTerminal("ContinueStatement", _ => new ContinueStatement());
+            IfStatement = NonTerminal("IfStatement", node => new IfStatement(
+                // if <1> \r\n <2>
+                (IAstElement)node.ChildAst(1),
+                (IAstElement)node.ChildAst(2)
+            ));
             VariableDefinition = NonTerminal("VariableDefinition", node => new VariableDefinition(node.ChildNodes[1].Token.Text, null));
+            Assignment = NonTerminal("Assignment", node => new Assignment((IAstElement)node.ChildAst(0), (IAstElement)node.ChildAst(2)));
         }
 
         private void SetStatementRules() {
+            Statement.Rule = ImportStatement | ForStatement | ContinueStatement | IfStatement | VariableDefinition | Assignment
+                           | SimpleCallExpression | MemberAccessOrCallExpression;
+            StatementListStar.Rule = MakeStarRule(StatementListStar, NewLinePlus, Statement);
+            StatementListPlus.Rule = MakePlusRule(StatementListPlus, NewLinePlus, Statement);
+
             ImportStatement.Rule = "import" + DotSeparatedName;
+            ForStatement.Rule = "for" + Name + "in" + Expression + "do" + NewLinePlus + (StatementListPlus + NewLinePlus | Empty) + "end";
+            ContinueStatement.Rule = "continue";
+            IfStatement.Rule = "if" + Expression + NewLineStar + Statement;
             VariableDefinition.Rule = "let" + Name + (Empty | "=" + Expression);
-            Statement.Rule = ImportStatement | VariableDefinition | Expression;
+            Assignment.Rule = MemberAccessOrCallExpression + "=" + Expression;
         }
 
         #endregion
@@ -212,18 +265,6 @@ namespace Light {
             return new NonTerminal(name, (c, node) => node.AstNode = getAstNode(node));
         }
 
-        //private static NonTerminal NonTerminalPlus(string name, BnfExpression listMember, Func<ParseTreeNode, object> getAstNode) {
-        //    var nonTerminal = NonTerminalWithoutRule(name, getAstNode);
-        //    MakePlusRule(nonTerminal, listMember);
-        //    return nonTerminal;
-        //}
-
-        //private static NonTerminal NonTerminalPlus(string name, BnfExpression listMember, BnfExpression delimiter, Func<ParseTreeNode, object> getAstNode) {
-        //    var nonTerminal = NonTerminalWithoutRule(name, getAstNode);
-        //    MakePlusRule(nonTerminal, delimiter, listMember);
-        //    return nonTerminal;
-        //}
-
         private NonTerminal Transient(string name) {
             var nonTerminal = new NonTerminal(name);
             MarkTransient(nonTerminal);
@@ -236,10 +277,6 @@ namespace Light {
                 return new IAstElement[0];
 
             return child.ChildNodes.Select(n => (IAstElement)n.AstNode).ToArray();
-        }
-
-        private object NotImplemented() {
-            throw new NotImplementedException();
         }
     }
 }

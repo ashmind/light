@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Light.Ast;
+using Light.Ast.Expressions;
 using Light.Ast.Literals;
 
 namespace Light.Tests {
@@ -56,6 +57,26 @@ namespace Light.Tests {
         protected override void VisitObjectInitializerEntry(ObjectInitializerEntry entry, StringBuilder builder) {
             builder.Append(entry.Name).Append(": ");
             Visit(entry.Value, builder);
+        }
+
+        protected override void VisitCallExpression(CallExpression call, StringBuilder builder) {
+            if (call.Target != null) {
+                Visit(call.Target, builder);
+                builder.Append(".");
+            }
+
+            builder.Append(call.MethodName);
+            builder.Append("(");
+            AppendCommaSeparatedElements(builder, call.Arguments);
+            builder.Append(")");
+        }
+
+        protected override void VisitNotRecognized(IAstElement element, StringBuilder builder) {
+            builder.Append(element);
+        }
+
+        protected override void VisitNotOverriden(IAstElement element, StringBuilder builder) {
+            builder.Append(element);
         }
 
         private void AppendCommaSeparatedElements(StringBuilder builder, IEnumerable<IAstElement> elements) {

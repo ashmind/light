@@ -13,11 +13,7 @@ namespace Light.Tests.OfParsing {
         [Row("1/2", "{1 / 2}")]
         [Row("1+\n2", "{1 + 2}")]
         public void Binary(string code, string expectedResult) {
-            var parser = new LightParser();
-            var result = parser.Parse(code);
-
-            AssertEx.That(() => !result.HasErrors
-                 && new TestAstVisitor().Describe(result.Tree) == expectedResult);
+            ParseAssert.IsParsedTo(code, expectedResult);
         }
     }
 }

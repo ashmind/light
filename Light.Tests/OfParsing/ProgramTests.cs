@@ -8,9 +8,12 @@ namespace Light.Tests.OfParsing {
     [TestFixture]
     public class ProgramTests {
         [Test]
-        [Row("Question.light")]
-        public void Simple(string name) {
-            var code = Resource.ReadAllText(typeof(ProgramTests), "Programs." + name);
+        public void Question() {
+            AssertIsParsed("Question.light");
+        }
+
+        private static void AssertIsParsed(string programName) {
+            var code = Resource.ReadAllText(typeof(ProgramTests), "Programs." + programName);
             var parsed = new LightParser().Parse(code);
 
             Assert.IsFalse(

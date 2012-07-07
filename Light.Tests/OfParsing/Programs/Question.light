@@ -28,3 +28,22 @@ let rules = [
 
 let files = Directory.GetFiles("d:\Development\VS 2010\HtmlToText\bin\Debug\text\", "*.*", SearchOption.AllDirectories)
 let sentences = files.Select(f => File.ReadAllText(f)).SelectMany(t => t.Split('.')).Select(s => s.Trim())
+
+for sentence in sentences.Skip(100).Take(100) do
+    for rule in rules do
+        let result = rule.GetQuestionsAndAnswersRaw(sentence)
+        if result.Length == 0
+            continue
+
+        Console.ForegroundColor = ConsoleColor.White
+        Console.WriteLine(sentence)
+        Console.ResetColor()
+
+        #let question = ToSentenceCase(result[0][0]).TrimEnd(punctuation) + '?'
+        #let answer = ToSentenceCase(result[0][1]).TrimEnd(punctuation) + '.'
+
+        Console.WriteLine("Q: {0}", question)
+        Console.WriteLine("A: {0}", answer)
+        Console.WriteLine()
+    end
+end
