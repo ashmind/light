@@ -30,6 +30,10 @@ namespace Light.Internal {
             return child.AstNode;
         }
 
+        public static TAstNode ChildAst<TAstNode>(this ParseTreeNode node, NonTerminal<TAstNode> term) {
+            return (TAstNode)node.ChildAst((BnfTerm)term);
+        }
+
         public static IEnumerable<object> ChildAsts(this ParseTreeNode node) {
             return node.ChildNodes.Select(c => c.AstNode);
         }
