@@ -69,7 +69,7 @@
     <Compile Include="Ast\Statements\IfStatement.cs" />
     <Compile Include="Ast\Statements\ForStatement.cs" />
     <Compile Include="Ast\Statements\VariableDefinition.cs" />
-    <Compile Include="Ast\Statements\ImportStatement.cs" />
+    <Compile Include="Ast\Definitions\ImportDefinition.cs" />
     <Compile Include="Ast\Literals\PrimitiveValue.cs" />
     <Compile Include="Ast\Expressions\BinaryOperator.cs" />
     <Compile Include="Ast\Names\CompositeName.cs" />

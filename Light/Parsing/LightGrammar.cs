@@ -202,7 +202,6 @@ namespace Light.Parsing {
         public NonTerminal Statement { get; private set; }
         public NonTerminal StatementListPlus { get; private set; }
         public NonTerminal OptionalBodyOfStatements { get; private set; }
-        public NonTerminal ImportStatement { get; private set; }
         public NonTerminal ForStatement { get; private set; }
         public NonTerminal ContinueStatement { get; private set; }
         public NonTerminal IfStatement { get; private set; }
@@ -215,7 +214,6 @@ namespace Light.Parsing {
             Statement = Transient("Statement");
             StatementListPlus = NonTerminal("StatementListPlus", node => node.ChildAsts().Cast<IAstElement>().ToArray());
             OptionalBodyOfStatements = NonTerminal("OptionalBodyOfStatements", node => node.ChildAst(0) ?? new IAstElement[0]);
-            ImportStatement = NonTerminal("Import", node => new ImportStatement((CompositeName)node.ChildAst(1)));
             ForStatement = NonTerminal("For", node => new ForStatement(
                 // for <1> in <3> do <5> end
                 node.Child(1).Token.Text,
@@ -235,12 +233,11 @@ namespace Light.Parsing {
         }
 
         private void SetStatementRules() {
-            Statement.Rule = ImportStatement | ForStatement | ContinueStatement | IfStatement | VariableDefinition | Assignment | ReturnStatement
+            Statement.Rule = ForStatement | ContinueStatement | IfStatement | VariableDefinition | Assignment | ReturnStatement
                            | SimpleCallExpression | MemberAccessOrCallExpression;
             StatementListPlus.Rule = MakePlusRule(StatementListPlus, NewLinePlus, Statement);
             OptionalBodyOfStatements.Rule = StatementListPlus + NewLinePlus | Empty;
-
-            ImportStatement.Rule = "import" + DotSeparatedName;
+            
             ForStatement.Rule = "for" + Name + "in" + Expression + "do" + NewLinePlus + OptionalBodyOfStatements + "end";
             ContinueStatement.Rule = "continue";
             IfStatement.Rule = "if" + Expression + NewLineStar + Statement;
@@ -255,6 +252,7 @@ namespace Light.Parsing {
         #region Definitions
 
         public NonTerminal Definition       { get; private set; }
+        public NonTerminal Import           { get; private set; }
         public NonTerminal Function         { get; private set; }
         public NonTerminal Parameter        { get; private set; }
         public NonTerminal TypedParameter   { get; private set; }
@@ -263,6 +261,7 @@ namespace Light.Parsing {
 
         public void ConstructDefinitions() {
             Definition = Transient("Definition");
+            Import = NonTerminal("Import", node => new ImportDefinition((CompositeName)node.ChildAst(1)));
             Function = NonTerminal(
                 "Function",
                 node => new FunctionDefinition(
@@ -278,7 +277,8 @@ namespace Light.Parsing {
         }
 
         public void SetDefinitionRules() {
-            Definition.Rule = Function;
+            Definition.Rule = Import | Function;
+            Import.Rule = "import" + DotSeparatedName;
             Function.Rule = "function" + Name + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
             ParameterList.Rule = MakeStarRule(ParameterList, ToTerm(","), Parameter);
             Parameter.Rule = TypedParameter | UntypedParameter;
