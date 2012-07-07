@@ -9,8 +9,7 @@ namespace Light.Ast {
         public ReadOnlyCollection<IAstElement> Elements { get; private set; }
 
         public AstRoot(params IAstElement[] elements) {
-            Argument.RequireNotNull("elements", elements);
-            Argument.RequireAllNotNull("elements", elements);
+            Argument.RequireNotNullAndNotContainsNull("elements", elements);
             Elements = elements.AsReadOnly();
         }
     }

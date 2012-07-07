@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Irony.Parsing;
-
 using Light.Ast;
+using Light.Ast.Definitions;
 using Light.Ast.Expressions;
 using Light.Ast.Literals;
 using Light.Ast.Names;
 using Light.Ast.Statements;
 using Light.Internal;
 
-namespace Light {
+namespace Light.Parsing {
     public class LightGrammar : Grammar {
         // top level:
         public NonTerminal TopLevelRoot { get; private set; }
@@ -56,7 +55,7 @@ namespace Light {
 
             TopLevelRoot.Rule = TopLevelElementList | Expression;
             TopLevelElementList.Rule = MakePlusRule(TopLevelElementList, NewLinePlus, TopLevelElement);
-            TopLevelElement.Rule = Statement;
+            TopLevelElement.Rule = Statement | Definition;
         }
 
         #region Identifiers
@@ -193,7 +192,7 @@ namespace Light {
  
             NewExpression.Rule = "new" + Name + (("(" + CommaSeparatedExpressionListStar + ")") | Empty) + (ObjectInitializer | Empty);
 
-            LambdaExpression.Rule = Parameter + "=>" + Expression;
+            LambdaExpression.Rule = UntypedParameter + "=>" + Expression;
         }
 
         #endregion
@@ -201,62 +200,90 @@ namespace Light {
         #region Statements
 
         public NonTerminal Statement { get; private set; }
-        public NonTerminal StatementListStar { get; private set; }
         public NonTerminal StatementListPlus { get; private set; }
+        public NonTerminal OptionalBodyOfStatements { get; private set; }
         public NonTerminal ImportStatement { get; private set; }
         public NonTerminal ForStatement { get; private set; }
         public NonTerminal ContinueStatement { get; private set; }
         public NonTerminal IfStatement { get; private set; }
         public NonTerminal VariableDefinition { get; private set; }
         public NonTerminal Assignment { get; private set; }
+        public NonTerminal AssignmentLeftHandSide { get; private set; }
+        public NonTerminal ReturnStatement { get; private set; }
 
         private void ConstructStatements() {
             Statement = Transient("Statement");
-            StatementListStar = new NonTerminal("StatementListStar");
             StatementListPlus = NonTerminal("StatementListPlus", node => node.ChildAsts().Cast<IAstElement>().ToArray());
-            ImportStatement = NonTerminal("ImportStatement", node => new ImportStatement((CompositeName)node.ChildAst(1)));
-            ForStatement = NonTerminal("ForStatement", node => new ForStatement(
+            OptionalBodyOfStatements = NonTerminal("OptionalBodyOfStatements", node => node.ChildAst(0) ?? new IAstElement[0]);
+            ImportStatement = NonTerminal("Import", node => new ImportStatement((CompositeName)node.ChildAst(1)));
+            ForStatement = NonTerminal("For", node => new ForStatement(
                 // for <1> in <3> do <5> end
                 node.Child(1).Token.Text,
                 (IAstElement)node.ChildAst(3),
-                AstElementsInStarChild(node.Child(5), 0)
+                (IAstElement[])node.ChildAst(OptionalBodyOfStatements)
             ));
-            ContinueStatement = NonTerminal("ContinueStatement", _ => new ContinueStatement());
-            IfStatement = NonTerminal("IfStatement", node => new IfStatement(
+            ContinueStatement = NonTerminal("Continue", _ => new ContinueStatement());
+            IfStatement = NonTerminal("If", node => new IfStatement(
                 // if <1> \r\n <2>
                 (IAstElement)node.ChildAst(1),
                 (IAstElement)node.ChildAst(2)
             ));
             VariableDefinition = NonTerminal("VariableDefinition", node => new VariableDefinition(node.ChildNodes[1].Token.Text, null));
             Assignment = NonTerminal("Assignment", node => new Assignment((IAstElement)node.ChildAst(0), (IAstElement)node.ChildAst(2)));
+            AssignmentLeftHandSide = Transient("AssignmentLeftHandSide");
+            ReturnStatement = NonTerminal("Return", node => new ReturnStatement((IAstElement)node.ChildAst(1)));
         }
 
         private void SetStatementRules() {
-            Statement.Rule = ImportStatement | ForStatement | ContinueStatement | IfStatement | VariableDefinition | Assignment
+            Statement.Rule = ImportStatement | ForStatement | ContinueStatement | IfStatement | VariableDefinition | Assignment | ReturnStatement
                            | SimpleCallExpression | MemberAccessOrCallExpression;
-            StatementListStar.Rule = MakeStarRule(StatementListStar, NewLinePlus, Statement);
             StatementListPlus.Rule = MakePlusRule(StatementListPlus, NewLinePlus, Statement);
+            OptionalBodyOfStatements.Rule = StatementListPlus + NewLinePlus | Empty;
 
             ImportStatement.Rule = "import" + DotSeparatedName;
-            ForStatement.Rule = "for" + Name + "in" + Expression + "do" + NewLinePlus + (StatementListPlus + NewLinePlus | Empty) + "end";
+            ForStatement.Rule = "for" + Name + "in" + Expression + "do" + NewLinePlus + OptionalBodyOfStatements + "end";
             ContinueStatement.Rule = "continue";
             IfStatement.Rule = "if" + Expression + NewLineStar + Statement;
             VariableDefinition.Rule = "let" + Name + (Empty | "=" + Expression);
-            Assignment.Rule = MemberAccessOrCallExpression + "=" + Expression;
+            Assignment.Rule = AssignmentLeftHandSide + "=" + Expression;
+            AssignmentLeftHandSide.Rule = SimpleIdentifierExpression | MemberAccessOrCallExpression;
+            ReturnStatement.Rule = "return" + Expression;
         }
 
         #endregion
 
         #region Definitions
 
-        public NonTerminal Parameter { get; private set; }
+        public NonTerminal Definition       { get; private set; }
+        public NonTerminal Function         { get; private set; }
+        public NonTerminal Parameter        { get; private set; }
+        public NonTerminal TypedParameter   { get; private set; }
+        public NonTerminal UntypedParameter { get; private set; }
+        public NonTerminal ParameterList    { get; private set; }
 
         public void ConstructDefinitions() {
-            Parameter = NonTerminal("Parameter", node => new ParameterDefinition(node.FindTokenAndGetText(), null));
+            Definition = Transient("Definition");
+            Function = NonTerminal(
+                "Function",
+                node => new FunctionDefinition(
+                    node.Child(Name).Token.Text,
+                    (IAstElement[])node.Child(ParameterList).AstNode,
+                    (IAstElement[])node.ChildAst(OptionalBodyOfStatements)
+                )
+            );
+            ParameterList = NonTerminal("ParameterList", node => node.ChildAsts().Cast<IAstElement>().ToArray());
+            Parameter = Transient("Parameter");
+            TypedParameter = NonTerminal("TypedParameter", node => new ParameterDefinition(node.Child(1).Token.Text, (CompositeName)node.Child(0).AstNode));
+            UntypedParameter = NonTerminal("UntypedParameter", node => new ParameterDefinition(node.FindTokenAndGetText(), null));
         }
 
         public void SetDefinitionRules() {
-            Parameter.Rule = Name;
+            Definition.Rule = Function;
+            Function.Rule = "function" + Name + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
+            ParameterList.Rule = MakeStarRule(ParameterList, ToTerm(","), Parameter);
+            Parameter.Rule = TypedParameter | UntypedParameter;
+            TypedParameter.Rule = DotSeparatedName + Name;
+            UntypedParameter.Rule = Name;
         }
 
         #endregion

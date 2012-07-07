@@ -50,6 +50,7 @@
     <Compile Include="Argument.cs" />
     <Compile Include="Ast\AstRoot.cs" />
     <Compile Include="Ast\AstVisitor.cs" />
+    <Compile Include="Ast\Definitions\FunctionDefinition.cs" />
     <Compile Include="Ast\Expressions\BinaryExpression.cs" />
     <Compile Include="Ast\Expressions\CallExpression.cs" />
     <Compile Include="Ast\Expressions\LambdaExpression.cs" />
@@ -61,9 +62,10 @@
     <Compile Include="Ast\Literals\ObjectInitializerEntry.cs" />
     <Compile Include="Ast\Literals\StringWithInterpolation.cs" />
     <Compile Include="Ast\Expressions\NewExpression.cs" />
-    <Compile Include="Ast\ParameterDefinition.cs" />
+    <Compile Include="Ast\Definitions\ParameterDefinition.cs" />
     <Compile Include="Ast\Statements\Assignment.cs" />
     <Compile Include="Ast\Statements\ContinueStatement.cs" />
+    <Compile Include="Ast\Statements\ReturnStatement.cs" />
     <Compile Include="Ast\Statements\IfStatement.cs" />
     <Compile Include="Ast\Statements\ForStatement.cs" />
     <Compile Include="Ast\Statements\VariableDefinition.cs" />
@@ -76,7 +78,7 @@
     <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />
     <Compile Include="Processing\IProcessingStep.cs" />
-    <Compile Include="LightGrammar.cs" />
+    <Compile Include="Parsing\LightGrammar.cs" />
     <Compile Include="LightParser.cs" />
     <Compile Include="LightProcessor.cs" />
     <Compile Include="Parsing\ParsingMessageKind.cs" />

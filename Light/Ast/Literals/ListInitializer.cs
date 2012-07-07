@@ -10,7 +10,7 @@ namespace Light.Ast.Literals {
         public ReadOnlyCollection<IAstElement> Elements { get; private set; }
 
         public ListInitializer(params IAstElement[] elements) {
-            Argument.RequireAllNotNull("elements", elements);
+            Argument.RequireNotNullAndNotContainsNull("elements", elements);
             Elements = elements.AsReadOnly();
         }
     }

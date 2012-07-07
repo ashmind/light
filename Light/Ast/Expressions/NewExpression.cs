@@ -12,8 +12,8 @@ namespace Light.Ast {
         }
 
         public NewExpression(string typeName, IAstElement[] arguments, IAstElement initializer) {
-            Argument.RequireNotNullOrEmpty("typeName", typeName);
-            Argument.RequireAllNotNull("arguments", arguments);
+            Argument.RequireNotNullAndNotEmpty("typeName", typeName);
+            Argument.RequireNotNullAndNotContainsNull("arguments", arguments);
 
             this.TypeName = typeName;
             this.Arguments = arguments;

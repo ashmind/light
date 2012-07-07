@@ -9,7 +9,7 @@ namespace Light.Ast {
         public CompositeName Type { get; private set; }
 
         public ParameterDefinition(string name, CompositeName type) {
-            Argument.RequireNotNullOrEmpty("name", name);
+            Argument.RequireNotNullAndNotEmpty("name", name);
 
             this.Name = name;
             this.Type = type;

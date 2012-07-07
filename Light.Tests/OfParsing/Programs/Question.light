@@ -47,3 +47,8 @@ for sentence in sentences.Skip(100).Take(100) do
         Console.WriteLine()
     end
 end
+
+function ToSentenceCase(string value)
+    value = value.Trim()
+    #return Char.ToUpperInvariant(value[0]) + value.Substring(1, value.Length - 1).ToLowerInvariant()
+end

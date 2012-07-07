@@ -10,7 +10,7 @@ namespace Light.Ast.Expressions {
 
         public CallExpression(IAstElement target, string methodName, params IAstElement[] arguments) {
             Argument.RequireNotNull("methodName", methodName);
-            Argument.RequireAllNotNull("arguments", arguments);
+            Argument.RequireNotNullAndNotContainsNull("arguments", arguments);
 
             this.Target = target;
             this.MethodName = methodName;

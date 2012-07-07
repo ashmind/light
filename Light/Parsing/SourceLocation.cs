@@ -23,7 +23,10 @@ namespace Light.Parsing {
             if (precedingSource.Length == 0)
                 return string.Format("line {0}, column {1}", this.Line + 1, this.Column);
 
-            precedingSource = precedingSource.Length > 25 ? precedingSource.Substring(precedingSource.Length - 25, 25) : precedingSource;
+            var indexOfLastWhitespace = precedingSource.LastIndexOfAny(new[] {' ', '\r', '\n', '\t'});
+            precedingSource = indexOfLastWhitespace >= 0
+                            ? precedingSource.Substring(indexOfLastWhitespace + 1, precedingSource.Length - indexOfLastWhitespace - 1)
+                            : precedingSource;
             return string.Format("line {0}, column {1}, after {2}", this.Line + 1, this.Column, precedingSource);
         }
     }

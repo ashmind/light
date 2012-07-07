@@ -10,7 +10,7 @@ namespace Light.Ast.Expressions {
 
         public MemberExpression(IAstElement target, string name) {
             Argument.RequireNotNull("target", target);
-            Argument.RequireNotNullOrEmpty("name", name);
+            Argument.RequireNotNullAndNotEmpty("name", name);
 
             this.Target = target;
             this.Name = name;

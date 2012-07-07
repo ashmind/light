@@ -8,7 +8,7 @@ namespace Light.Ast.Expressions {
         public string Name { get; private set; }
 
         public IdentifierExpression(string name) {
-            Argument.RequireNotNullOrEmpty("name", name);
+            Argument.RequireNotNullAndNotEmpty("name", name);
             this.Name = name;
         }
 
