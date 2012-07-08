@@ -180,7 +180,7 @@ namespace Light.Parsing {
                             | NewExpression | LambdaExpression;
 
             BinaryExpression.Rule = Expression + BinaryOperator + NewLineStar + Expression;
-            BinaryOperator.Rule = new[] {"+", "-", "*", "/", "==", "==="}.Select(k => {
+            BinaryOperator.Rule = new[] {"+", "-", "*", "/", "==", "===", "|", "&"}.Select(k => {
                 var @operator = (BnfExpression)ToTerm(k);
                 @operator.SetFlag(TermFlags.IsOperator);
                 return @operator;
@@ -264,6 +264,13 @@ namespace Light.Parsing {
 
         public NonTerminal<IAstElement> Definition { get; private set; }
         public NonTerminal<IAstElement> Import { get; private set; }
+        public NonTerminal<IAstElement> TypeDefinition { get; private set; }
+        public NonTerminal<IAstElement> TypeMember { get; private set; }
+        public NonTerminal<IAstElement[]> TypeMemberList { get; private set; }
+        public NonTerminal<IAstElement[]> OptionalTypeContent { get; private set; }
+        public NonTerminal OptionalAccessLevel { get; private set; }
+        public NonTerminal<IAstElement> Property { get; private set; }
+        public NonTerminal<IAstElement> Constructor { get; private set; }
         public NonTerminal<IAstElement> Function { get; private set; }
         public NonTerminal<IAstElement> Parameter { get; private set; }
         public NonTerminal<IAstElement> TypedParameter { get; private set; }
@@ -273,14 +280,22 @@ namespace Light.Parsing {
         private void ConstructDefinitions() {
             Definition = Transient("Definition");
             Import = NonTerminal("Import", node => new ImportDefinition((CompositeName)node.ChildAst(1)));
+            TypeDefinition = NonTerminal("TypeDefinition", node => new TypeDefinition(node.ChildBefore(Name).Token.Text, node.Child(Name).Token.Text));
+            TypeMember = Transient("TypeMember");
+            TypeMemberList = NonTerminal("TypeMemberList", node => node.ChildAsts().Cast<IAstElement>().ToArray());
+            OptionalTypeContent = NonTerminal("OptionalTypeContent", node => node.ChildAst(TypeMemberList) ?? new IAstElement[0]);
+            Property = NonTerminal("Property", node => new PropertyDefinition(node.Child(2).Token.Text, null));
+            Constructor = NonTerminal("Constructor", node => new ConstructorDefinition(node.ChildAst(ParameterList), node.ChildAst(OptionalBodyOfStatements)));
             Function = NonTerminal(
                 "Function",
-                node => new FunctionDefinition(
+                node =>  new FunctionDefinition(
                     node.Child(Name).Token.Text,
                     node.ChildAst(ParameterList),
-                    node.ChildAst(OptionalBodyOfStatements)
+                    node.ChildAst(OptionalBodyOfStatements),
+                    null
                 )
             );
+            OptionalAccessLevel = new NonTerminal("OptionalAccessLevel");
             ParameterList = NonTerminal("ParameterList", node => node.ChildAsts().Cast<IAstElement>().ToArray());
             Parameter = Transient("Parameter");
             TypedParameter = NonTerminal("TypedParameter", node => new ParameterDefinition(node.Child(1).Token.Text, (CompositeName)node.Child(0).AstNode));
@@ -288,9 +303,16 @@ namespace Light.Parsing {
         }
 
         private void SetDefinitionRules() {
-            Definition.Rule = Import | Function;
+            Definition.Rule = Import | TypeDefinition | Function;
             Import.Rule = "import" + DotSeparatedName;
-            Function.Rule = "function" + Name + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
+            TypeDefinition.Rule = OptionalAccessLevel + (ToTerm("interface") | "class") + Name + NewLinePlus + OptionalTypeContent + "end";
+            OptionalAccessLevel.Rule = (ToTerm("public") | "private" | Empty);
+            TypeMember.Rule = Function | Constructor | Property;
+            TypeMemberList.Rule = MakePlusRule(TypeMemberList, NewLinePlus, TypeMember);
+            OptionalTypeContent.Rule = (TypeMemberList + NewLinePlus | Empty);
+            Property.Rule = OptionalAccessLevel + Name + Name;
+            Function.Rule = OptionalAccessLevel + "function" + Name + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
+            Constructor.Rule = OptionalAccessLevel + "new" + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
             ParameterList.Rule = MakeStarRule(ParameterList, ToTerm(","), Parameter);
             Parameter.Rule = TypedParameter | UntypedParameter;
             TypedParameter.Rule = DotSeparatedName + Name;

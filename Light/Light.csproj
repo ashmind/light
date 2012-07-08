@@ -50,6 +50,10 @@
     <Compile Include="Argument.cs" />
     <Compile Include="Ast\AstRoot.cs" />
     <Compile Include="Ast\AstVisitor.cs" />
+    <Compile Include="Ast\Definitions\ConstructorDefinition.cs" />
+    <Compile Include="Ast\Definitions\PropertyDefinition.cs" />
+    <Compile Include="Ast\Definitions\FunctionDefinitionBase.cs" />
+    <Compile Include="Ast\Definitions\TypeDefinition.cs" />
     <Compile Include="Ast\Definitions\FunctionDefinition.cs" />
     <Compile Include="Ast\Expressions\BinaryExpression.cs" />
     <Compile Include="Ast\Expressions\CallExpression.cs" />

@@ -39,8 +39,8 @@ for sentence in sentences.Skip(100).Take(100) do
         Console.WriteLine(sentence)
         Console.ResetColor()
 
-        #let question = ToSentenceCase(result[0][0]).TrimEnd(punctuation) + '?'
-        #let answer = ToSentenceCase(result[0][1]).TrimEnd(punctuation) + '.'
+        let question = ToSentenceCase(result[0].question).TrimEnd(punctuation) + '?'
+        let answer = ToSentenceCase(result[0].answer).TrimEnd(punctuation) + '.'
 
         Console.WriteLine("Q: {0}", question)
         Console.WriteLine("A: {0}", answer)
@@ -51,4 +51,22 @@ end
 function ToSentenceCase(string value)
     value = value.Trim()
     return Char.ToUpperInvariant(value[0]) + value.Substring(1, value.Length - 1).ToLowerInvariant()
+end
+
+class RegexRule
+    public string Pattern
+    public string Replacement
+
+    public new(string pattern, string replacement)
+        Pattern = pattern
+        Replacement = replacement
+    end
+    
+    public function GetQuestionsAndAnswersRaw(string sentence)
+        unless (Regex.IsMatch(sentence, Pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline))
+            return []
+
+        let parts = Regex.Replace(sentence, Pattern, Replacement, RegexOptions.IgnoreCase | RegexOptions.Singleline).Split('|')
+        return [{ question: parts[0], answer: parts[1] }]
+    end
 end

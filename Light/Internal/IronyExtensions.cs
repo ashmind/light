@@ -14,6 +14,10 @@ namespace Light.Internal {
             return node.ChildNodes.SingleOrDefault(n => n.Term == term);
         }
 
+        public static ParseTreeNode ChildBefore(this ParseTreeNode node, BnfTerm term) {
+            return node.ChildNodes.Last(n => n.Term != term);
+        }
+
         public static object ChildAst(this ParseTreeNode node, int index) {
             var child = node.Child(index);
             if (child == null)
