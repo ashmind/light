@@ -31,7 +31,7 @@ namespace Light.Parsing {
         }
 
         private void ConstructAll() {
-            ConstructIdentifiers();
+            ConstructNameAndTypeRules();
             ConstructExpressions();
             ConstructStatements();
             ConstructDefinitions();
@@ -48,7 +48,7 @@ namespace Light.Parsing {
         }
 
         private void SetAllRules() {
-            SetIdentifierRules();
+            SetNameAndTypeRules();
             SetExpressionRules();
             SetStatementRules();
             SetDefinitionRules();
@@ -58,18 +58,27 @@ namespace Light.Parsing {
             TopLevelElement.Rule = Statement | Definition;
         }
 
-        #region Identifiers
+        #region NamesAndTypes
 
         public IdentifierTerminal Name { get; private set; }
         public NonTerminal<CompositeName> DotSeparatedName { get; private set; }
+        public NonTerminal<string> TypeReference { get; private set; }
+        public NonTerminal TypeReferenceListPlus { get; private set; }
 
-        public void ConstructIdentifiers() {
+        public void ConstructNameAndTypeRules() {
             Name = new IdentifierTerminal("Name");
             DotSeparatedName = NonTerminalWithNoElement("DotSeparatedName", n => new CompositeName(n.ChildNodes.Select(c => c.Token.Text).ToArray()));
+
+            TypeReference = NonTerminalWithNoElement("TypeReference", n => n.Child(Name).Token.Text); // WIP
+            TypeReferenceListPlus = new NonTerminal("TypeReferenceListPlus");
         }
 
-        public void SetIdentifierRules() {
+        public void SetNameAndTypeRules() {
             DotSeparatedName.Rule = MakePlusRule(DotSeparatedName, ToTerm("."), Name);
+
+            TypeReference.Rule = Name + ("<" + TypeReferenceListPlus + ">" | Empty);
+            TypeReferenceListPlus.Rule = MakePlusRule(TypeReferenceListPlus, ToTerm(","), TypeReference);
+
         }
 
         #endregion
@@ -162,7 +171,7 @@ namespace Light.Parsing {
             NewExpression = NonTerminal(
                 "NewExpression",
                 node => new NewExpression(
-                    node.ChildNodes[1].Token.Text,
+                    node.ChildAst(TypeReference),
                     node.ChildAst(CommaSeparatedExpressionListStar) ?? new IAstElement[0],
                     node.ChildAst(ObjectInitializer) 
                 )
@@ -180,7 +189,7 @@ namespace Light.Parsing {
                             | NewExpression | LambdaExpression;
 
             BinaryExpression.Rule = Expression + BinaryOperator + NewLineStar + Expression;
-            BinaryOperator.Rule = new[] {"+", "-", "*", "/", "==", "===", "|", "&"}.Select(k => {
+            BinaryOperator.Rule = new[] {"+", "-", "*", "/", "==", "===", "<", ">", "|", "&"}.Select(k => {
                 var @operator = (BnfExpression)ToTerm(k);
                 @operator.SetFlag(TermFlags.IsOperator);
                 return @operator;
@@ -201,7 +210,7 @@ namespace Light.Parsing {
             SimpleIdentifierExpression.Rule = Name;
             SimpleIndexerExpression.Rule = SimpleIdentifierExpression + "[" + CommaSeparatedExpressionListStar + "]";
  
-            NewExpression.Rule = "new" + Name + (("(" + CommaSeparatedExpressionListStar + ")") | Empty) + (ObjectInitializer | Empty);
+            NewExpression.Rule = "new" + TypeReference + (("(" + CommaSeparatedExpressionListStar + ")") | Empty) + (ObjectInitializer | Empty);
 
             LambdaExpression.Rule = UntypedParameter + "=>" + Expression;
         }
@@ -215,7 +224,7 @@ namespace Light.Parsing {
         public NonTerminal<IAstElement[]> OptionalBodyOfStatements { get; private set; }
         public NonTerminal<IAstElement> ForStatement { get; private set; }
         public NonTerminal<IAstElement> ContinueStatement { get; private set; }
-        public NonTerminal<IAstElement> IfStatement { get; private set; }
+        public NonTerminal<IAstElement> IfOrUnlessStatement { get; private set; }
         public NonTerminal<IAstElement> VariableDefinition { get; private set; }
         public NonTerminal<IAstElement> Assignment { get; private set; }
         public NonTerminal<IAstElement> AssignmentLeftHandSide { get; private set; }
@@ -232,8 +241,9 @@ namespace Light.Parsing {
                 node.ChildAst(OptionalBodyOfStatements)
             ));
             ContinueStatement = NonTerminal("Continue", _ => new ContinueStatement());
-            IfStatement = NonTerminal("If", node => new IfStatement(
-                // if <1> \r\n <2>
+            IfOrUnlessStatement = NonTerminal("If", node => new IfOrUnlessStatement(
+                // (if|unless) <1> \r\n <2>
+                (IfOrUnlessKind)Enum.Parse(typeof(IfOrUnlessKind), node.Child(0).Child(0).Token.Text, true),
                 (IAstElement)node.ChildAst(1),
                 (IAstElement)node.ChildAst(2)
             ));
@@ -244,14 +254,14 @@ namespace Light.Parsing {
         }
 
         private void SetStatementRules() {
-            Statement.Rule = ForStatement | ContinueStatement | IfStatement | VariableDefinition | Assignment | ReturnStatement
+            Statement.Rule = ForStatement | ContinueStatement | IfOrUnlessStatement | VariableDefinition | Assignment | ReturnStatement
                            | SimpleCallExpression | MemberAccessOrCallExpression;
             StatementListPlus.Rule = MakePlusRule(StatementListPlus, NewLinePlus, Statement);
             OptionalBodyOfStatements.Rule = StatementListPlus + NewLinePlus | Empty;
             
             ForStatement.Rule = "for" + Name + "in" + Expression + "do" + NewLinePlus + OptionalBodyOfStatements + "end";
             ContinueStatement.Rule = "continue";
-            IfStatement.Rule = "if" + Expression + NewLineStar + Statement;
+            IfOrUnlessStatement.Rule = (ToTerm("if") | "unless") + Expression + NewLineStar + Statement;
             VariableDefinition.Rule = "let" + Name + (Empty | "=" + Expression);
             Assignment.Rule = AssignmentLeftHandSide + "=" + Expression;
             AssignmentLeftHandSide.Rule = SimpleIdentifierExpression | MemberAccessOrCallExpression;
@@ -298,7 +308,7 @@ namespace Light.Parsing {
             OptionalAccessLevel = new NonTerminal("OptionalAccessLevel");
             ParameterList = NonTerminal("ParameterList", node => node.ChildAsts().Cast<IAstElement>().ToArray());
             Parameter = Transient("Parameter");
-            TypedParameter = NonTerminal("TypedParameter", node => new ParameterDefinition(node.Child(1).Token.Text, (CompositeName)node.Child(0).AstNode));
+            TypedParameter = NonTerminal("TypedParameter", node => new ParameterDefinition(node.Child(1).Token.Text, node.ChildAst(TypeReference)));
             UntypedParameter = NonTerminal("UntypedParameter", node => new ParameterDefinition(node.FindTokenAndGetText(), null));
         }
 
@@ -310,12 +320,12 @@ namespace Light.Parsing {
             TypeMember.Rule = Function | Constructor | Property;
             TypeMemberList.Rule = MakePlusRule(TypeMemberList, NewLinePlus, TypeMember);
             OptionalTypeContent.Rule = (TypeMemberList + NewLinePlus | Empty);
-            Property.Rule = OptionalAccessLevel + Name + Name;
+            Property.Rule = OptionalAccessLevel + TypeReference + Name + (Empty | "=" + Expression);
             Function.Rule = OptionalAccessLevel + "function" + Name + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
             Constructor.Rule = OptionalAccessLevel + "new" + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
             ParameterList.Rule = MakeStarRule(ParameterList, ToTerm(","), Parameter);
             Parameter.Rule = TypedParameter | UntypedParameter;
-            TypedParameter.Rule = DotSeparatedName + Name;
+            TypedParameter.Rule = TypeReference + Name;
             UntypedParameter.Rule = Name;
         }
 

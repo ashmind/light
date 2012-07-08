@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Light.Ast.Names;
 
-namespace Light.Ast {
+namespace Light.Ast.Definitions {
     public class ParameterDefinition : IAstElement {
         public string Name { get; private set; }
-        public CompositeName Type { get; private set; }
+        public string TypeName { get; private set; }
 
-        public ParameterDefinition(string name, CompositeName type) {
+        public ParameterDefinition(string name, string type) {
             Argument.RequireNotNullAndNotEmpty("name", name);
 
             this.Name = name;
-            this.Type = type;
+            this.TypeName = type;
         }
     }
 }

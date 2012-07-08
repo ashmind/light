@@ -53,6 +53,10 @@ function ToSentenceCase(string value)
     return Char.ToUpperInvariant(value[0]) + value.Substring(1, value.Length - 1).ToLowerInvariant()
 end
 
+interface IRule
+    function GetQuestionsAndAnswersRaw(string sentence)
+end
+
 class RegexRule
     public string Pattern
     public string Replacement
@@ -63,10 +67,22 @@ class RegexRule
     end
     
     public function GetQuestionsAndAnswersRaw(string sentence)
-        unless (Regex.IsMatch(sentence, Pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline))
+        unless Regex.IsMatch(sentence, Pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline)
             return []
 
         let parts = Regex.Replace(sentence, Pattern, Replacement, RegexOptions.IgnoreCase | RegexOptions.Singleline).Split('|')
         return [{ question: parts[0], answer: parts[1] }]
+    end
+end
+
+class Alternative
+    public IList<Rule> Rules = new List<Rule>()
+
+    public function GetQuestionsAndAnswersRaw(string sentence)
+        let first = Rules.Select(r => r.GetQuestionsAndAnswersRaw(sentence)).FirstOrDefault(x => x.Any())
+        if first == null
+            return []
+
+        return first
     end
 end

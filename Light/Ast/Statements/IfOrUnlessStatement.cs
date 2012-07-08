@@ -5,14 +5,16 @@ using System.Linq;
 using AshMind.Extensions;
 
 namespace Light.Ast.Statements {
-    public class IfStatement : IAstElement {
+    public class IfOrUnlessStatement : IAstElement {
+        public IfOrUnlessKind Kind { get; private set; }
         public IAstElement Condition { get; private set; }
         public ReadOnlyCollection<IAstElement> Body { get; private set; }
 
-        public IfStatement(IAstElement condition, params IAstElement[] body) {
+        public IfOrUnlessStatement(IfOrUnlessKind kind, IAstElement condition, params IAstElement[] body) {
             Argument.RequireNotNull("condition", condition);
             Argument.RequireNotNullNotEmptyAndNotContainsNull("body", body);
 
+            Kind = kind;
             Condition = condition;
             Body = body.AsReadOnly();
         }

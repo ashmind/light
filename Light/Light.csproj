@@ -70,8 +70,9 @@
     <Compile Include="Ast\Definitions\ParameterDefinition.cs" />
     <Compile Include="Ast\Statements\Assignment.cs" />
     <Compile Include="Ast\Statements\ContinueStatement.cs" />
+    <Compile Include="Ast\Statements\IfOrUnlessKind.cs" />
     <Compile Include="Ast\Statements\ReturnStatement.cs" />
-    <Compile Include="Ast\Statements\IfStatement.cs" />
+    <Compile Include="Ast\Statements\IfOrUnlessStatement.cs" />
     <Compile Include="Ast\Statements\ForStatement.cs" />
     <Compile Include="Ast\Statements\VariableDefinition.cs" />
     <Compile Include="Ast\Definitions\ImportDefinition.cs" />
