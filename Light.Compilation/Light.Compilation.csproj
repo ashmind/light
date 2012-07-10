@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="CompilationArguments.cs" />
     <Compile Include="CompilationTarget.cs" />
+    <Compile Include="Internal\CecilHelper.cs" />
     <Compile Include="LightCompiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

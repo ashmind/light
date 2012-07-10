@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 
 namespace Light {
-    internal static class Argument {
+    public static class Argument {
         [DebuggerHidden]
         public static void RequireNotNull(string name, object value) {
             if (value == null)

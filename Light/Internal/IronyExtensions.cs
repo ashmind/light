@@ -15,7 +15,7 @@ namespace Light.Internal {
         }
 
         public static ParseTreeNode ChildBefore(this ParseTreeNode node, BnfTerm term) {
-            return node.ChildNodes.Last(n => n.Term != term);
+            return node.ChildNodes.TakeWhile(n => n.Term != term).Last();
         }
 
         public static object ChildAst(this ParseTreeNode node, int index) {

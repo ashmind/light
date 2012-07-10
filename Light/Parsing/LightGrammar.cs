@@ -290,7 +290,7 @@ namespace Light.Parsing {
         private void ConstructDefinitions() {
             Definition = Transient("Definition");
             Import = NonTerminal("Import", node => new ImportDefinition((CompositeName)node.ChildAst(1)));
-            TypeDefinition = NonTerminal("TypeDefinition", node => new TypeDefinition(node.ChildBefore(Name).Token.Text, node.Child(Name).Token.Text));
+            TypeDefinition = NonTerminal("TypeDefinition", node => new TypeDefinition(node.ChildBefore(Name).FindTokenAndGetText(), node.Child(Name).Token.Text));
             TypeMember = Transient("TypeMember");
             TypeMemberList = NonTerminal("TypeMemberList", node => node.ChildAsts().Cast<IAstElement>().ToArray());
             OptionalTypeContent = NonTerminal("OptionalTypeContent", node => node.ChildAst(TypeMemberList) ?? new IAstElement[0]);

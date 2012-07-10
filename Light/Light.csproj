@@ -84,6 +84,7 @@
     <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Internal\NonTerminal.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />
+    <Compile Include="Processing\GenerateDefaultConstructors.cs" />
     <Compile Include="Processing\IProcessingStep.cs" />
     <Compile Include="Parsing\LightGrammar.cs" />
     <Compile Include="LightParser.cs" />

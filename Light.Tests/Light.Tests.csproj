@@ -51,8 +51,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OfCompilation\CompilationHelper.cs" />
     <Compile Include="OfCompilation\ProgramTests.cs" />
+    <Compile Include="OfCompilation\ValueTests.cs" />
     <Compile Include="OfParsing\CallAndMemberAccessTests.cs" />
+    <Compile Include="OfParsing\TypeTests.cs" />
     <Compile Include="OfParsing\LiteralTests.cs" />
     <Compile Include="OfParsing\OperatorTests.cs" />
     <Compile Include="OfParsing\ParseAssert.cs" />
