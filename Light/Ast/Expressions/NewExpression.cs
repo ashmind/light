@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AshMind.Extensions;
 
 namespace Light.Ast {
     public class NewExpression : IAstElement {
@@ -19,5 +20,13 @@ namespace Light.Ast {
             this.Arguments = arguments;
             this.Initializer = initializer;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            return this.Arguments.Concat(this.Initializer);
+        }
+
+        #endregion
     }
 }

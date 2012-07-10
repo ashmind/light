@@ -18,5 +18,16 @@ namespace Light.Ast.Statements {
             Condition = condition;
             Body = body.AsReadOnly();
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield return this.Condition;
+            foreach (var element in this.Body) {
+                yield return element;
+            }
+        }
+
+        #endregion
     }
 }

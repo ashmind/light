@@ -19,5 +19,13 @@ namespace Light.Ast.Expressions {
         public override string ToString() {
             return this.Target + "." + this.Name;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield return this.Target;
+        }
+
+        #endregion
     }
 }

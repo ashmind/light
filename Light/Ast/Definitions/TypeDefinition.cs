@@ -6,18 +6,26 @@ using AshMind.Extensions;
 
 namespace Light.Ast.Definitions {
     public class TypeDefinition : IAstElement {
-        public string TypeDefinitionType { get; set; }
-        public string Name { get; private set; }
+        public string DefinitionType                   { get; private set; }
+        public string Name                             { get; private set; }
         public ReadOnlyCollection<IAstElement> Members { get; private set; }
 
-        public TypeDefinition(string typeDefinitionType, string name, params IAstElement[] members) {
-            Argument.RequireNotNullAndNotEmpty("typeDefinitionType", typeDefinitionType);
+        public TypeDefinition(string definitionType, string name, params IAstElement[] members) {
+            Argument.RequireNotNullAndNotEmpty("definitionType", definitionType);
             Argument.RequireNotNullAndNotEmpty("name", name);
             Argument.RequireNotNullAndNotContainsNull("members", members);
 
-            this.TypeDefinitionType = typeDefinitionType;
+            this.DefinitionType = definitionType;
             this.Name = name;
             this.Members = members.AsReadOnly();
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            return this.Members;
+        }
+
+        #endregion
     }
 }

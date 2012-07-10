@@ -21,5 +21,13 @@ namespace Light.Ast.Literals {
 
             return Value.ToString();
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield break;
+        }
+
+        #endregion
     }
 }

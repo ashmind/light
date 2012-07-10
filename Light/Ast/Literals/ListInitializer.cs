@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using AshMind.Extensions;
 
@@ -13,5 +12,13 @@ namespace Light.Ast.Literals {
             Argument.RequireNotNullAndNotContainsNull("elements", elements);
             Elements = elements.AsReadOnly();
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            return this.Elements;
+        }
+
+        #endregion
     }
 }

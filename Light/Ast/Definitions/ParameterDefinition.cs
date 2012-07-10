@@ -13,5 +13,13 @@ namespace Light.Ast.Definitions {
             this.Name = name;
             this.TypeName = type;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield break;
+        }
+
+        #endregion
     }
 }

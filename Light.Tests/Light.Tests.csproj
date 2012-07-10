@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OfCompilation\ProgramTests.cs" />
     <Compile Include="OfParsing\CallAndMemberAccessTests.cs" />
     <Compile Include="OfParsing\LiteralTests.cs" />
     <Compile Include="OfParsing\OperatorTests.cs" />
@@ -61,16 +62,20 @@
     <Compile Include="TestAstVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Light.Compilation\Light.Compilation.csproj">
+      <Project>{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}</Project>
+      <Name>Light.Compilation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Light\Light.csproj">
       <Project>{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}</Project>
       <Name>Light</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="OfParsing\Programs\Question.light" />
+    <EmbeddedResource Include="Programs\Question.light" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="OfParsing\Programs\HelloWorld.light" />
+    <EmbeddedResource Include="Programs\HelloWorld.light" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

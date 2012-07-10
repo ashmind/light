@@ -13,5 +13,16 @@ namespace Light.Ast.Statements {
             Source = source;
             Body = body;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield return this.Source;
+            foreach (var element in this.Body) {
+                yield return element;
+            }
+        }
+
+        #endregion
     }
 }

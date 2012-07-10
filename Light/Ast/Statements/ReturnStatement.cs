@@ -9,5 +9,13 @@ namespace Light.Ast.Statements {
         public ReturnStatement(IAstElement result) {
             Result = result;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield return this.Result;
+        }
+
+        #endregion
     }
 }

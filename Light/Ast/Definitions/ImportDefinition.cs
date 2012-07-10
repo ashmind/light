@@ -10,5 +10,13 @@ namespace Light.Ast.Definitions {
         public ImportDefinition(CompositeName @namespace) {
             Namespace = @namespace;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield break;
+        }
+
+        #endregion
     }
 }

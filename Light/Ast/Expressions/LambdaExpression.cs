@@ -16,5 +16,13 @@ namespace Light.Ast.Expressions {
             Parameters = parameters.AsReadOnly();
             Body = body;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            return this.Parameters.Concat(this.Body);
+        }
+
+        #endregion
     }
 }

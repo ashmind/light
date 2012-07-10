@@ -14,5 +14,13 @@ namespace Light.Ast.Literals {
             this.Name = name;
             this.Value = value;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield return this.Value;
+        }
+
+        #endregion
     }
 }

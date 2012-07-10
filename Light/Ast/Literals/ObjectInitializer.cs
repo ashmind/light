@@ -12,5 +12,13 @@ namespace Light.Ast.Literals {
             Argument.RequireNotNullAndNotContainsNull("elements", elements);
             Elements = elements.AsReadOnly();
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            return this.Elements;
+        }
+
+        #endregion
     }
 }

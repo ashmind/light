@@ -9,5 +9,13 @@ namespace Light.Ast.Literals {
         public StringWithInterpolation(string text) {
             Text = text;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield break;
+        }
+
+        #endregion
     }
 }

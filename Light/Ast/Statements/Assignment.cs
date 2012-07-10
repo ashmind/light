@@ -14,5 +14,14 @@ namespace Light.Ast.Statements {
             this.Target = target;
             this.Value = value;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield return this.Target;
+            yield return this.Value;
+        }
+
+        #endregion
     }
 }

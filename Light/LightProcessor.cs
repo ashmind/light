@@ -9,12 +9,11 @@ namespace Light {
     public class LightProcessor {
         private readonly IProcessingStep[] steps;
 
-        public LightProcessor(IProcessingStep[] steps) {
+        public LightProcessor(params IProcessingStep[] steps) {
             this.steps = steps;
         }
 
-        public void Process(IAstElement[] tree) {
-            
+        public void Process(IAstElement root) {
         }
     }
 }

@@ -5,5 +5,6 @@ using System.Text;
 
 namespace Light.Ast {
     public interface IAstElement {
+        IEnumerable<IAstElement> Children();
     }
 }

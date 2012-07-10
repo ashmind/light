@@ -18,7 +18,7 @@ namespace Light.Tests.OfParsing {
         }
  
         private static void AssertIsParsed(string programName) {
-            var code = Resource.ReadAllText(typeof(ProgramTests), "Programs." + programName);
+            var code = Resource.ReadAllText(typeof(Resource), "Programs." + programName);
             var parsed = new LightParser().Parse(code);
 
             Assert.IsFalse(

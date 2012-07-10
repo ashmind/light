@@ -16,5 +16,16 @@ namespace Light.Ast.Expressions {
             this.MethodName = methodName;
             this.Arguments = arguments;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield return this.Target;
+            foreach (var argument in this.Arguments) {
+                yield return argument;
+            }
+        }
+
+        #endregion
     }
 }

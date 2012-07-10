@@ -11,5 +11,13 @@ namespace Light.Ast.Statements {
             Name = @name;
             Value = value;
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.Children() {
+            yield return Value;
+        }
+
+        #endregion
     }
 }
