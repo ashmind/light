@@ -37,11 +37,11 @@ namespace Light.Parsing {
             ConstructDefinitions();
 
             TopLevelRoot = NonTerminal("TopLevelRoot", node => {
-                var list = node.ChildAst(TopLevelElementList);
+                var list = node.FirstChild.ChildAst(TopLevelElementList);
                 if (list != null)
                     return new AstRoot(list);
 
-                return (IAstElement)node.ChildAst(0);
+                return (IAstElement)node.FirstChild.ChildAst(0);
             });
             TopLevelElement = Transient("TopLevelElement");
             TopLevelElementList = NonTerminal("TopLevelElementList", node => node.ChildNodes.Select(n => (IAstElement)n.AstNode).ToArray());
@@ -53,7 +53,7 @@ namespace Light.Parsing {
             SetStatementRules();
             SetDefinitionRules();
 
-            TopLevelRoot.Rule = TopLevelElementList | Expression;
+            TopLevelRoot.Rule = (TopLevelElementList | Expression) + NewLineStar;
             TopLevelElementList.Rule = MakePlusRule(TopLevelElementList, NewLinePlus, TopLevelElement);
             TopLevelElement.Rule = Statement | Definition;
         }
