@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Light.Ast.Expressions {
-    public class CallExpression : IAstElement {
+    public class CallExpression : IStatement {
         public IAstElement Target { get; private set; }
         public string MethodName { get; private set; }
         public IAstElement[] Arguments { get; private set; }

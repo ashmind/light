@@ -11,7 +11,10 @@ namespace Light {
 
         // TODO: Better discovery/IoC support
         public LightProcessor()
-            : this(new[] { new GenerateDefaultConstructors() })
+            : this(new IProcessingStep[] {
+                new GenerateDefaultConstructors(),
+                new GenerateReturns()
+            })
         {
         }
 

@@ -3,15 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Light.Ast.Statements {
-    public class ForStatement : IAstElement {
-        public string VariableName { get; private set; }
-        public IAstElement Source { get; private set; }
-        public IAstElement[] Body { get; private set; }
+    public class ForStatement : IStatement {
+        private IAstElement source;
+        private string variableName;
 
-        public ForStatement(string variableName, IAstElement source, params IAstElement[] body) {
+        public string VariableName {
+            get { return this.variableName; }
+            set {
+                Argument.RequireNotNullAndNotEmpty("value", value);
+                this.variableName = value;
+            }
+        }
+
+        public IAstElement Source {
+            get { return this.source; }
+            set {
+                Argument.RequireNotNull("value", value);
+                this.source = value;
+            }
+        }
+
+        public IList<IStatement> Body { get; private set; }
+
+        public ForStatement(string variableName, IAstElement source, IEnumerable<IStatement> body) {
             VariableName = variableName;
             Source = source;
-            Body = body;
+            Body = body.ToList();
         }
 
         #region IAstElement Members

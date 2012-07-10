@@ -26,12 +26,13 @@ namespace Light.Ast.Definitions {
 
         public IList<IAstElement> Members { get; private set; }
 
-        public TypeDefinition(string definitionType, string name, params IAstElement[] members) {
-            Argument.RequireNotNullAndNotContainsNull("members", members);
+        public TypeDefinition(string definitionType, string name, IEnumerable<IAstElement> members) {
+            var membersList = members.ToList();
+            Argument.RequireNotNullAndNotContainsNull("members", membersList);
 
             this.DefinitionType = definitionType;
             this.Name = name;
-            this.Members = members.ToList();
+            this.Members = membersList;
         }
 
         #region IAstElement Members

@@ -52,11 +52,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cil\PrimitiveValueCompiler.cs" />
+    <Compile Include="Cil\ReturnCompiler.cs" />
     <Compile Include="CompilationArguments.cs" />
     <Compile Include="CompilationTarget.cs" />
     <Compile Include="Internal\CecilHelper.cs" />
     <Compile Include="LightCompiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Cil\CilCompilerBase.cs" />
+    <Compile Include="Cil\ICilCompiler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

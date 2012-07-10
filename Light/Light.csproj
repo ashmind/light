@@ -53,7 +53,7 @@
     <Compile Include="Ast\AstVisitor.cs" />
     <Compile Include="Ast\Definitions\ConstructorDefinition.cs" />
     <Compile Include="Ast\Definitions\PropertyDefinition.cs" />
-    <Compile Include="Ast\Definitions\FunctionDefinitionBase.cs" />
+    <Compile Include="Ast\Definitions\MethodDefinitionBase.cs" />
     <Compile Include="Ast\Definitions\TypeDefinition.cs" />
     <Compile Include="Ast\Definitions\FunctionDefinition.cs" />
     <Compile Include="Ast\Definitions\TypeDefintionTypes.cs" />
@@ -73,6 +73,7 @@
     <Compile Include="Ast\Statements\Assignment.cs" />
     <Compile Include="Ast\Statements\ContinueStatement.cs" />
     <Compile Include="Ast\Statements\IfOrUnlessKind.cs" />
+    <Compile Include="Ast\IStatement.cs" />
     <Compile Include="Ast\Statements\ReturnStatement.cs" />
     <Compile Include="Ast\Statements\IfOrUnlessStatement.cs" />
     <Compile Include="Ast\Statements\ForStatement.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Internal\NonTerminal.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />
+    <Compile Include="Processing\GenerateReturns.cs" />
     <Compile Include="Processing\GenerateDefaultConstructors.cs" />
     <Compile Include="Processing\IProcessingStep.cs" />
     <Compile Include="Parsing\LightGrammar.cs" />

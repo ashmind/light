@@ -3,21 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using AshMind.Extensions;
 
-namespace Light.Ast {
+namespace Light.Ast.Expressions {
     public class NewExpression : IAstElement {
-        public string TypeName { get; private set; }
-        public IAstElement[] Arguments { get; private set; }
-        public IAstElement Initializer { get; private set; }
+        private string typeName;
 
-        public NewExpression(string typeName, params IAstElement[] arguments) : this(typeName, arguments, null) {
+        public string TypeName {
+            get { return typeName; }
+            set {
+                Argument.RequireNotNullAndNotEmpty("value", value);
+                typeName = value;
+            }
         }
 
-        public NewExpression(string typeName, IAstElement[] arguments, IAstElement initializer) {
-            Argument.RequireNotNullAndNotEmpty("typeName", typeName);
-            Argument.RequireNotNullAndNotContainsNull("arguments", arguments);
+        public IList<IAstElement> Arguments { get; private set; }
+        public IAstElement Initializer { get; set; }
+
+        public NewExpression(string typeName, IEnumerable<IAstElement> arguments, IAstElement initializer) {
+            var argumentList = arguments.ToList();
+
+            
+            Argument.RequireNotNullAndNotContainsNull("arguments", argumentList);
 
             this.TypeName = typeName;
-            this.Arguments = arguments;
+            this.Arguments = argumentList;
             this.Initializer = initializer;
         }
 

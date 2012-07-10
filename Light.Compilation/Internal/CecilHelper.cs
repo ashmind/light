@@ -10,8 +10,12 @@ namespace Light.Compilation.Internal {
             return new MethodDefinition(
                 ".ctor",
                 MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.HideBySig,
-                module.Import(typeof(void))
+                GetVoidType(module)
             );
+        }
+
+        public static TypeReference GetVoidType(ModuleDefinition module) {
+            return module.Import(typeof(void));
         }
     }
 }

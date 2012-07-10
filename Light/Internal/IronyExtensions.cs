@@ -41,5 +41,9 @@ namespace Light.Internal {
         public static IEnumerable<object> ChildAsts(this ParseTreeNode node) {
             return node.ChildNodes.Select(c => c.AstNode);
         }
+
+        public static IEnumerable<TAstNode> ChildAsts<TAstNode>(this ParseTreeNode node) {
+            return node.ChildNodes.Select(c => (TAstNode)c.AstNode);
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Light.Ast;
 using Light.Ast.Definitions;
+using Light.Compilation.Cil;
 using Light.Compilation.Internal;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -11,6 +12,21 @@ using TypeDefinition = Mono.Cecil.TypeDefinition;
 
 namespace Light.Compilation {
     public class LightCompiler {
+        private readonly ICilCompiler[] cilCompilers;
+
+        // TODO: Better discovery/IoC support
+        public LightCompiler()
+            : this(new ICilCompiler[] {
+                new ReturnCompiler(),
+                new PrimitiveValueCompiler()
+            })
+        {
+        }
+
+        public LightCompiler(ICilCompiler[] cilCompilers) {
+            this.cilCompilers = cilCompilers;
+        }
+
         public void Compile(AstRoot root, Stream toStream, CompilationArguments arguments) {
             Argument.RequireNotNull("toStream", toStream);
             Argument.RequireNotNull("root", root);
@@ -41,21 +57,43 @@ namespace Light.Compilation {
         }
 
         private void CompileMember(TypeDefinition type, IAstElement memberAst, ModuleDefinition module) {
-            var constructorAst = memberAst as Ast.Definitions.ConstructorDefinition;
-            if (constructorAst != null) {
-                var constructor = CecilHelper.CreateConstructor(module);
-                CompileBody(constructor, constructorAst.Body, module);
-
-                constructor.Attributes |= MethodAttributes.Public;
-                type.Methods.Add(constructor);
+            var functionAst = memberAst as MethodDefinitionBase;
+            if (functionAst != null) {
+                CompileFunction(type, functionAst, module);
+            }
+            else {
+                throw new NotImplementedException();
             }
         }
 
-        private void CompileBody(MethodDefinition method, IList<IAstElement> bodyAst, ModuleDefinition module) {
+        private void CompileFunction(TypeDefinition type, MethodDefinitionBase methodAst, ModuleDefinition module) {
+            MethodDefinition method;
+            if (methodAst is Ast.Definitions.FunctionDefinition) {
+                var functionAst = methodAst as FunctionDefinition;
+                method = new MethodDefinition(functionAst.Name, MethodAttributes.Public, CecilHelper.GetVoidType(module));
+            }
+            else if (methodAst is Ast.Definitions.ConstructorDefinition) {
+                method = CecilHelper.CreateConstructor(module);
+                method.Attributes |= MethodAttributes.Public;
+            }
+            else {
+                throw new NotImplementedException();
+            }
+
+            CompileBody(method, methodAst.Body, module);
+            type.Methods.Add(method);
+        }
+
+        private void CompileBody(MethodDefinition method, IEnumerable<IStatement> bodyAst, ModuleDefinition module) {
             var body = method.Body.GetILProcessor();
-            body.Emit(OpCodes.Ldarg_0);
-            body.Emit(OpCodes.Call, module.Import(typeof(object).GetConstructor(new Type[0])));
-            body.Emit(OpCodes.Ret);
+            foreach (var element in bodyAst) {
+                CompileCil(body, element);
+            }
+        }
+
+        private void CompileCil (ILProcessor body, IAstElement element) {
+            this.cilCompilers.Single(c => c.CanCompile(body, element))
+                             .Compile(body, element, e => CompileCil(body, e));
         }
 
         private TypeAttributes ToTypeAttribute(string definitionType) {
