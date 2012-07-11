@@ -82,9 +82,15 @@
     <Compile Include="Ast\Literals\PrimitiveValue.cs" />
     <Compile Include="Ast\Expressions\BinaryOperator.cs" />
     <Compile Include="Ast\Names\CompositeName.cs" />
+    <Compile Include="Ast\Types\AstPrimitiveType.cs" />
+    <Compile Include="Ast\Types\AstTypeExtensions.cs" />
+    <Compile Include="Ast\Types\AstVoidType.cs" />
+    <Compile Include="Ast\Types\AstImplicitType.cs" />
+    <Compile Include="Ast\Types\IAstTypeReference.cs" />
     <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Internal\NonTerminal.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />
+    <Compile Include="Processing\InferFunctionReturnTypes.cs" />
     <Compile Include="Processing\GenerateReturns.cs" />
     <Compile Include="Processing\GenerateDefaultConstructors.cs" />
     <Compile Include="Processing\IProcessingStep.cs" />
@@ -100,6 +106,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

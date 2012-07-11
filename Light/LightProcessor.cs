@@ -13,7 +13,8 @@ namespace Light {
         public LightProcessor()
             : this(new IProcessingStep[] {
                 new GenerateDefaultConstructors(),
-                new GenerateReturns()
+                new GenerateReturns(),
+                new InferFunctionReturnTypes()
             })
         {
         }

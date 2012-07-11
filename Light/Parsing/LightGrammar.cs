@@ -8,6 +8,7 @@ using Light.Ast.Expressions;
 using Light.Ast.Literals;
 using Light.Ast.Names;
 using Light.Ast.Statements;
+using Light.Ast.Types;
 using Light.Internal;
 
 namespace Light.Parsing {
@@ -306,7 +307,7 @@ namespace Light.Parsing {
                     node.Child(Name).Token.Text,
                     node.ChildAst(ParameterList),
                     node.ChildAst(OptionalBodyOfStatements),
-                    null
+                    AstImplicitType.Instance
                 )
             );
             OptionalAccessLevel = new NonTerminal("OptionalAccessLevel");

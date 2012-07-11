@@ -9,7 +9,6 @@ namespace Light.Tests.OfCompilation {
     public class ValueTests {
         [Test]
         [Row("1", 1)]
-        [Ignore("WIP")]
         public void FunctionReturn(string valueString, object expectedValue) {
             var code = (@"
                 public class Test

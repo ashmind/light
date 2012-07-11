@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using Autofac;
 using Gallio.Framework;
 using Light.Ast;
 using Light.Compilation;
@@ -29,7 +29,8 @@ namespace Light.Tests.OfCompilation {
             };
 
             var stream = new MemoryStream();
-            new LightCompiler().Compile((AstRoot)parsed.Root, stream, compilationArguments);
+            var compiler = TestEnvironment.Container.Resolve<LightCompiler>();
+            compiler.Compile((AstRoot)parsed.Root, stream, compilationArguments);
 
             // for debugging
             WriteAssemblyOnDiskForDebugging(stream);

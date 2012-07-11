@@ -6,24 +6,18 @@ using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Compilation.Cil;
 using Light.Compilation.Internal;
+using Light.Compilation.Types;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using TypeDefinition = Mono.Cecil.TypeDefinition;
 
 namespace Light.Compilation {
     public class LightCompiler {
+        private readonly ITypeResolver[] typeResolvers;
         private readonly ICilCompiler[] cilCompilers;
 
-        // TODO: Better discovery/IoC support
-        public LightCompiler()
-            : this(new ICilCompiler[] {
-                new ReturnCompiler(),
-                new PrimitiveValueCompiler()
-            })
-        {
-        }
-
-        public LightCompiler(ICilCompiler[] cilCompilers) {
+        public LightCompiler(ITypeResolver[] typeResolvers, ICilCompiler[] cilCompilers) {
+            this.typeResolvers = typeResolvers;
             this.cilCompilers = cilCompilers;
         }
 
@@ -70,7 +64,12 @@ namespace Light.Compilation {
             MethodDefinition method;
             if (methodAst is Ast.Definitions.FunctionDefinition) {
                 var functionAst = methodAst as FunctionDefinition;
-                method = new MethodDefinition(functionAst.Name, MethodAttributes.Public, CecilHelper.GetVoidType(module));
+                var returnType = this.typeResolvers.Select(r => r.Resolve(functionAst.ReturnType, module))
+                                     .FirstOrDefault(t => t != null);
+                if (returnType == null)
+                    throw new NotSupportedException("Cannot resolve AST type " + functionAst.ReturnType);
+
+                method = new MethodDefinition(functionAst.Name, MethodAttributes.Public, returnType);
             }
             else if (methodAst is Ast.Definitions.ConstructorDefinition) {
                 method = CecilHelper.CreateConstructor(module);

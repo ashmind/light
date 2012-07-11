@@ -22,12 +22,8 @@ namespace Light.Ast.Definitions {
         public IList<IAstElement> Parameters { get; private set; }
         public IList<IStatement> Body { get; private set; }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.Children() {
+        public virtual IEnumerable<IAstElement> Children() {
             return this.Parameters.Concat(this.Body);
         }
-
-        #endregion
     }
 }
