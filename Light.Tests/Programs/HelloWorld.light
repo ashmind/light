@@ -1,2 +1,2 @@
-﻿import System.IO
-Console.WriteLine("Hello world!")
+﻿import System
+Console.WriteLine('Hello world!')

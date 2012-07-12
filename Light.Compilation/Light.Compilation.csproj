@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AshMind.Extensions, Version=1.0.4.0, Culture=neutral, PublicKeyToken=32a35e6126a2a893, processorArchitecture=MSIL" />
     <Reference Include="Autofac">
       <HintPath>..\$packages\Autofac.2.6.3.862\lib\NET40\Autofac.dll</HintPath>
     </Reference>
@@ -58,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cil\CallCompiler.cs" />
     <Compile Include="Cil\PrimitiveValueCompiler.cs" />
     <Compile Include="Cil\ReturnCompiler.cs" />
     <Compile Include="CompilationArguments.cs" />
@@ -68,8 +70,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Cil\CilCompilerBase.cs" />
     <Compile Include="Cil\ICilCompiler.cs" />
+    <Compile Include="Types\VoidTypeResolver.cs" />
     <Compile Include="Types\ITypeResolver.cs" />
-    <Compile Include="Types\PrimitiveTypeResolver.cs" />
+    <Compile Include="Types\ReflectedTypeResolver.cs" />
     <Compile Include="Types\TypeResolverBase.cs" />
   </ItemGroup>
   <ItemGroup>

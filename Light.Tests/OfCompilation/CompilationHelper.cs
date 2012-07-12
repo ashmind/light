@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 using Autofac;
 using Gallio.Framework;
 using Light.Ast;
 using Light.Compilation;
 using MbUnit.Framework;
+using Test = Gallio.Model.Tree.Test;
 
 namespace Light.Tests.OfCompilation {
     public static class CompilationHelper {
@@ -20,12 +23,14 @@ namespace Light.Tests.OfCompilation {
             var parsed = new LightParser().Parse(code);
             AssertEx.That(() => !parsed.HasErrors);
 
-            new LightProcessor().Process(parsed.Root);
-
+            var processor = TestEnvironment.Container.Resolve<LightProcessor>();
+            processor.Process(parsed.Root);
+            
+            var assemblyName = GetAssemblyName();
             var compilationArguments = new CompilationArguments {
-                AssemblyName = "TestAssembly",
+                AssemblyName = assemblyName,
                 AssemblyVersion = new Version(0, 1),
-                Target = CompilationTarget.Console
+                Target = target
             };
 
             var stream = new MemoryStream();
@@ -33,15 +38,23 @@ namespace Light.Tests.OfCompilation {
             compiler.Compile((AstRoot)parsed.Root, stream, compilationArguments);
 
             // for debugging
-            WriteAssemblyOnDiskForDebugging(stream);
+            WriteAssemblyOnDiskForDebugging(stream, assemblyName, target);
             return Assembly.Load(stream.ToArray());
         }
 
-        private static void WriteAssemblyOnDiskForDebugging(MemoryStream stream) {
+        private static string GetAssemblyName() {
+            var stepName = TestContext.CurrentContext.TestStep.Name;
+            var stepNameCleanedUp = Regex.Replace(stepName, @"[^\w\d]+", ".").Trim('.');
+            return stepNameCleanedUp;
+        }
+
+        // you should be able to find assemblies in c:\Users\<user>\AppData\Local\Temp\Light.Tests\
+        private static void WriteAssemblyOnDiskForDebugging(MemoryStream stream, string assemblyName, CompilationTarget target) {
             var debuggingHelperDirectory = Path.Combine(Path.GetTempPath(), "Light.Tests");
             Directory.CreateDirectory(debuggingHelperDirectory);
 
-            File.WriteAllBytes(Path.Combine(debuggingHelperDirectory, TestContext.CurrentContext.Test.Name + "-TestAssembly.dll"), stream.ToArray());
+            var extension = target == CompilationTarget.Console ? ".exe" : ".dll";
+            File.WriteAllBytes(Path.Combine(debuggingHelperDirectory, assemblyName + extension), stream.ToArray());
         }
     }
 }

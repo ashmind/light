@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Light.Ast.Statements {
-    public class ForStatement : IStatement {
+    public class ForStatement : IAstStatement {
         private IAstElement source;
         private string variableName;
 
@@ -23,9 +23,9 @@ namespace Light.Ast.Statements {
             }
         }
 
-        public IList<IStatement> Body { get; private set; }
+        public IList<IAstStatement> Body { get; private set; }
 
-        public ForStatement(string variableName, IAstElement source, IEnumerable<IStatement> body) {
+        public ForStatement(string variableName, IAstElement source, IEnumerable<IAstStatement> body) {
             VariableName = variableName;
             Source = source;
             Body = body.ToList();

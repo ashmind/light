@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast.Expressions;
+using Light.Ast.References;
 
-namespace Light.Ast.Expressions {
-    public class IdentifierExpression : IAstElement {
+namespace Light.Ast.Incomplete {
+    public class IdentifierExpression : IAstExpression {
         public string Name { get; private set; }
 
         public IdentifierExpression(string name) {
@@ -15,12 +17,12 @@ namespace Light.Ast.Expressions {
             return this.Name;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.Children() {
-            yield break;
+        public IEnumerable<IAstElement> Children() {
+            return No.Elements;
         }
 
-        #endregion
+        IAstTypeReference IAstExpression.ExpressionType {
+            get { return null; }
+        }
     }
 }

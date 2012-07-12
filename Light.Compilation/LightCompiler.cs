@@ -56,7 +56,7 @@ namespace Light.Compilation {
                 CompileFunction(type, functionAst, module);
             }
             else {
-                throw new NotImplementedException();
+                throw new NotImplementedException("LightCompiler.CompileMember: cannot compile " + memberAst + ".");
             }
         }
 
@@ -76,23 +76,26 @@ namespace Light.Compilation {
                 method.Attributes |= MethodAttributes.Public;
             }
             else {
-                throw new NotImplementedException();
+                throw new NotImplementedException("LightCompiler.CompileFunction: cannot compile " + methodAst + ".");
             }
 
             CompileBody(method, methodAst.Body, module);
             type.Methods.Add(method);
         }
 
-        private void CompileBody(MethodDefinition method, IEnumerable<IStatement> bodyAst, ModuleDefinition module) {
+        private void CompileBody(MethodDefinition method, IEnumerable<IAstStatement> bodyAst, ModuleDefinition module) {
             var body = method.Body.GetILProcessor();
             foreach (var element in bodyAst) {
-                CompileCil(body, element);
+                CompileCil(body, element, module);
             }
         }
 
-        private void CompileCil (ILProcessor body, IAstElement element) {
-            this.cilCompilers.Single(c => c.CanCompile(body, element))
-                             .Compile(body, element, e => CompileCil(body, e));
+        private void CompileCil(ILProcessor body, IAstElement element, ModuleDefinition module) {
+            var compiler = this.cilCompilers.SingleOrDefault(c => c.CanCompile(body, element));
+            if (compiler == null)
+                throw new NotImplementedException("LightCompiler: No CilCompiler for " + element);
+
+            compiler.Compile(body, element, e => CompileCil(body, e, module), module);
         }
 
         private TypeAttributes ToTypeAttribute(string definitionType) {

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Light.Ast.Incomplete;
+using Light.Ast.References;
+using Light.Ast.References.Types;
 
 namespace Light.Ast.Types {
     public static class AstTypeExtensions {

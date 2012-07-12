@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Light.Ast;
 using Light.Ast.Expressions;
+using Light.Ast.Incomplete;
 using Light.Ast.Literals;
 
 namespace Light.Tests {
@@ -35,7 +36,7 @@ namespace Light.Tests {
             builder.Append("{")
                    .Append(value)
                    .Append(": ")
-                   .Append(value.Type.Name)
+                   .Append(value.ExpressionType.ActualType.Name)
                    .Append("}");
         }
 
@@ -62,7 +63,7 @@ namespace Light.Tests {
                 builder.Append(".");
             }
 
-            builder.Append(call.MethodName);
+            builder.Append(call.Method.Name);
             builder.Append("(");
             AppendCommaSeparatedElements(builder, call.Arguments);
             builder.Append(")");

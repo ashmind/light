@@ -5,7 +5,7 @@ using System.Linq;
 using AshMind.Extensions;
 
 namespace Light.Ast.Statements {
-    public class IfOrUnlessStatement : IStatement {
+    public class IfOrUnlessStatement : IAstStatement {
         public IfOrUnlessKind Kind { get; private set; }
         public IAstElement Condition { get; private set; }
         public ReadOnlyCollection<IAstElement> Body { get; private set; }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast.Errors;
+using Light.Ast.Expressions;
 
-namespace Light.Ast.Types {
+namespace Light.Ast.References.Types {
     public class AstVoidType : IAstTypeReference {
         public static AstVoidType Instance { get; private set; }
 
@@ -17,6 +19,14 @@ namespace Light.Ast.Types {
 
         IEnumerable<IAstElement> IAstElement.Children() {
             yield break;
+        }
+
+        #endregion
+
+        #region IAstTypeReference Members
+
+        IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
+            return new AstMissingMethod(name, this);
         }
 
         #endregion

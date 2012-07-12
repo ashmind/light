@@ -11,6 +11,7 @@ namespace Light.Tests {
         static TestEnvironment() {
             var builder = new ContainerBuilder();
             builder.RegisterAssemblyModules(typeof(LightCompiler).Assembly);
+            builder.RegisterAssemblyModules(typeof(LightProcessor).Assembly);
 
             Container = builder.Build();
         }

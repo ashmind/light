@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using AshMind.Extensions;
+using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
-    public class IndexerExpression : IAstElement {
+    public class IndexerExpression : IAstExpression {
         public IAstElement Target { get; private set; }
         public ReadOnlyCollection<IAstElement> Arguments { get; private set; }
 
@@ -17,15 +18,15 @@ namespace Light.Ast.Expressions {
             this.Arguments = arguments.AsReadOnly();
         }
 
-        #region IAstElement Members
+        public IAstTypeReference ExpressionType {
+            get { throw new NotImplementedException("IndexerExpression.ExpressionType"); }
+        }
 
-        IEnumerable<IAstElement> IAstElement.Children() {
+        public IEnumerable<IAstElement> Children() {
             yield return this.Target;
             foreach (var argument in this.Arguments) {
                 yield return argument;
             }
         }
-
-        #endregion
     }
 }

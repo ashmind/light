@@ -26,6 +26,11 @@ namespace Light.Ast.Definitions {
 
         public IList<IAstElement> Members { get; private set; }
 
+        public TypeDefinition(string definitionType, string name, params IAstElement[] members) 
+            : this(definitionType, name, (IEnumerable<IAstElement>)members)
+        {
+        }
+
         public TypeDefinition(string definitionType, string name, IEnumerable<IAstElement> members) {
             var membersList = members.ToList();
             Argument.RequireNotNullAndNotContainsNull("members", membersList);

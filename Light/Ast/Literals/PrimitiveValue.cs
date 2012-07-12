@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Light.Ast.Expressions;
+using Light.Ast.References;
+using Light.Ast.References.Types;
 
 namespace Light.Ast.Literals {
-    public class PrimitiveValue : IAstElement {
+    public class PrimitiveValue : IAstExpression {
         public PrimitiveValue(object value) {
             this.Value = value;
-        }
-
-        public Type Type {
-            get { return Value.GetType(); }
+            this.ExpressionType = new AstReflectedType(value.GetType());
         }
 
         public object Value { get; private set; }
@@ -22,12 +21,14 @@ namespace Light.Ast.Literals {
             return Value.ToString();
         }
 
-        #region IAstElement Members
+        public AstReflectedType ExpressionType { get; private set; }
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            yield break;
+        public IEnumerable<IAstElement> Children() {
+            return No.Elements;
         }
 
-        #endregion
+        IAstTypeReference IAstExpression.ExpressionType {
+            get { return this.ExpressionType; }
+        }
     }
 }

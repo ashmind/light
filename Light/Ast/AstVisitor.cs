@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AshMind.Extensions;
 using Light.Ast.Expressions;
+using Light.Ast.Incomplete;
 using Light.Ast.Literals;
 
 namespace Light.Ast {

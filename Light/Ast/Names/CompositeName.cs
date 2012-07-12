@@ -14,5 +14,9 @@ namespace Light.Ast.Names {
 
             Parts = parts.AsReadOnly();
         }
+
+        public override string ToString() {
+            return string.Join(".", this.Parts);
+        }
     }
 }

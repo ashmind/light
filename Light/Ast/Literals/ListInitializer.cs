@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using AshMind.Extensions;
+using Light.Ast.Expressions;
+using Light.Ast.References;
 
 namespace Light.Ast.Literals {
-    public class ListInitializer : IAstElement {
-        public ReadOnlyCollection<IAstElement> Elements { get; private set; }
+    public class ListInitializer : IAstExpression {
+        public IList<IAstElement> Elements { get; private set; }
 
         public ListInitializer(params IAstElement[] elements) {
             Argument.RequireNotNullAndNotContainsNull("elements", elements);
-            Elements = elements.AsReadOnly();
+            Elements = elements.ToList();
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.Children() {
+        public IEnumerable<IAstElement> Children() {
             return this.Elements;
         }
 
-        #endregion
+        public IAstTypeReference ExpressionType {
+            get { throw new NotImplementedException("ListInitializer.ExpressionType"); }
+        }
     }
 }

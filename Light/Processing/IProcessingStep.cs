@@ -2,6 +2,7 @@ using Light.Ast;
 
 namespace Light.Processing {
     public interface IProcessingStep {
-        void Process(IAstElement root);
+        void ProcessBeforeChildren(IAstElement element, ProcessingContext context);
+        void ProcessAfterChildren(IAstElement element, ProcessingContext context);
     }
 }

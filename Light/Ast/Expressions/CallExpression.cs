@@ -1,31 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
-    public class CallExpression : IStatement {
-        public IAstElement Target { get; private set; }
-        public string MethodName { get; private set; }
-        public IAstElement[] Arguments { get; private set; }
+    public class CallExpression : IAstExpression, IAstStatement {
+        private IAstMethodReference method;
+        public IAstElement Target { get; set; }
+        public IList<IAstExpression> Arguments { get; private set; }
 
-        public CallExpression(IAstElement target, string methodName, params IAstElement[] arguments) {
-            Argument.RequireNotNull("methodName", methodName);
+        public CallExpression(IAstElement target, IAstMethodReference method, IList<IAstExpression> arguments) {
             Argument.RequireNotNullAndNotContainsNull("arguments", arguments);
 
             this.Target = target;
-            this.MethodName = methodName;
-            this.Arguments = arguments;
+            this.Method = method;
+            this.Arguments = arguments.ToList();
         }
 
-        #region IAstElement Members
+        public IAstMethodReference Method {
+            get { return this.method; }
+            set {
+                Argument.RequireNotNull("value", value);
+                this.method = value;
+            }
+        }
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            yield return this.Target;
+        public IEnumerable<IAstElement> Children() {
+            if (this.Target != null)
+                yield return this.Target;
+
             foreach (var argument in this.Arguments) {
                 yield return argument;
             }
         }
 
-        #endregion
+        public IAstTypeReference ExpressionType {
+            get { return this.Method.ReturnType; }
+        }
     }
 }

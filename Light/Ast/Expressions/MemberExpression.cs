@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
-    public class MemberExpression : IAstElement {
+    public class MemberExpression : IAstExpression {
         public IAstElement Target { get; private set; }
         public string Name { get; private set; }
 
@@ -20,12 +20,13 @@ namespace Light.Ast.Expressions {
             return this.Target + "." + this.Name;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.Children() {
-            yield return this.Target;
+        public IEnumerable<IAstElement> Children() {
+            if (this.Target != null)
+                yield return this.Target;
         }
 
-        #endregion
+        public IAstTypeReference ExpressionType {
+            get { throw new NotImplementedException("MemberExpression.ExpressionType"); }
+        }
     }
 }

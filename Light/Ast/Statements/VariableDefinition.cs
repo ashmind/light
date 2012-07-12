@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Light.Ast.Statements {
-    public class VariableDefinition : IStatement {
+    public class VariableDefinition : IAstStatement {
         public string Name { get; private set; }
         public IAstElement Value { get; private set; }
 

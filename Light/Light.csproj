@@ -35,6 +35,12 @@
     <Reference Include="AshMind.Extensions">
       <HintPath>..\$packages\AshMind.Extensions.1.0.4\lib\3.5\AshMind.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="Autofac">
+      <HintPath>..\$packages\Autofac.2.6.3.862\lib\NET40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Configuration">
+      <HintPath>..\$packages\Autofac.2.6.3.862\lib\NET40\Autofac.Configuration.dll</HintPath>
+    </Reference>
     <Reference Include="Irony, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca48ace7223ead47, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\$libraries\Irony.dll</HintPath>
@@ -57,23 +63,30 @@
     <Compile Include="Ast\Definitions\TypeDefinition.cs" />
     <Compile Include="Ast\Definitions\FunctionDefinition.cs" />
     <Compile Include="Ast\Definitions\TypeDefintionTypes.cs" />
+    <Compile Include="Ast\Errors\AstMissingMethod.cs" />
     <Compile Include="Ast\Expressions\BinaryExpression.cs" />
     <Compile Include="Ast\Expressions\CallExpression.cs" />
+    <Compile Include="Ast\Expressions\IAstExpression.cs" />
     <Compile Include="Ast\Expressions\IndexerExpression.cs" />
     <Compile Include="Ast\Expressions\LambdaExpression.cs" />
     <Compile Include="Ast\Expressions\MemberExpression.cs" />
     <Compile Include="Ast\IAstElement.cs" />
-    <Compile Include="Ast\Expressions\IdentifierExpression.cs" />
+    <Compile Include="Ast\Incomplete\AstUnknownMethod.cs" />
+    <Compile Include="Ast\Incomplete\IdentifierExpression.cs" />
     <Compile Include="Ast\Literals\ObjectInitializer.cs" />
     <Compile Include="Ast\Literals\ListInitializer.cs" />
     <Compile Include="Ast\Literals\ObjectInitializerEntry.cs" />
     <Compile Include="Ast\Literals\StringWithInterpolation.cs" />
     <Compile Include="Ast\Expressions\NewExpression.cs" />
     <Compile Include="Ast\Definitions\ParameterDefinition.cs" />
+    <Compile Include="Ast\No.cs" />
+    <Compile Include="Ast\References\IAstMethodReference.cs" />
+    <Compile Include="Ast\References\IAstReference.cs" />
+    <Compile Include="Ast\References\Methods\AstReflectedMethod.cs" />
     <Compile Include="Ast\Statements\Assignment.cs" />
     <Compile Include="Ast\Statements\ContinueStatement.cs" />
     <Compile Include="Ast\Statements\IfOrUnlessKind.cs" />
-    <Compile Include="Ast\IStatement.cs" />
+    <Compile Include="Ast\IAstStatement.cs" />
     <Compile Include="Ast\Statements\ReturnStatement.cs" />
     <Compile Include="Ast\Statements\IfOrUnlessStatement.cs" />
     <Compile Include="Ast\Statements\ForStatement.cs" />
@@ -82,17 +95,27 @@
     <Compile Include="Ast\Literals\PrimitiveValue.cs" />
     <Compile Include="Ast\Expressions\BinaryOperator.cs" />
     <Compile Include="Ast\Names\CompositeName.cs" />
-    <Compile Include="Ast\Types\AstPrimitiveType.cs" />
-    <Compile Include="Ast\Types\AstTypeExtensions.cs" />
-    <Compile Include="Ast\Types\AstVoidType.cs" />
-    <Compile Include="Ast\Types\AstImplicitType.cs" />
-    <Compile Include="Ast\Types\IAstTypeReference.cs" />
+    <Compile Include="Ast\References\Types\AstReflectedType.cs" />
+    <Compile Include="Ast\References\AstTypeExtensions.cs" />
+    <Compile Include="Ast\References\Types\AstVoidType.cs" />
+    <Compile Include="Ast\Incomplete\AstImplicitType.cs" />
+    <Compile Include="Ast\References\IAstTypeReference.cs" />
     <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Internal\NonTerminal.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />
-    <Compile Include="Processing\InferFunctionReturnTypes.cs" />
-    <Compile Include="Processing\GenerateReturns.cs" />
-    <Compile Include="Processing\GenerateDefaultConstructors.cs" />
+    <Compile Include="LightMainModule.cs" />
+    <Compile Include="Processing\ProcessingContext.cs" />
+    <Compile Include="Processing\Scoping\INameSource.cs" />
+    <Compile Include="Processing\Scoping\ExternalNamespaceNameSource.cs" />
+    <Compile Include="Processing\Scoping\Scope.cs" />
+    <Compile Include="Processing\ProcessingStepBase.cs" />
+    <Compile Include="Processing\Steps\AddImportsToScope.cs" />
+    <Compile Include="Processing\Steps\ResolveMethodReferences.cs" />
+    <Compile Include="Processing\Steps\ResolveIdentifiers.cs" />
+    <Compile Include="Processing\Steps\GenerateMainMethod.cs" />
+    <Compile Include="Processing\Steps\InferFunctionReturnTypes.cs" />
+    <Compile Include="Processing\Steps\GenerateReturns.cs" />
+    <Compile Include="Processing\Steps\GenerateDefaultConstructors.cs" />
     <Compile Include="Processing\IProcessingStep.cs" />
     <Compile Include="Parsing\LightGrammar.cs" />
     <Compile Include="LightParser.cs" />

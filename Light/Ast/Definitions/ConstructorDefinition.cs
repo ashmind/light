@@ -7,7 +7,7 @@ namespace Light.Ast.Definitions {
         public ConstructorDefinition() {
         }
 
-        public ConstructorDefinition(IEnumerable<IAstElement> parameters, IEnumerable<IStatement> body)
+        public ConstructorDefinition(IEnumerable<IAstElement> parameters, IEnumerable<IAstStatement> body)
             : base(parameters, body) {
         }
     }

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using AshMind.Extensions;
+using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
-    public class LambdaExpression : IAstElement {
+    public class LambdaExpression : IAstExpression {
         public ReadOnlyCollection<IAstElement> Parameters { get; set; }
         public IAstElement Body { get; set; }
 
@@ -17,12 +18,12 @@ namespace Light.Ast.Expressions {
             Body = body;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.Children() {
+        public IEnumerable<IAstElement> Children() {
             return this.Parameters.Concat(this.Body);
         }
 
-        #endregion
+        public IAstTypeReference ExpressionType {
+            get { throw new NotImplementedException("LambdaExpression.ExpressionType"); }
+        }
     }
 }

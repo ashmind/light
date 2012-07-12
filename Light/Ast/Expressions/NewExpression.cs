@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using AshMind.Extensions;
+using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
-    public class NewExpression : IAstElement {
+    public class NewExpression : IAstExpression {
         private string typeName;
 
         public string TypeName {
@@ -20,8 +21,6 @@ namespace Light.Ast.Expressions {
 
         public NewExpression(string typeName, IEnumerable<IAstElement> arguments, IAstElement initializer) {
             var argumentList = arguments.ToList();
-
-            
             Argument.RequireNotNullAndNotContainsNull("arguments", argumentList);
 
             this.TypeName = typeName;
@@ -29,12 +28,12 @@ namespace Light.Ast.Expressions {
             this.Initializer = initializer;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.Children() {
+        public IEnumerable<IAstElement> Children() {
             return this.Arguments.Concat(this.Initializer);
         }
 
-        #endregion
+        public IAstTypeReference ExpressionType {
+            get { throw new NotImplementedException("NewExpression.ExpressionType"); }
+        }
     }
 }
