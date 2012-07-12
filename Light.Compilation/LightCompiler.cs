@@ -69,7 +69,13 @@ namespace Light.Compilation {
                 if (returnType == null)
                     throw new NotSupportedException("Cannot resolve AST type " + functionAst.ReturnType);
 
-                method = new MethodDefinition(functionAst.Name, MethodAttributes.Public, returnType);
+                var attributes = MethodAttributes.Public;
+                if (methodAst.Compilation.Static)
+                    attributes |= MethodAttributes.Static;
+
+                method = new MethodDefinition(functionAst.Name, attributes, returnType);
+                if (methodAst.Compilation.EntryPoint)
+                    module.EntryPoint = method;
             }
             else if (methodAst is Ast.Definitions.ConstructorDefinition) {
                 method = CecilHelper.CreateConstructor(module);

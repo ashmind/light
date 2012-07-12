@@ -100,6 +100,7 @@
     <Compile Include="Ast\References\Types\AstVoidType.cs" />
     <Compile Include="Ast\Incomplete\AstImplicitType.cs" />
     <Compile Include="Ast\References\IAstTypeReference.cs" />
+    <Compile Include="Compilation\Instructions\MethodCompilation.cs" />
     <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Internal\NonTerminal.cs" />
     <Compile Include="Interpretation\LightInterpreter.cs" />

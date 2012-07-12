@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AshMind.Extensions;
 using Light.Ast.References;
-using Light.Ast.Types;
 
 namespace Light.Ast.Definitions {
     public class FunctionDefinition : MethodDefinitionBase {

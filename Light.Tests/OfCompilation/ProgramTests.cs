@@ -13,6 +13,8 @@ namespace Light.Tests.OfCompilation {
             var main = assembly.GetTypes().Select(t => t.GetMethod("Main")).SingleOrDefault(m => m != null);
 
             Assert.IsNotNull(main);
+            Assert.IsTrue(main.IsStatic);
+            Assert.AreEqual(assembly.EntryPoint, main);
         }
     }
 }
