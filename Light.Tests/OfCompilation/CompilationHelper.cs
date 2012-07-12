@@ -29,7 +29,7 @@ namespace Light.Tests.OfCompilation {
             var assemblyName = GetAssemblyName();
             var compilationArguments = new CompilationArguments {
                 AssemblyName = assemblyName,
-                AssemblyVersion = new Version(0, 1),
+                AssemblyVersion = new Version(0, 1, 0, 0),
                 Target = target
             };
 
