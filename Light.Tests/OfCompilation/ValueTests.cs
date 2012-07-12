@@ -8,7 +8,10 @@ namespace Light.Tests.OfCompilation {
     [TestFixture]
     public class ValueTests {
         [Test]
-        [Row("1", 1)]
+        [Row(  "1",    1)]
+        [Row("1.1",  1.1)]
+        [Row("'x'",  "x")]
+        [Row("true", true)]
         public void FunctionReturn(string valueString, object expectedValue) {
             var code = (@"
                 public class Test

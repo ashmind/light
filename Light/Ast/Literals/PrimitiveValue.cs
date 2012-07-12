@@ -18,6 +18,9 @@ namespace Light.Ast.Literals {
             if (Value is string)
                 return "'" + Value + "'";
 
+            if (Value is bool)
+                return Value.ToString().ToLowerInvariant();
+
             return Value.ToString();
         }
 

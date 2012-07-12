@@ -22,6 +22,13 @@ namespace Light.Tests.OfParsing {
         }
 
         [Test]
+        [Row("true",  "{true: Boolean}")]
+        [Row("false", "{false: Boolean}")]
+        public void Boolean(string literal, string expectedResult) {
+            ParseAssert.IsParsedTo(literal, expectedResult, includeTypesOfValues: true);
+        }
+
+        [Test]
         [Row("[]",              "[]")]
         [Row("[1]",             "[1]")]
         [Row("[1, 'a']",        "[1, 'a']")]

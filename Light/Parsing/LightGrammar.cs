@@ -90,6 +90,7 @@ namespace Light.Parsing {
         public NumberLiteral Number { get; private set; }
         public StringLiteral SingleQuotedString { get; private set; }
         public StringLiteral DoubleQuotedString { get; private set; }
+        public NonTerminal<IAstExpression> Boolean { get; private set; }
 
         public NonTerminal<IAstExpression> Expression { get; private set; }
         public NonTerminal<IAstExpression> Literal { get; private set; }
@@ -117,6 +118,8 @@ namespace Light.Parsing {
             SingleQuotedString = new StringLiteral("SingleQuotedString", "'", StringOptions.NoEscapes, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
             DoubleQuotedString = new StringLiteral("DoubleQuotedString", "\"", StringOptions.NoEscapes, (c, node) => node.AstNode = new StringWithInterpolation((string)node.Token.Value));
 
+            Boolean = NonTerminal("Boolean", n => new PrimitiveValue(n.FindTokenAndGetText() == "true"));
+            
             Literal = Transient<IAstExpression>("Literal");
             Expression = Transient<IAstExpression>("Expression");
             BinaryExpression = NonTerminal("BinaryExpression", node => new BinaryExpression(
@@ -185,7 +188,9 @@ namespace Light.Parsing {
         }
 
         private void SetExpressionRules() {
-            Literal.Rule = SingleQuotedString | DoubleQuotedString | Number | ListInitializer | ObjectInitializer;
+            Literal.Rule = SingleQuotedString | DoubleQuotedString | Number | Boolean | ListInitializer | ObjectInitializer;
+            Boolean.Rule = ToTerm("true") | "false";
+
             Expression.Rule = Literal | BinaryExpression
                             | SimpleCallExpression | SimpleIdentifierExpression | SimpleIndexerExpression | MemberAccessOrCallExpression
                             | NewExpression | LambdaExpression;
