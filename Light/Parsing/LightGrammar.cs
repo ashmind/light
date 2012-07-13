@@ -8,8 +8,8 @@ using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
 using Light.Ast.Literals;
 using Light.Ast.Names;
+using Light.Ast.References;
 using Light.Ast.Statements;
-using Light.Ast.Types;
 using Light.Internal;
 
 namespace Light.Parsing {
@@ -64,14 +64,14 @@ namespace Light.Parsing {
 
         public IdentifierTerminal Name { get; private set; }
         public NonTerminal<CompositeName> DotSeparatedName { get; private set; }
-        public NonTerminal<string> TypeReference { get; private set; }
+        public NonTerminal<IAstTypeReference> TypeReference { get; private set; }
         public NonTerminal TypeReferenceListPlus { get; private set; }
 
         public void ConstructNameAndTypeRules() {
             Name = new IdentifierTerminal("Name");
-            DotSeparatedName = NonTerminalWithNoElement("DotSeparatedName", n => new CompositeName(n.ChildNodes.Select(c => c.Token.Text).ToArray()));
+            DotSeparatedName = NonTerminalWithCustomType("DotSeparatedName", n => new CompositeName(n.ChildNodes.Select(c => c.Token.Text).ToArray()));
 
-            TypeReference = NonTerminalWithNoElement("TypeReference", n => n.Child(Name).Token.Text); // WIP
+            TypeReference = NonTerminalWithCustomType("TypeReference", n => (IAstTypeReference)new AstUnknownType(n.Child(Name).Token.Text)); // WIP
             TypeReferenceListPlus = new NonTerminal("TypeReferenceListPlus");
         }
 
@@ -128,7 +128,7 @@ namespace Light.Parsing {
                 (IAstExpression)node.ChildNodes[2].AstNode
             ));
 
-            BinaryOperator = NonTerminalWithNoElement("BinaryOperator", node => new BinaryOperator(node.FindTokenAndGetText()));
+            BinaryOperator = NonTerminalWithCustomType("BinaryOperator", node => new BinaryOperator(node.FindTokenAndGetText()));
 
             CommaSeparatedExpressionListStar = NonTerminal("CommaSeparatedExpressionListStar", node => node.ChildAsts<IAstExpression>());
             ListInitializer = NonTerminal("ListInitializer", node => new ListInitializer(AstElementsInStarChild(node, 0)));
@@ -297,10 +297,10 @@ namespace Light.Parsing {
         public NonTerminal<IAstElement> Property { get; private set; }
         public NonTerminal<IAstElement> Constructor { get; private set; }
         public NonTerminal<IAstElement> Function { get; private set; }
-        public NonTerminal<IAstElement> Parameter { get; private set; }
-        public NonTerminal<IAstElement> TypedParameter { get; private set; }
-        public NonTerminal<IAstElement> UntypedParameter { get; private set; }
-        public NonTerminal<IEnumerable<IAstElement>> ParameterList { get; private set; }
+        public NonTerminal<ParameterDefinition> Parameter { get; private set; }
+        public NonTerminal<ParameterDefinition> TypedParameter { get; private set; }
+        public NonTerminal<ParameterDefinition> UntypedParameter { get; private set; }
+        public NonTerminal<IEnumerable<ParameterDefinition>> ParameterList { get; private set; }
 
         private void ConstructDefinitions() {
             Definition = Transient<IAstElement>("Definition");
@@ -325,10 +325,10 @@ namespace Light.Parsing {
                 )
             );
             OptionalAccessLevel = new NonTerminal("OptionalAccessLevel");
-            ParameterList = NonTerminal("ParameterList", node => node.ChildAsts<IAstElement>());
-            Parameter = Transient<IAstElement>("Parameter");
-            TypedParameter = NonTerminal("TypedParameter", node => new ParameterDefinition(node.Child(1).Token.Text, node.ChildAst(TypeReference)));
-            UntypedParameter = NonTerminal("UntypedParameter", node => new ParameterDefinition(node.FindTokenAndGetText(), null));
+            ParameterList = NonTerminalWithCustomType("ParameterList", node => node.ChildAsts<ParameterDefinition>());
+            Parameter = Transient<ParameterDefinition>("Parameter");
+            TypedParameter = NonTerminalWithCustomType("TypedParameter", node => new ParameterDefinition(node.Child(1).Token.Text, node.ChildAst(TypeReference)));
+            UntypedParameter = NonTerminalWithCustomType("UntypedParameter", node => new ParameterDefinition(node.FindTokenAndGetText(), AstImplicitType.Instance));
         }
 
         private void SetDefinitionRules() {
@@ -366,7 +366,7 @@ namespace Light.Parsing {
             return new NonTerminal<IEnumerable<IAstStatement>>(name, nodeCreator);
         }
 
-        private static NonTerminal<TAstNode> NonTerminalWithNoElement<TAstNode>(string name, Func<ParseTreeNode, TAstNode> nodeCreator) {
+        private static NonTerminal<TAstNode> NonTerminalWithCustomType<TAstNode>(string name, Func<ParseTreeNode, TAstNode> nodeCreator) {
             return new NonTerminal<TAstNode>(name, nodeCreator);
         }
 

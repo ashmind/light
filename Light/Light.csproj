@@ -72,6 +72,7 @@
     <Compile Include="Ast\Expressions\MemberExpression.cs" />
     <Compile Include="Ast\IAstElement.cs" />
     <Compile Include="Ast\Incomplete\AstUnknownMethod.cs" />
+    <Compile Include="Ast\Incomplete\AstUnknownType.cs" />
     <Compile Include="Ast\Incomplete\IdentifierExpression.cs" />
     <Compile Include="Ast\Literals\ObjectInitializer.cs" />
     <Compile Include="Ast\Literals\ListInitializer.cs" />

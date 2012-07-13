@@ -10,7 +10,7 @@ namespace Light.Processing.Steps {
     public class GenerateMainMethod : ProcessingStepBase<AstRoot> {
         public override void ProcessAfterChildren(AstRoot root, ProcessingContext context) {
             var statements = root.Children<IAstStatement>();
-            var main = new FunctionDefinition("Main", Enumerable.Empty<IAstElement>(), statements, AstVoidType.Instance) {
+            var main = new FunctionDefinition("Main", No.Parameters, statements, AstVoidType.Instance) {
                 Compilation = { Static = true, EntryPoint = true }
             };
 

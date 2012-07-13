@@ -5,12 +5,12 @@ using Light.Compilation.Instructions;
 namespace Light.Ast.Definitions {
     public abstract class MethodDefinitionBase : IAstElement {
         protected MethodDefinitionBase() {
-            this.Parameters = new List<IAstElement>();
+            this.Parameters = new List<ParameterDefinition>();
             this.Body = new List<IAstStatement>();
             this.Compilation = new MethodCompilation();
         }
 
-        protected MethodDefinitionBase(IEnumerable<IAstElement> parameters, IEnumerable<IAstStatement> body) {
+        protected MethodDefinitionBase(IEnumerable<ParameterDefinition> parameters, IEnumerable<IAstStatement> body) {
             var parametersAsList = parameters.ToList();
             var bodyAsList = body.ToList();
 
@@ -23,12 +23,12 @@ namespace Light.Ast.Definitions {
             this.Compilation = new MethodCompilation();
         }
 
-        public IList<IAstElement> Parameters { get; private set; }
+        public IList<ParameterDefinition> Parameters { get; private set; }
         public IList<IAstStatement> Body { get; private set; }
         public MethodCompilation Compilation { get; private set; }
 
         public virtual IEnumerable<IAstElement> Children() {
-            return this.Parameters.Concat(this.Body);
+            return this.Parameters.Cast<IAstElement>().Concat(this.Body);
         }
     }
 }

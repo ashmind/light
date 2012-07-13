@@ -1,23 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast.References;
 
 namespace Light.Ast.Definitions {
     public class ParameterDefinition : IAstElement {
+        private IAstTypeReference type;
         public string Name { get; private set; }
-        public string TypeName { get; private set; }
+        public IAstTypeReference Type
+        {
+            get { return this.type; }
+            set {
+                Argument.RequireNotNull("value", value);
+                this.type = value;
+            }
+        }
 
-        public ParameterDefinition(string name, string type) {
+        public ParameterDefinition(string name, IAstTypeReference type) {
             Argument.RequireNotNullAndNotEmpty("name", name);
 
             this.Name = name;
-            this.TypeName = type;
+            this.Type = type;
         }
 
         #region IAstElement Members
 
         IEnumerable<IAstElement> IAstElement.Children() {
-            yield break;
+            return No.Elements;
         }
 
         #endregion

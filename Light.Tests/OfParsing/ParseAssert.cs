@@ -1,18 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
+using Light.Ast;
 using MbUnit.Framework;
 
 namespace Light.Tests.OfParsing {
     public static class ParseAssert {
-        public static void IsParsedTo(string literal, string expectedResult, bool includeTypesOfValues = false) {
+        public static void IsParsedTo(string code, string expectedResult, bool includeTypesOfValues = false) {
             var parser = new LightParser();
-            var result = parser.Parse(literal);
+            var result = parser.Parse(code);
 
             var visitor = new TestAstVisitor { IncludesTypesOfValues = includeTypesOfValues };
             AssertEx.That(() => !result.HasErrors);
             Assert.AreEqual(expectedResult, visitor.Describe(result.Root));
+        }
+
+        public static void IsParsedTo<TAstElement>(string code, Expression<Func<TAstElement, bool>> condition) {
+            IsParsedTo(code, root => root.Children().FirstOrDefault() ?? root, condition);
+        }
+
+        public static void IsParsedTo<TAstElement>(string code, Func<IAstElement, IAstElement> getElementFromResult, Expression<Func<TAstElement, bool>> condition) {
+            var result = new LightParser().Parse(code);
+            AssertEx.That(() => !result.HasErrors);
+
+            var element = getElementFromResult(result.Root);
+            Assert.IsInstanceOfType<TAstElement>(element);
+            AssertEx.That(Expression.Lambda<Func<bool>>(Expression.Invoke(condition, Expression.Constant(element))));
         }
     }
 }

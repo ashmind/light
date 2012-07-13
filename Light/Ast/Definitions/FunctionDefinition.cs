@@ -17,7 +17,7 @@ namespace Light.Ast.Definitions {
             }
         }
 
-        public FunctionDefinition(string name, IEnumerable<IAstElement> parameters, IEnumerable<IAstStatement> body, IAstTypeReference returnType)
+        public FunctionDefinition(string name, IEnumerable<ParameterDefinition> parameters, IEnumerable<IAstStatement> body, IAstTypeReference returnType)
             : base(parameters, body)
         {
             Argument.RequireNotNullAndNotEmpty("name", name);
