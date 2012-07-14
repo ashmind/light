@@ -6,11 +6,11 @@ using Mono.Cecil;
 
 namespace Light.Compilation.Internal {
     public static class CecilHelper {
-        public static MethodDefinition CreateConstructor(ModuleDefinition module) {
+        public static MethodDefinition CreateConstructor(TypeDefinition type) {
             return new MethodDefinition(
                 ".ctor",
                 MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.HideBySig,
-                GetVoidType(module)
+                GetVoidType(type.Module)
             );
         }
 

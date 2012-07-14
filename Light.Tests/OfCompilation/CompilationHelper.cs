@@ -10,13 +10,19 @@ using Gallio.Framework;
 using Light.Ast;
 using Light.Compilation;
 using MbUnit.Framework;
-using Test = Gallio.Model.Tree.Test;
 
 namespace Light.Tests.OfCompilation {
     public static class CompilationHelper {
         public static Assembly CompileFromResource(string resourceName, CompilationTarget target = CompilationTarget.Library) {
             var code = Resource.ReadAllText(typeof(Resource), resourceName);
             return CompileCode(code, target);
+        }
+
+        public static dynamic CompileCodeAndGetInstance(string code, string typeName) {
+            var assembly = CompileCode(code);
+            var type = assembly.GetType(typeName, true);
+
+            return Activator.CreateInstance(type);
         }
 
         public static Assembly CompileCode(string code, CompilationTarget target = CompilationTarget.Library) {

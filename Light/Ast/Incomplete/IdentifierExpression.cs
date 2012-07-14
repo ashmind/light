@@ -5,7 +5,7 @@ using Light.Ast.Expressions;
 using Light.Ast.References;
 
 namespace Light.Ast.Incomplete {
-    public class IdentifierExpression : IAstExpression {
+    public class IdentifierExpression : IAstExpression, IAstAssignable {
         public string Name { get; private set; }
 
         public IdentifierExpression(string name) {

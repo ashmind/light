@@ -36,5 +36,13 @@ namespace Light.Ast.References {
         }
 
         #endregion
+
+        #region IAstReference Members
+
+        object IAstReference.Target {
+            get { return this.Parameter; }
+        }
+
+        #endregion
     }
 }

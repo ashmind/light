@@ -7,6 +7,9 @@ using Light.Ast.References;
 
 namespace Light.Processing.Steps {
     public class ResolveTypeReferences : ProcessingStepBase<AstUnknownType> {
+        public ResolveTypeReferences() : base(ProcessingStage.ReferenceResolution) {
+        }
+
         public override IAstElement ProcessAfterChildren(AstUnknownType type, ProcessingContext context) {
             return ResolveSingleType(context, type.Name);
         }

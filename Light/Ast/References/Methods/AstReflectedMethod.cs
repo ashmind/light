@@ -29,5 +29,13 @@ namespace Light.Ast.References.Methods {
         }
 
         #endregion
+
+        #region IAstReference Members
+
+        object IAstReference.Target {
+            get { return this.Method; }
+        }
+
+        #endregion
     }
 }

@@ -41,5 +41,13 @@ namespace Light.Ast.References.Types {
         }
 
         #endregion
+
+        #region IAstReference Members
+
+        object IAstReference.Target {
+            get { return this.ActualType; }
+        }
+
+        #endregion
     }
 }

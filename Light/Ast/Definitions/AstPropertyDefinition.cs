@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Definitions {
-    public class PropertyDefinition : IAstElement {
+    public class AstPropertyDefinition : IAstDefinition {
         private IAstTypeReference type;
         public string Name { get; private set; }
 
@@ -16,11 +16,11 @@ namespace Light.Ast.Definitions {
             }
         }
 
-        public PropertyDefinition(string name, IAstTypeReference type) {
+        public AstPropertyDefinition(string name, IAstTypeReference type) {
             Argument.RequireNotNullAndNotEmpty("name", name);
 
-            Name = name;
-            Type = type;
+            this.Name = name;
+            this.Type = type;
         }
 
         #region IAstElement Members

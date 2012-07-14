@@ -15,11 +15,7 @@ namespace Light.Compilation.Cil {
                 context.Compile(argument);
             }
 
-            var reflectedMethod = call.Method as AstReflectedMethod;
-            if (reflectedMethod == null)
-                throw new NotImplementedException("CallCompiler: Cannot compile call to " + call.Method + ".");
-
-            processor.Emit(OpCodes.Call, context.Module.Import(reflectedMethod.Method));
+            processor.Emit(OpCodes.Call, context.ConvertMethodReference(call.Method));
         }
     }
 }

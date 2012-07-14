@@ -13,19 +13,22 @@ namespace Light.Tests.OfParsing {
         [Row("class X\r\nend",     "class")]
         [Row("interface X\r\nend", "interface")]
         public void Types(string code, string definitionType) {
-            ParseAssert.IsParsedTo<TypeDefinition>(code, t => t.Name == "X" && t.DefinitionType == definitionType);
+            ParseAssert.IsParsedTo<AstTypeDefinition>(code, t => t.Name == "X" && t.DefinitionType == definitionType);
         }
 
         [Test]
-        public void TypedAutoPropertyWithoutAssignment() {
-            var code = @"
+        [Row("")]
+        [Row("private")]
+        [Row("public")]
+        public void TypedAutoPropertyWithoutAssignment(string accessModifier) {
+            var code = string.Format(@"
                 class X
-                    string x
+                    {0} string x
                 end
-            ".Trim();
+            ", accessModifier).Trim();
 
             ParseAssert.IsParsedTo(
-                code, r => r.Descendant<PropertyDefinition>(),
+                code, r => r.Descendant<AstPropertyDefinition>(),
                 f => f.Name == "x" && f.Type.Name == "string"
             );
         }

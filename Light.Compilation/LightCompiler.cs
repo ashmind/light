@@ -5,20 +5,23 @@ using System.Linq;
 using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Compilation.Cil;
+using Light.Compilation.Definitions;
 using Light.Compilation.Internal;
-using Light.Compilation.Types;
+using Light.Compilation.References;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using TypeDefinition = Mono.Cecil.TypeDefinition;
 
 namespace Light.Compilation {
     public class LightCompiler {
-        private readonly ITypeResolver[] typeResolvers;
+        private readonly IDefinitionBuilder[] builders;
         private readonly ICilCompiler[] cilCompilers;
+        private readonly IReferenceProvider[] referenceProviders;
 
-        public LightCompiler(ITypeResolver[] typeResolvers, ICilCompiler[] cilCompilers) {
-            this.typeResolvers = typeResolvers;
+        public LightCompiler(IDefinitionBuilder[] builders, ICilCompiler[] cilCompilers, IReferenceProvider[] referenceProviders) {
+            this.builders = builders;
             this.cilCompilers = cilCompilers;
+            this.referenceProviders = referenceProviders;
         }
 
         public void Compile(AstRoot root, Stream toStream, CompilationArguments arguments) {
@@ -32,42 +35,41 @@ namespace Light.Compilation {
                 arguments.Target == CompilationTarget.Console ? ModuleKind.Console : ModuleKind.Dll
             );
 
-            foreach (var typeAst in root.Descendants<Ast.Definitions.TypeDefinition>()) {
-                CompileType(assembly.MainModule, typeAst);
+            var module = assembly.MainModule;
+            var context = new DefinitionBuildingContext(module, this.referenceProviders);
+            foreach (var typeAst in root.Descendants<Ast.Definitions.AstTypeDefinition>()) {
+                CompileType(module, typeAst, context);
             }
 
             assembly.Write(toStream);
         }
 
-        private void CompileType(ModuleDefinition module, Ast.Definitions.TypeDefinition typeAst) {
+        private void CompileType(ModuleDefinition module, Ast.Definitions.AstTypeDefinition typeAst, DefinitionBuildingContext context) {
             var type = new TypeDefinition("", typeAst.Name, TypeAttributes.Public | ToTypeAttribute(typeAst.DefinitionType)) {
                 BaseType = module.Import(typeof(object))
             };
-            foreach (var memberAst in typeAst.Members) {
-                CompileMember(type, memberAst, module);
-            }
+            module.Types.Add(type);            
 
-            module.Types.Add(type);
+            foreach (var memberAst in typeAst.Members) {
+                CompileMember(type, memberAst, context);
+            }
         }
 
-        private void CompileMember(TypeDefinition type, IAstElement memberAst, ModuleDefinition module) {
+        private void CompileMember(TypeDefinition type, IAstDefinition memberAst, DefinitionBuildingContext context) {
             var functionAst = memberAst as MethodDefinitionBase;
             if (functionAst != null) {
-                CompileFunction(type, functionAst, module);
+                CompileFunction(type, functionAst, context);
             }
             else {
-                throw new NotImplementedException("LightCompiler.CompileMember: cannot compile " + memberAst + ".");
+                CompileDefinition(type, memberAst, context);
             }
         }
 
-        private void CompileFunction(TypeDefinition type, MethodDefinitionBase methodAst, ModuleDefinition module) {
+        private void CompileFunction(TypeDefinition type, MethodDefinitionBase methodAst, DefinitionBuildingContext context) {
             MethodDefinition method;
             if (methodAst is Ast.Definitions.FunctionDefinition) {
                 var functionAst = methodAst as FunctionDefinition;
-                var returnType = this.typeResolvers.Select(r => r.Resolve(functionAst.ReturnType, module))
-                                     .FirstOrDefault(t => t != null);
-                if (returnType == null)
-                    throw new NotSupportedException("Cannot resolve AST type " + functionAst.ReturnType);
+                var returnType = context.ConvertTypeReference(functionAst.ReturnType);
 
                 var attributes = MethodAttributes.Public;
                 if (methodAst.Compilation.Static)
@@ -75,35 +77,42 @@ namespace Light.Compilation {
 
                 method = new MethodDefinition(functionAst.Name, attributes, returnType);
                 if (methodAst.Compilation.EntryPoint)
-                    module.EntryPoint = method;
+                    type.Module.EntryPoint = method;
             }
             else if (methodAst is Ast.Definitions.ConstructorDefinition) {
-                method = CecilHelper.CreateConstructor(module);
+                method = CecilHelper.CreateConstructor(type);
                 method.Attributes |= MethodAttributes.Public;
             }
             else {
                 throw new NotImplementedException("LightCompiler.CompileFunction: cannot compile " + methodAst + ".");
             }
 
-            CompileParameters(method, methodAst, module);
-            CompileBody(method, methodAst, module);
             type.Methods.Add(method);
+            CompileParameters(method, methodAst, context);
+            CompileBody(method, methodAst, context);
         }
 
-        private void CompileParameters(MethodDefinition method, MethodDefinitionBase methodAst, ModuleDefinition module) {
+        private void CompileParameters(MethodDefinition method, MethodDefinitionBase methodAst, DefinitionBuildingContext context) {
             foreach (var parameter in methodAst.Parameters) {
-                var type = typeResolvers.Select(r => r.Resolve(parameter.Type, module)).First(t => t != null);
-                method.Parameters.Add(new ParameterDefinition(parameter.Name, ParameterAttributes.None, type));
+                method.Parameters.Add(new ParameterDefinition(parameter.Name, ParameterAttributes.None, context.ConvertTypeReference(parameter.Type)));
             }
         }
 
-        private void CompileBody(MethodDefinition method, Ast.Definitions.MethodDefinitionBase methodAst, ModuleDefinition module) {
+        private void CompileBody(MethodDefinition method, Ast.Definitions.MethodDefinitionBase methodAst, DefinitionBuildingContext parentContext) {
             var body = method.Body.GetILProcessor();
-            var context = new CilCompilationContext(methodAst, (e, c) => CompileCil(body, e, c), module);
+            var context = new CilCompilationContext(methodAst, (e, c) => CompileCil(body, e, c), parentContext);
 
             foreach (var element in methodAst.Body) {
                 CompileCil(body, element, context);
             }
+        }
+
+        private void CompileDefinition(IMemberDefinition parent, IAstDefinition definitionAst, DefinitionBuildingContext context) {
+            var builder = this.builders.SingleOrDefault(c => c.CanBuild(definitionAst, parent));
+            if (builder == null)
+                throw new NotImplementedException("LightCompiler: No DefinitionBuilder for " + definitionAst + " under " + parent + ".");
+
+            builder.Build(definitionAst, parent, context);
         }
 
         private void CompileCil(ILProcessor body, IAstElement element, CilCompilationContext context) {

@@ -7,6 +7,9 @@ using Light.Ast.Incomplete;
 
 namespace Light.Processing.Steps {
     public class ResolveMethodReferences : ProcessingStepBase<CallExpression> {
+        public ResolveMethodReferences() : base(ProcessingStage.ReferenceResolution) {
+        }
+
         public override IAstElement ProcessAfterChildren(CallExpression call, ProcessingContext context) {
             if (!(call.Method is AstUnknownMethod))
                 return call;

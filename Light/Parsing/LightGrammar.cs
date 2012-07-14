@@ -263,7 +263,7 @@ namespace Light.Parsing {
                 (IAstElement)node.ChildAst(2)
             ));
             VariableDefinition = NonTerminal("VariableDefinition", node => new VariableDefinition(node.ChildNodes[1].Token.Text, null));
-            Assignment = NonTerminal("Assignment", node => new Assignment((IAstElement)node.ChildAst(0), (IAstElement)node.ChildAst(2)));
+            Assignment = NonTerminal("Assignment", node => new AssignmentStatement((IAstAssignable)node.ChildAst(0), (IAstExpression)node.ChildAst(2)));
             AssignmentLeftHandSide = Transient<IAstElement>("AssignmentLeftHandSide");
             ReturnStatement = NonTerminal("Return", node => new ReturnStatement((IAstExpression)node.ChildAst(1)));
         }
@@ -287,33 +287,33 @@ namespace Light.Parsing {
 
         #region Definitions
 
-        public NonTerminal<IAstElement> Definition { get; private set; }
+        public NonTerminal<IAstDefinition> Definition { get; private set; }
         public NonTerminal<IAstElement> Import { get; private set; }
-        public NonTerminal<IAstElement> TypeDefinition { get; private set; }
-        public NonTerminal<IAstElement> TypeMember { get; private set; }
-        public NonTerminal<IEnumerable<IAstElement>> TypeMemberList { get; private set; }
-        public NonTerminal<IEnumerable<IAstElement>> OptionalTypeContent { get; private set; }
+        public NonTerminal<IAstDefinition> TypeDefinition { get; private set; }
+        public NonTerminal<IAstDefinition> TypeMember { get; private set; }
+        public NonTerminal<IEnumerable<IAstDefinition>> TypeMemberList { get; private set; }
+        public NonTerminal<IEnumerable<IAstDefinition>> OptionalTypeContent { get; private set; }
         public NonTerminal OptionalAccessLevel { get; private set; }
-        public NonTerminal<IAstElement> Property { get; private set; }
-        public NonTerminal<IAstElement> Constructor { get; private set; }
-        public NonTerminal<IAstElement> Function { get; private set; }
+        public NonTerminal<IAstDefinition> Property { get; private set; }
+        public NonTerminal<IAstDefinition> Constructor { get; private set; }
+        public NonTerminal<IAstDefinition> Function { get; private set; }
         public NonTerminal<AstParameterDefinition> Parameter { get; private set; }
         public NonTerminal<AstParameterDefinition> TypedParameter { get; private set; }
         public NonTerminal<AstParameterDefinition> UntypedParameter { get; private set; }
         public NonTerminal<IEnumerable<AstParameterDefinition>> ParameterList { get; private set; }
 
         private void ConstructDefinitions() {
-            Definition = Transient<IAstElement>("Definition");
+            Definition = Transient<IAstDefinition>("Definition");
             Import = NonTerminal("Import", node => new ImportDefinition((CompositeName)node.ChildAst(1)));
-            TypeDefinition = NonTerminal("TypeDefinition", node => new TypeDefinition(
+            TypeDefinition = NonTerminal("TypeDefinition", node => new AstTypeDefinition(
                 node.ChildBefore(Name).FindTokenAndGetText(),
                 node.Child(Name).Token.Text,
                 node.ChildAst(OptionalTypeContent)
             ));
-            TypeMember = Transient<IAstElement>("TypeMember");
-            TypeMemberList = NonTerminal("TypeMemberList", node => node.ChildAsts<IAstElement>());
-            OptionalTypeContent = NonTerminal("OptionalTypeContent", node => node.ChildAst(TypeMemberList) ?? Enumerable.Empty<IAstElement>());
-            Property = NonTerminal("Property", node => new PropertyDefinition(node.Child(2).Token.Text, node.ChildAst(TypeReference)));
+            TypeMember = Transient<IAstDefinition>("TypeMember");
+            TypeMemberList = NonTerminal("TypeMemberList", node => node.ChildAsts<IAstDefinition>());
+            OptionalTypeContent = NonTerminal("OptionalTypeContent", node => node.ChildAst(TypeMemberList) ?? Enumerable.Empty<IAstDefinition>());
+            Property = NonTerminal("Property", node => new AstPropertyDefinition(node.Child(2).Token.Text, node.ChildAst(TypeReference)));
             Constructor = NonTerminal("Constructor", node => new ConstructorDefinition(node.ChildAst(ParameterList), node.ChildAst(OptionalBodyOfStatements)));
             Function = NonTerminal(
                 "Function",
@@ -346,6 +346,14 @@ namespace Light.Parsing {
             Parameter.Rule = TypedParameter | UntypedParameter;
             TypedParameter.Rule = TypeReference + Name;
             UntypedParameter.Rule = Name;
+        }
+
+        private static NonTerminal<IAstDefinition> NonTerminal(string name, Func<ParseTreeNode, IAstDefinition> nodeCreator) {
+            return new NonTerminal<IAstDefinition>(name, nodeCreator);
+        }
+
+        private static NonTerminal<IEnumerable<IAstDefinition>> NonTerminal(string name, Func<ParseTreeNode, IEnumerable<IAstDefinition>> nodeCreator) {
+            return new NonTerminal<IEnumerable<IAstDefinition>>(name, nodeCreator);
         }
 
         #endregion

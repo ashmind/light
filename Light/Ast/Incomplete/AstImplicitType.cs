@@ -37,5 +37,13 @@ namespace Light.Ast.Incomplete {
         }
 
         #endregion
+
+        #region IAstReference Members
+
+        object IAstReference.Target {
+            get { return null; }
+        }
+
+        #endregion
     }
 }

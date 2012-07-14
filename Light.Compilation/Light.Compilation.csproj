@@ -61,10 +61,16 @@
   <ItemGroup>
     <Compile Include="Cil\CallCompiler.cs" />
     <Compile Include="Cil\CilCompilationContext.cs" />
+    <Compile Include="Cil\AssignmentCompiler.cs" />
+    <Compile Include="Cil\PropertyReferenceCompiler.cs" />
     <Compile Include="Cil\ParameterReferenceCompiler.cs" />
     <Compile Include="Cil\PrimitiveValueCompiler.cs" />
     <Compile Include="Cil\ReturnCompiler.cs" />
     <Compile Include="CompilationArguments.cs" />
+    <Compile Include="Definitions\DefinitionBuilderBase.cs" />
+    <Compile Include="Definitions\DefinitionBuildingContext.cs" />
+    <Compile Include="Definitions\IDefinitionBuilder.cs" />
+    <Compile Include="Definitions\PropertyOrFieldDefinitionBuilder.cs" />
     <Compile Include="LightCompilationModule.cs" />
     <Compile Include="CompilationTarget.cs" />
     <Compile Include="Internal\CecilHelper.cs" />
@@ -72,10 +78,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Cil\CilCompilerBase.cs" />
     <Compile Include="Cil\ICilCompiler.cs" />
-    <Compile Include="Types\VoidTypeResolver.cs" />
-    <Compile Include="Types\ITypeResolver.cs" />
-    <Compile Include="Types\ReflectedTypeResolver.cs" />
-    <Compile Include="Types\TypeResolverBase.cs" />
+    <Compile Include="References\IReferenceContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="References\IReferenceProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="References\Providers\ReflectedProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="References\Providers\VoidTypeProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="References\ReferenceContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

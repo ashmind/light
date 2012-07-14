@@ -4,6 +4,12 @@ namespace Light.Processing {
     public abstract class ProcessingStepBase<TAstElement> : IProcessingStep 
         where TAstElement : class, IAstElement
     {
+        public ProcessingStage Stage { get; private set; }
+
+        protected ProcessingStepBase(ProcessingStage stage) {
+            this.Stage = stage;
+        }
+
         public virtual IAstElement ProcessBeforeChildren(TAstElement element, ProcessingContext context) {
             return element;
         }

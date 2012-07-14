@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
-    public class MemberExpression : IAstExpression {
+    public class MemberExpression : IAstExpression, IAstAssignable {
         public IAstElement Target { get; private set; }
         public string Name { get; private set; }
 

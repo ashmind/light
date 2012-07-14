@@ -6,7 +6,10 @@ using Light.Ast.Definitions;
 using Light.Processing.Scoping;
 
 namespace Light.Processing.Steps {
-    public class AddImportsToScope : ProcessingStepBase<ImportDefinition> {
+    public class AddImportToScope : ProcessingStepBase<ImportDefinition> {
+        public AddImportToScope() : base(ProcessingStage.ScopeDefinition) {
+        }
+
         public override IAstElement ProcessAfterChildren(ImportDefinition import, ProcessingContext context) {
             var @namespace = import.Namespace.ToString();
             if (!@namespace.StartsWith("System"))

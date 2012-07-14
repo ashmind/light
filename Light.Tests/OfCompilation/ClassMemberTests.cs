@@ -5,22 +5,28 @@ using MbUnit.Framework;
 
 namespace Light.Tests.OfCompilation {
     [TestFixture]
-    public class FunctionTests {
+    public class ClassMemberTests {
         [Test]
         [Row(typeof(string), "string", "x")]
-        public void CallAndReturn<T>(string argumentType, T value) {
+        public void WriteAndReadPropertyThroughMethods<T>(string propetyType, T value) {
             var code = string.Format(@"
                 public class Test
-                    public function Identity({0} x)
+                    private {0} x
+                    
+                    public function SetValue({0} value)
+                        x = value
+                    end
+
+                    public function GetValue()
                         return x
                     end
                 end
-            ", argumentType).Trim();
+            ", propetyType).Trim();
 
             var instance = CompilationHelper.CompileCodeAndGetInstance(code, "Test");
-            var returned = instance.Identity(value);
+            instance.SetValue(value);
 
-            Assert.AreEqual(returned, value);
+            Assert.AreEqual(instance.GetValue(), value);
         }
     }
 }

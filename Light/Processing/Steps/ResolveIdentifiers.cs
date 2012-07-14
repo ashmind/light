@@ -8,6 +8,9 @@ using Light.Ast.References;
 
 namespace Light.Processing.Steps {
     public class ResolveIdentifiers : ProcessingStepBase<IAstElement> {
+        public ResolveIdentifiers() : base(ProcessingStage.ReferenceResolution) {
+        }
+
         public override IAstElement ProcessBeforeChildren(IAstElement element, ProcessingContext context) {
             var call = element as CallExpression;
             if (call != null && call.Target is IdentifierExpression)

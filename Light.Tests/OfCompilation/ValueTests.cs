@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MbUnit.Framework;
 
 namespace Light.Tests.OfCompilation {
@@ -20,10 +19,9 @@ namespace Light.Tests.OfCompilation {
                     end
                 end
             ").Trim();
-            var compiled = CompilationHelper.CompileCode(code);
-            var type = compiled.GetType("Test", true);
-            var instance = Activator.CreateInstance(type);
-            var value = type.GetMethod("GetValue").Invoke(instance, null);
+
+            var instance = CompilationHelper.CompileCodeAndGetInstance(code, "Test");
+            var value = instance.GetValue();
 
             Assert.AreEqual(expectedValue, value);
         }

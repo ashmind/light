@@ -8,6 +8,9 @@ using Light.Processing.Scoping;
 
 namespace Light.Processing.Steps {
     public class DefineFunctionScope : ProcessingStepBase<FunctionDefinition> {
+        public DefineFunctionScope() : base(ProcessingStage.ScopeDefinition) {
+        }
+
         public override IAstElement ProcessBeforeChildren(FunctionDefinition function, ProcessingContext context) {
             var scope = new Scope();
             foreach (var parameter in function.Parameters) {

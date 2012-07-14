@@ -8,6 +8,9 @@ using Light.Ast.References.Types;
 
 namespace Light.Processing.Steps {
     public class GenerateMainMethod : ProcessingStepBase<AstRoot> {
+        public GenerateMainMethod() : base(ProcessingStage.PreCompilation) {
+        }
+
         public override IAstElement ProcessAfterChildren(AstRoot root, ProcessingContext context) {
             var statements = root.Children<IAstStatement>();
             var main = new FunctionDefinition("Main", No.Parameters, statements, AstVoidType.Instance) {
@@ -16,7 +19,7 @@ namespace Light.Processing.Steps {
 
             root.Elements.RemoveWhere(s => s is IAstStatement);
 
-            var program = new TypeDefinition(TypeDefintionTypes.Class, "Program", main);
+            var program = new AstTypeDefinition(TypeDefintionTypes.Class, "Program", main);
             root.Elements.Add(program);
 
             return root;

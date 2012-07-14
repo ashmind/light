@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AshMind.Extensions">
@@ -59,9 +61,10 @@
     <Compile Include="Ast\AstVisitor.cs" />
     <Compile Include="Ast\AstElementTransform.cs" />
     <Compile Include="Ast\Definitions\ConstructorDefinition.cs" />
-    <Compile Include="Ast\Definitions\PropertyDefinition.cs" />
+    <Compile Include="Ast\Definitions\AstPropertyDefinition.cs" />
+    <Compile Include="Ast\Definitions\IAstDefinition.cs" />
     <Compile Include="Ast\Definitions\MethodDefinitionBase.cs" />
-    <Compile Include="Ast\Definitions\TypeDefinition.cs" />
+    <Compile Include="Ast\Definitions\AstTypeDefinition.cs" />
     <Compile Include="Ast\Definitions\FunctionDefinition.cs" />
     <Compile Include="Ast\Definitions\TypeDefintionTypes.cs" />
     <Compile Include="Ast\Errors\AstMissingMethod.cs" />
@@ -83,11 +86,13 @@
     <Compile Include="Ast\Definitions\AstParameterDefinition.cs" />
     <Compile Include="Ast\No.cs" />
     <Compile Include="Ast\References\AstParameterReference.cs" />
+    <Compile Include="Ast\References\AstPropertyReference.cs" />
     <Compile Include="Ast\References\IAstMethodReference.cs" />
     <Compile Include="Ast\References\IAstReference.cs" />
     <Compile Include="Ast\References\Methods\AstReflectedMethod.cs" />
-    <Compile Include="Ast\Statements\Assignment.cs" />
+    <Compile Include="Ast\Statements\AssignmentStatement.cs" />
     <Compile Include="Ast\Statements\ContinueStatement.cs" />
+    <Compile Include="Ast\IAstAssignable.cs" />
     <Compile Include="Ast\Statements\IfOrUnlessKind.cs" />
     <Compile Include="Ast\IAstStatement.cs" />
     <Compile Include="Ast\Statements\ReturnStatement.cs" />
@@ -109,12 +114,15 @@
     <Compile Include="Interpretation\LightInterpreter.cs" />
     <Compile Include="LightMainModule.cs" />
     <Compile Include="Processing\ProcessingContext.cs" />
+    <Compile Include="Processing\ProcessingStage.cs" />
     <Compile Include="Processing\Scoping\BuiltInTypesNameSource.cs" />
     <Compile Include="Processing\Scoping\INameSource.cs" />
     <Compile Include="Processing\Scoping\ExternalNamespaceNameSource.cs" />
     <Compile Include="Processing\Scoping\Scope.cs" />
     <Compile Include="Processing\ProcessingStepBase.cs" />
-    <Compile Include="Processing\Steps\AddImportsToScope.cs" />
+    <Compile Include="Processing\Steps\AddImportToScope.cs" />
+    <Compile Include="Processing\Steps\AddPropertyToScope.cs" />
+    <Compile Include="Processing\Steps\DefineTypeScope.cs" />
     <Compile Include="Processing\Steps\ResolveTypeReferences.cs" />
     <Compile Include="Processing\Steps\DefineFunctionScope.cs" />
     <Compile Include="Processing\Steps\ResolveMethodReferences.cs" />

@@ -3,7 +3,7 @@ using System.Linq;
 using Light.Compilation.Instructions;
 
 namespace Light.Ast.Definitions {
-    public abstract class MethodDefinitionBase : IAstElement {
+    public abstract class MethodDefinitionBase : IAstDefinition {
         protected MethodDefinitionBase() {
             this.Parameters = new List<AstParameterDefinition>();
             this.Body = new List<IAstStatement>();

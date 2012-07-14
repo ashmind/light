@@ -5,8 +5,11 @@ using Light.Ast;
 using Light.Ast.Definitions;
 
 namespace Light.Processing.Steps {
-    public class GenerateDefaultConstructors : ProcessingStepBase<TypeDefinition> {
-        public override IAstElement ProcessBeforeChildren(TypeDefinition type, ProcessingContext context) {
+    public class GenerateDefaultConstructors : ProcessingStepBase<AstTypeDefinition> {
+        public GenerateDefaultConstructors() : base(ProcessingStage.PreCompilation) {
+        }
+
+        public override IAstElement ProcessBeforeChildren(AstTypeDefinition type, ProcessingContext context) {
             if (type.Children<ConstructorDefinition>().Any())
                 return type;
 

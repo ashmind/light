@@ -4,14 +4,15 @@ using System.Linq;
 using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.Incomplete;
-using Light.Ast.Literals;
 using Light.Ast.References;
 using Light.Ast.References.Types;
 using Light.Ast.Statements;
-using Light.Ast.Types;
 
 namespace Light.Processing.Steps {
     public class InferFunctionReturnTypes : ProcessingStepBase<FunctionDefinition> {
+        public InferFunctionReturnTypes() : base(ProcessingStage.TypeInference) {
+        }
+
         public override IAstElement ProcessAfterChildren(FunctionDefinition function, ProcessingContext context) {
             if (function.ReturnType != AstImplicitType.Instance)
                 return function;

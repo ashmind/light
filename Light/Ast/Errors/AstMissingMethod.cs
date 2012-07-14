@@ -27,5 +27,13 @@ namespace Light.Ast.Errors {
         }
 
         #endregion
+
+        #region IAstReference Members
+
+        object IAstReference.Target {
+            get { return null; }
+        }
+
+        #endregion
     }
 }

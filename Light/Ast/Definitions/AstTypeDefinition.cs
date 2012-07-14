@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Light.Ast.Definitions {
-    public class TypeDefinition : IAstElement {
+    public class AstTypeDefinition : IAstDefinition {
         private string definitionType;
-        private string name;
+        public string Name { get; private set; }
 
         public string DefinitionType {
             get { return definitionType; }
@@ -15,23 +15,16 @@ namespace Light.Ast.Definitions {
             }
         }
 
-        public string Name {
-            get { return name; }
-            set {
-                Argument.RequireNotNullAndNotEmpty("name", value);
-                this.name = value;
-            }
-        }
+        public IList<IAstDefinition> Members { get; private set; }
 
-        public IList<IAstElement> Members { get; private set; }
-
-        public TypeDefinition(string definitionType, string name, params IAstElement[] members) 
-            : this(definitionType, name, (IEnumerable<IAstElement>)members)
+        public AstTypeDefinition(string definitionType, string name, params IAstDefinition[] members)
+            : this(definitionType, name, (IEnumerable<IAstDefinition>)members)
         {
         }
 
-        public TypeDefinition(string definitionType, string name, IEnumerable<IAstElement> members) {
+        public AstTypeDefinition(string definitionType, string name, IEnumerable<IAstDefinition> members) {
             var membersList = members.ToList();
+            Argument.RequireNotNullAndNotEmpty("name", name);
             Argument.RequireNotNullAndNotContainsNull("members", membersList);
 
             this.DefinitionType = definitionType;

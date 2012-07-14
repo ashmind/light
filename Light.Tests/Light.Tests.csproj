@@ -40,6 +40,7 @@
     </Reference>
     <Reference Include="Gallio" />
     <Reference Include="MbUnit" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Pex.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -57,6 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OfCompilation\ClassMemberTests.cs" />
     <Compile Include="OfCompilation\FunctionTests.cs" />
     <Compile Include="OfParsing\DefinitionTests.cs" />
     <Compile Include="TestEnvironment.cs" />
