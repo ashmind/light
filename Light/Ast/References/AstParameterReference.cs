@@ -31,14 +31,6 @@ namespace Light.Ast.References {
 
         #region IAstReference Members
 
-        string IAstReference.Name {
-            get { return this.Parameter.Name; }
-        }
-
-        #endregion
-
-        #region IAstReference Members
-
         object IAstReference.Target {
             get { return this.Parameter; }
         }

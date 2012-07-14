@@ -22,6 +22,14 @@ namespace Light.Ast.References.Types {
             return new AstReflectedMethod(method, this);
         }
 
+        public IAstConstructorReference ResolveConstructor(IEnumerable<IAstExpression> arguments) {
+            var constructor = this.ActualType.GetConstructor(arguments.Select(a => ((AstReflectedType)a.ExpressionType).ActualType).ToArray());
+            if (constructor == null)
+                return null;
+
+            return new AstReflectedConstructor(constructor);
+        }
+
         public override string ToString() {
             return this.ActualType.ToString();
         }
@@ -36,7 +44,7 @@ namespace Light.Ast.References.Types {
 
         #region IAstReference Members
 
-        string IAstReference.Name {
+        string IAstTypeReference.Name {
             get { return this.ActualType.Name; }
         }
 

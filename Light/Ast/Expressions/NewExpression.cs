@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AshMind.Extensions;
 using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
     public class NewExpression : IAstExpression {
         private IAstTypeReference type;
-
         public IAstTypeReference Type {
             get { return type; }
             set {
@@ -16,10 +14,11 @@ namespace Light.Ast.Expressions {
             }
         }
 
-        public IList<IAstElement> Arguments { get; private set; }
+        public IAstConstructorReference Constructor { get; set; }
+        public IList<IAstExpression> Arguments { get; private set; }
         public IAstElement Initializer { get; set; }
 
-        public NewExpression(IAstTypeReference type, IEnumerable<IAstElement> arguments, IAstElement initializer) {
+        public NewExpression(IAstTypeReference type, IEnumerable<IAstExpression> arguments, IAstElement initializer) {
             var argumentList = arguments.ToList();
             Argument.RequireNotNullAndNotContainsNull("arguments", argumentList);
 
@@ -35,9 +34,14 @@ namespace Light.Ast.Expressions {
         #region IAstElement Members
 
         IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
-            return this.Arguments.Transform(transform).Concat(
-                this.Initializer = transform(this.Initializer)
-            );
+            yield return this.Type = (IAstTypeReference)transform(this.Type);
+            foreach (var argument in this.Arguments.Transform(transform)) {
+                yield return argument;
+            }
+            if (this.Initializer == null)
+                yield break;
+            
+            yield return this.Initializer = transform(this.Initializer);
         }
 
         #endregion

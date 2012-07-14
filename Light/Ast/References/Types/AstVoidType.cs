@@ -21,6 +21,10 @@ namespace Light.Ast.References.Types {
             return new AstMissingMethod(name, this);
         }
 
+        IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
+            return null;
+        }
+
         #endregion
 
         #region IAstElement Members
@@ -31,9 +35,9 @@ namespace Light.Ast.References.Types {
 
         #endregion
 
-        #region IAstReference Members
+        #region IAstTypeReference Members
 
-        string IAstReference.Name {
+        string IAstTypeReference.Name {
             get { return "void"; }
         }
 

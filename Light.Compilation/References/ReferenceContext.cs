@@ -14,16 +14,24 @@ namespace Light.Compilation.References {
             this.providers = providers;
         }
 
-        public virtual TypeReference ConvertTypeReference(IAstTypeReference type) {
-            return (TypeReference)this.ConvertReference(type);
+        public virtual TypeReference ConvertReference(IAstTypeReference type) {
+            Argument.RequireNotNull("type", type);
+            return (TypeReference)ConvertReference((IAstReference)type);
         }
 
-        public virtual MethodReference ConvertMethodReference(IAstMethodReference method) {
-            return (MethodReference)this.ConvertReference(method);
+        public virtual MethodReference ConvertReference(IAstConstructorReference constructor) {
+            Argument.RequireNotNull("constructor", constructor);
+            return (MethodReference)ConvertReference((IAstReference)constructor);
         }
 
-        public virtual FieldReference ConvertFieldReference(AstPropertyReference property) {
-            return (FieldReference)this.ConvertReference(property);
+        public virtual MethodReference ConvertReference(IAstMethodReference method) {
+            Argument.RequireNotNull("method", method);
+            return (MethodReference)ConvertReference((IAstReference)method);
+        }
+
+        public virtual FieldReference ConvertReference(AstPropertyReference property) {
+            Argument.RequireNotNull("property", property);
+            return (FieldReference)ConvertReference((IAstReference)property);
         }
 
         protected virtual MemberReference ConvertReference(IAstReference reference) {

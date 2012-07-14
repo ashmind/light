@@ -11,14 +11,6 @@ namespace Light.Ast.References {
             this.Property = property;
         }
 
-        #region IAstReference Members
-
-        string IAstReference.Name {
-            get { return this.Property.Name; }
-        }
-
-        #endregion
-
         #region IAstElement Members
 
         IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {

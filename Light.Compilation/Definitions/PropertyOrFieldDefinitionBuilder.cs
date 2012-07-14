@@ -7,7 +7,7 @@ using Mono.Cecil;
 namespace Light.Compilation.Definitions {
     public class PropertyOrFieldDefinitionBuilder : DefinitionBuilderBase<AstPropertyDefinition, TypeDefinition> {
         public override void Build(AstPropertyDefinition propertyOrField, TypeDefinition typeDefinition, DefinitionBuildingContext context) {
-            var type = context.ConvertTypeReference(propertyOrField.Type);
+            var type = context.ConvertReference(propertyOrField.Type);
             var fieldDefinition = new FieldDefinition(propertyOrField.Name, FieldAttributes.Private, type);
             
             typeDefinition.Fields.Add(fieldDefinition);

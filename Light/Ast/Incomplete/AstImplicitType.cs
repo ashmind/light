@@ -19,6 +19,10 @@ namespace Light.Ast.Incomplete {
         IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<Expressions.IAstExpression> arguments) {
             throw new NotImplementedException("Implicit type can not resolve methods.");
         }
+        
+        IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<Expressions.IAstExpression> arguments) {
+            throw new NotImplementedException("Implicit type can not resolve constructors.");
+        }
 
         #endregion
 
@@ -30,9 +34,9 @@ namespace Light.Ast.Incomplete {
 
         #endregion
 
-        #region IAstReference Members
+        #region IAstTypeReference Members
 
-        string IAstReference.Name {
+        string IAstTypeReference.Name {
             get { return ""; }
         }
 

@@ -87,9 +87,11 @@
     <Compile Include="Ast\No.cs" />
     <Compile Include="Ast\References\AstParameterReference.cs" />
     <Compile Include="Ast\References\AstPropertyReference.cs" />
+    <Compile Include="Ast\References\IAstConstructorReference.cs" />
     <Compile Include="Ast\References\IAstMethodReference.cs" />
     <Compile Include="Ast\References\IAstReference.cs" />
     <Compile Include="Ast\References\Methods\AstReflectedMethod.cs" />
+    <Compile Include="Ast\References\Methods\AstReflectedConstructor.cs" />
     <Compile Include="Ast\Statements\AssignmentStatement.cs" />
     <Compile Include="Ast\Statements\ContinueStatement.cs" />
     <Compile Include="Ast\IAstAssignable.cs" />
@@ -122,6 +124,7 @@
     <Compile Include="Processing\ProcessingStepBase.cs" />
     <Compile Include="Processing\Steps\AddImportToScope.cs" />
     <Compile Include="Processing\Steps\AddPropertyToScope.cs" />
+    <Compile Include="Processing\Steps\ResolveConstructorReferences.cs" />
     <Compile Include="Processing\Steps\DefineTypeScope.cs" />
     <Compile Include="Processing\Steps\ResolveTypeReferences.cs" />
     <Compile Include="Processing\Steps\DefineFunctionScope.cs" />

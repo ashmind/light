@@ -17,7 +17,7 @@ namespace Light.Tests.OfCompilation {
                 end
             ", argumentType).Trim();
 
-            var instance = CompilationHelper.CompileCodeAndGetInstance(code, "Test");
+            var instance = CompilationHelper.CompileAndGetInstance(code, "Test");
             var returned = instance.Identity(value);
 
             Assert.AreEqual(returned, value);

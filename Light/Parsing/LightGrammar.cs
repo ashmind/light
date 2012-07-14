@@ -177,7 +177,7 @@ namespace Light.Parsing {
                 "NewExpression",
                 node => new NewExpression(
                     node.ChildAst(TypeReference),
-                    node.ChildAst(CommaSeparatedExpressionListStar) ?? Enumerable.Empty<IAstElement>(),
+                    node.ChildAst(CommaSeparatedExpressionListStar) ?? Enumerable.Empty<IAstExpression>(),
                     node.ChildAst(ObjectInitializer) 
                 )
             );

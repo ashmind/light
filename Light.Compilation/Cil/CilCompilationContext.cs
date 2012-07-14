@@ -24,16 +24,20 @@ namespace Light.Compilation.Cil {
             this.compile(element, this);
         }
 
-        public TypeReference ConvertTypeReference(IAstTypeReference type) {
-            return this.referenceContext.ConvertTypeReference(type);
+        public TypeReference ConvertReference(IAstTypeReference type) {
+            return this.referenceContext.ConvertReference(type);
         }
 
-        public MethodReference ConvertMethodReference(IAstMethodReference method) {
-            return this.referenceContext.ConvertMethodReference(method);
+        public MethodReference ConvertReference(IAstConstructorReference constructor) {
+            return this.referenceContext.ConvertReference(constructor);
         }
 
-        public FieldReference ConvertFieldReference(AstPropertyReference property) {
-            return this.referenceContext.ConvertFieldReference(property);
+        public MethodReference ConvertReference(IAstMethodReference method) {
+            return this.referenceContext.ConvertReference(method);
+        }
+
+        public FieldReference ConvertReference(AstPropertyReference property) {
+            return this.referenceContext.ConvertReference(property);
         }
     }
 }

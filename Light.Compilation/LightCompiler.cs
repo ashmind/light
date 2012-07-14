@@ -69,7 +69,7 @@ namespace Light.Compilation {
             MethodDefinition method;
             if (methodAst is Ast.Definitions.FunctionDefinition) {
                 var functionAst = methodAst as FunctionDefinition;
-                var returnType = context.ConvertTypeReference(functionAst.ReturnType);
+                var returnType = context.ConvertReference(functionAst.ReturnType);
 
                 var attributes = MethodAttributes.Public;
                 if (methodAst.Compilation.Static)
@@ -94,7 +94,7 @@ namespace Light.Compilation {
 
         private void CompileParameters(MethodDefinition method, MethodDefinitionBase methodAst, DefinitionBuildingContext context) {
             foreach (var parameter in methodAst.Parameters) {
-                method.Parameters.Add(new ParameterDefinition(parameter.Name, ParameterAttributes.None, context.ConvertTypeReference(parameter.Type)));
+                method.Parameters.Add(new ParameterDefinition(parameter.Name, ParameterAttributes.None, context.ConvertReference(parameter.Type)));
             }
         }
 

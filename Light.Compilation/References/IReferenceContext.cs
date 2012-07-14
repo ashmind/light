@@ -3,8 +3,9 @@ using Mono.Cecil;
 
 namespace Light.Compilation.References {
     public interface IReferenceContext {
-        TypeReference ConvertTypeReference(IAstTypeReference astType);
-        MethodReference ConvertMethodReference(IAstMethodReference astMethod);
-        FieldReference ConvertFieldReference(AstPropertyReference astProperty);
+        TypeReference ConvertReference(IAstTypeReference astType);
+        MethodReference ConvertReference(IAstConstructorReference astConstructor);
+        MethodReference ConvertReference(IAstMethodReference astMethod);
+        FieldReference ConvertReference(AstPropertyReference astProperty);
     }
 }

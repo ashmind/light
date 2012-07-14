@@ -13,12 +13,23 @@ using MbUnit.Framework;
 
 namespace Light.Tests.OfCompilation {
     public static class CompilationHelper {
+        public static dynamic CompileAndEvaluate(string expression) {
+            return CompileAndGetInstance(string.Format(@"
+                import System
+                public class _
+                    public function Evaluate()
+                        return {0}
+                    end
+                end
+            ", expression).Trim(), "_").Evaluate();
+        }
+
         public static Assembly CompileFromResource(string resourceName, CompilationTarget target = CompilationTarget.Library) {
             var code = Resource.ReadAllText(typeof(Resource), resourceName);
             return CompileCode(code, target);
         }
 
-        public static dynamic CompileCodeAndGetInstance(string code, string typeName) {
+        public static dynamic CompileAndGetInstance(string code, string typeName) {
             var assembly = CompileCode(code);
             var type = assembly.GetType(typeName, true);
 

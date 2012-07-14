@@ -7,6 +7,26 @@ namespace Light.Tests.OfCompilation {
     [TestFixture]
     public class ClassMemberTests {
         [Test]
+        [Row("1", 1)]
+        [Row("1.1", 1.1)]
+        [Row("'x'", "x")]
+        [Row("true", true)]
+        public void FunctionReturn(string valueString, object expectedValue) {
+            var code = (@"
+                public class Test
+                    public function GetValue()
+                        return " + valueString + @"
+                    end
+                end
+            ").Trim();
+
+            var instance = CompilationHelper.CompileAndGetInstance(code, "Test");
+            var value = instance.GetValue();
+
+            Assert.AreEqual(expectedValue, value);
+        }
+
+        [Test]
         [Row(typeof(string), "string", "x")]
         public void WriteAndReadPropertyThroughMethods<T>(string propetyType, T value) {
             var code = string.Format(@"
@@ -23,7 +43,7 @@ namespace Light.Tests.OfCompilation {
                 end
             ", propetyType).Trim();
 
-            var instance = CompilationHelper.CompileCodeAndGetInstance(code, "Test");
+            var instance = CompilationHelper.CompileAndGetInstance(code, "Test");
             instance.SetValue(value);
 
             Assert.AreEqual(instance.GetValue(), value);

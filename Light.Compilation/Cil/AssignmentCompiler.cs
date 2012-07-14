@@ -21,7 +21,7 @@ namespace Light.Compilation.Cil {
         private void CompileFieldOrPropertyAssignment(ILProcessor processor, AstPropertyReference property, IAstExpression value, CilCompilationContext context) {
             processor.Emit(OpCodes.Ldarg_0);
             context.Compile(value);
-            var field = context.ConvertFieldReference(property);
+            var field = context.ConvertReference(property);
             processor.Emit(OpCodes.Stfld, field);
         }
     }

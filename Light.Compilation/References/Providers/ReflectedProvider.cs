@@ -15,6 +15,10 @@ namespace Light.Compilation.References.Providers {
             if (reflectedMethod != null)
                 return module.Import(reflectedMethod.Method);
 
+            var reflectedConstructor = astReference as AstReflectedConstructor;
+            if (reflectedConstructor != null)
+                return module.Import(reflectedConstructor.Constructor);
+
             return null;
         }
     }

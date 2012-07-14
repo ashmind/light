@@ -15,7 +15,7 @@ namespace Light.Compilation.Cil {
                 context.Compile(argument);
             }
 
-            processor.Emit(OpCodes.Call, context.ConvertMethodReference(call.Method));
+            processor.Emit(OpCodes.Call, context.ConvertReference(call.Method));
         }
     }
 }

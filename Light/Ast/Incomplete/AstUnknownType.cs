@@ -17,6 +17,10 @@ namespace Light.Ast.Incomplete {
             throw new NotImplementedException("Unknown type can not resolve methods.");
         }
 
+        IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<Expressions.IAstExpression> arguments) {
+            throw new NotImplementedException("Unknown type can not resolve constructors.");
+        }
+
         #endregion
 
         #region IAstElement Members
