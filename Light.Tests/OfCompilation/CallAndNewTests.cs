@@ -7,9 +7,15 @@ namespace Light.Tests.OfCompilation {
     [TestFixture]
     public class CallAndNewTests {
         [Test]
-        public void NewExternalObject() {
+        public void NewExternalObjectWithoutArguments() {
             var result = CompilationHelper.CompileAndEvaluate("new Random()");
             Assert.IsInstanceOfType<Random>(result);
+        }
+
+        [Test]
+        public void NewExternalObjectWithArguments() {
+            var result = CompilationHelper.CompileAndEvaluate("new Version('1.1.1.1')");
+            Assert.AreEqual(new Version("1.1.1.1"), result);
         }
     }
 }

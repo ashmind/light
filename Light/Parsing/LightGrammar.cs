@@ -104,6 +104,7 @@ namespace Light.Parsing {
 
         public NonTerminal<IAstExpression> NewExpression { get; private set; }
         public NonTerminal<IAstExpression> SimpleCallExpression { get; private set; }
+        public NonTerminal<IEnumerable<IAstExpression>> ArgumentList { get; private set; }
         public NonTerminal<IAstExpression> SimpleIndexerExpression { get; private set; }
         public NonTerminal<IAstExpression> SimpleIdentifierExpression { get; private set; }
         public NonTerminal<IAstExpression> MemberAccessOrCallExpression { get; private set; }
@@ -175,12 +176,14 @@ namespace Light.Parsing {
 
             NewExpression = NonTerminal(
                 "NewExpression",
-                node => new NewExpression(
+                node => new AstNewExpression(
                     node.ChildAst(TypeReference),
-                    node.ChildAst(CommaSeparatedExpressionListStar) ?? Enumerable.Empty<IAstExpression>(),
-                    node.ChildAst(ObjectInitializer) 
+                    node.Child(2).ChildAst(CommaSeparatedExpressionListStar) ?? Enumerable.Empty<IAstExpression>(),
+                    node.Child(3).ChildAst(ObjectInitializer) 
                 )
             );
+
+            ArgumentList = Transient<IEnumerable<IAstExpression>>("ArgumentList");
 
             LambdaExpression = NonTerminal(
                 "Lambda", node => new LambdaExpression(new[] { (IAstElement)node.ChildAst(0) }, (IAstElement)node.ChildAst(1))
@@ -213,11 +216,12 @@ namespace Light.Parsing {
             MemberPathRoot.Rule = Literal | MemberPathElement;
             MemberPathElement.Rule = SimpleIdentifierExpression | SimpleCallExpression | SimpleIndexerExpression;
             MemberPathElementListPlus.Rule = MakeStarRule(MemberPathElementListPlus, ToTerm("."), MemberPathElement);
-            SimpleCallExpression.Rule = Name + "(" + CommaSeparatedExpressionListStar + ")";
+            SimpleCallExpression.Rule = Name + ArgumentList;
             SimpleIdentifierExpression.Rule = Name;
             SimpleIndexerExpression.Rule = SimpleIdentifierExpression + "[" + CommaSeparatedExpressionListStar + "]";
- 
-            NewExpression.Rule = "new" + TypeReference + (("(" + CommaSeparatedExpressionListStar + ")") | Empty) + (ObjectInitializer | Empty);
+
+            NewExpression.Rule = "new" + TypeReference + (ArgumentList | Empty) + (ObjectInitializer | Empty);
+            ArgumentList.Rule = "(" + CommaSeparatedExpressionListStar + ")";
 
             LambdaExpression.Rule = UntypedParameter + "=>" + Expression;
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
-    public class NewExpression : IAstExpression {
+    public class AstNewExpression : IAstExpression {
         private IAstTypeReference type;
         public IAstTypeReference Type {
             get { return type; }
@@ -18,7 +18,7 @@ namespace Light.Ast.Expressions {
         public IList<IAstExpression> Arguments { get; private set; }
         public IAstElement Initializer { get; set; }
 
-        public NewExpression(IAstTypeReference type, IEnumerable<IAstExpression> arguments, IAstElement initializer) {
+        public AstNewExpression(IAstTypeReference type, IEnumerable<IAstExpression> arguments, IAstElement initializer) {
             var argumentList = arguments.ToList();
             Argument.RequireNotNullAndNotContainsNull("arguments", argumentList);
 

@@ -5,8 +5,8 @@ using Light.Ast.Expressions;
 using Mono.Cecil.Cil;
 
 namespace Light.Compilation.Cil {
-    public class NewCompiler : CilCompilerBase<NewExpression> {
-        public override void Compile(ILProcessor processor, NewExpression @new, CilCompilationContext context) {
+    public class NewCompiler : CilCompilerBase<AstNewExpression> {
+        public override void Compile(ILProcessor processor, AstNewExpression @new, CilCompilationContext context) {
             if (@new.Constructor == null)
                 throw new NotImplementedException("NewCompiler: Constructor on " + @new + " is null.");
 

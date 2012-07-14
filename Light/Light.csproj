@@ -82,7 +82,7 @@
     <Compile Include="Ast\Literals\ListInitializer.cs" />
     <Compile Include="Ast\Literals\ObjectInitializerEntry.cs" />
     <Compile Include="Ast\Literals\StringWithInterpolation.cs" />
-    <Compile Include="Ast\Expressions\NewExpression.cs" />
+    <Compile Include="Ast\Expressions\AstNewExpression.cs" />
     <Compile Include="Ast\Definitions\AstParameterDefinition.cs" />
     <Compile Include="Ast\No.cs" />
     <Compile Include="Ast\References\AstParameterReference.cs" />
