@@ -10,7 +10,7 @@ namespace Light.Ast {
     public static class No {
         private static readonly ReadOnlyCollection<IAstElement> elements = new IAstElement[0].AsReadOnly();
         private static readonly ReadOnlyCollection<IAstReference> references = new IAstReference[0].AsReadOnly();
-        private static readonly ReadOnlyCollection<ParameterDefinition> parameters = new ParameterDefinition[0].AsReadOnly();
+        private static readonly ReadOnlyCollection<AstParameterDefinition> parameters = new AstParameterDefinition[0].AsReadOnly();
 
         public static ReadOnlyCollection<IAstElement> Elements {
             get { return elements; }
@@ -20,7 +20,7 @@ namespace Light.Ast {
             get { return references; }
         }
 
-        public static ReadOnlyCollection<ParameterDefinition> Parameters {
+        public static ReadOnlyCollection<AstParameterDefinition> Parameters {
             get { return parameters; }
         }
     }

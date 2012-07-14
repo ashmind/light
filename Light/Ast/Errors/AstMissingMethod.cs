@@ -20,8 +20,12 @@ namespace Light.Ast.Errors {
             get { return null; }
         }
 
-        public IEnumerable<IAstElement> Children() {
-            throw new NotImplementedException();
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
         }
+
+        #endregion
     }
 }

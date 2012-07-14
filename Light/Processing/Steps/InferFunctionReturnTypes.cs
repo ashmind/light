@@ -12,11 +12,12 @@ using Light.Ast.Types;
 
 namespace Light.Processing.Steps {
     public class InferFunctionReturnTypes : ProcessingStepBase<FunctionDefinition> {
-        public override void ProcessAfterChildren(FunctionDefinition function, ProcessingContext context) {
+        public override IAstElement ProcessAfterChildren(FunctionDefinition function, ProcessingContext context) {
             if (function.ReturnType != AstImplicitType.Instance)
-                return;
+                return function;
 
             function.ReturnType = InferReturnType(function);
+            return function;
         }
 
         private static IAstTypeReference InferReturnType(FunctionDefinition function) {

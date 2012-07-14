@@ -28,12 +28,18 @@ namespace Light.Ast.Expressions {
             this.Initializer = initializer;
         }
 
-        public IEnumerable<IAstElement> Children() {
-            return this.Arguments.Concat(this.Initializer);
-        }
-
         IAstTypeReference IAstExpression.ExpressionType {
             get { return this.Type; }
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return this.Arguments.Transform(transform).Concat(
+                this.Initializer = transform(this.Initializer)
+            );
+        }
+
+        #endregion
     }
 }

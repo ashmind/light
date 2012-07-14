@@ -14,8 +14,8 @@ namespace Light.Ast {
 
         #region IAstElement Members
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            return this.Elements;
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return this.Elements.Transform(transform);
         }
 
         #endregion

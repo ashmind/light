@@ -7,33 +7,27 @@ using Light.Ast.Incomplete;
 using Light.Ast.References;
 
 namespace Light.Processing.Steps {
-    public class ResolveIdentifiers : IProcessingStep {
-        public void ProcessBeforeChildren(IAstElement element, ProcessingContext context) {
+    public class ResolveIdentifiers : ProcessingStepBase<IAstElement> {
+        public override IAstElement ProcessBeforeChildren(IAstElement element, ProcessingContext context) {
             var call = element as CallExpression;
-            if (call != null && call.Target is IdentifierExpression) {
-                ProcessCall(call, context);
-                return;
-            }
+            if (call != null && call.Target is IdentifierExpression)
+                return ProcessCall(call, context);
 
             var member = element as MemberExpression;
-            if (member != null && member.Target is IdentifierExpression) {
-                ProcessMember(member, context);
-                return;
-            }
+            if (member != null && member.Target is IdentifierExpression)
+                return ProcessMember(member, context);
 
             var identifier = element as IdentifierExpression;
             if (identifier != null)
-                ProcessIdentifier(identifier, context);
+                return ProcessIdentifier(identifier, context);
+
+            return element;
         }
 
-        private void ProcessCall(CallExpression call, ProcessingContext context) {
+        private IAstElement ProcessCall(CallExpression call, ProcessingContext context) {
             var name = (call.Target as IdentifierExpression).Name;
             var resolved = context.Resolve(name);
-            if (resolved.Count == 0)
-                throw new NotImplementedException("ResolveIdentifiers: cannot resolve '" + name + "'.");
-
-            if (resolved.Count > 1)
-                throw new NotImplementedException("ResolveIdentifiers: ambiguous match for '" + name + "'.");
+            RequireExactlyOne(resolved, name);
 
             var typeReference = resolved[0] as IAstTypeReference;
             if (typeReference == null)
@@ -41,21 +35,26 @@ namespace Light.Processing.Steps {
 
             call.Target = null;
             ((AstUnknownMethod)call.Method).DeclaringType = typeReference;
+            return call;
         }
 
-        private void ProcessMember(MemberExpression member, ProcessingContext context) {
+        private IAstElement ProcessMember(MemberExpression member, ProcessingContext context) {
             throw new NotImplementedException("ResolveIdentifiers.ProcessMember");
         }
 
-        private void ProcessIdentifier(IdentifierExpression identifier, ProcessingContext context) {
-            throw new NotImplementedException("ResolveIdentifiers.ProcessIdentifier");
+        private IAstElement ProcessIdentifier(IdentifierExpression identifier, ProcessingContext context) {
+            var resolved = context.Resolve(identifier.Name);
+            RequireExactlyOne(resolved, identifier.Name);
+
+            return resolved[0];
         }
 
-        #region IProcessingStep Members
+        private static void RequireExactlyOne(IList<IAstReference> resolved, string name) {
+            if (resolved.Count == 0)
+                throw new NotImplementedException("ResolveIdentifiers: cannot resolve '" + name + "'.");
 
-        void IProcessingStep.ProcessAfterChildren(IAstElement element, ProcessingContext context) {
+            if (resolved.Count > 1)
+                throw new NotImplementedException("ResolveIdentifiers: ambiguous match for '" + name + "'.");
         }
-
-        #endregion
     }
 }

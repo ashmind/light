@@ -21,9 +21,9 @@ namespace Light.Ast.Statements {
 
         #region IAstElement Members
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            yield return this.Condition;
-            foreach (var element in this.Body) {
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            yield return this.Condition = transform(this.Condition);
+            foreach (var element in this.Body.Transform(transform)) {
                 yield return element;
             }
         }

@@ -22,11 +22,15 @@ namespace Light.Ast.Expressions {
             get { throw new NotImplementedException("IndexerExpression.ExpressionType"); }
         }
 
-        public IEnumerable<IAstElement> Children() {
-            yield return this.Target;
-            foreach (var argument in this.Arguments) {
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            yield return this.Target = transform(this.Target);
+            foreach (var argument in this.Arguments.Transform(transform)) {
                 yield return argument;
             }
         }
+
+        #endregion
     }
 }

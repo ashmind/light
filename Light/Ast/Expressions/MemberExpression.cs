@@ -20,13 +20,17 @@ namespace Light.Ast.Expressions {
             return this.Target + "." + this.Name;
         }
 
-        public IEnumerable<IAstElement> Children() {
-            if (this.Target != null)
-                yield return this.Target;
-        }
-
         public IAstTypeReference ExpressionType {
             get { throw new NotImplementedException("MemberExpression.ExpressionType"); }
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            if (this.Target != null)
+                yield return this.Target = transform(this.Target);
+        }
+
+        #endregion
     }
 }

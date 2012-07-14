@@ -60,6 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cil\CallCompiler.cs" />
+    <Compile Include="Cil\CilCompilationContext.cs" />
+    <Compile Include="Cil\ParameterReferenceCompiler.cs" />
     <Compile Include="Cil\PrimitiveValueCompiler.cs" />
     <Compile Include="Cil\ReturnCompiler.cs" />
     <Compile Include="CompilationArguments.cs" />

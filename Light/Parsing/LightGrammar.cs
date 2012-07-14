@@ -297,10 +297,10 @@ namespace Light.Parsing {
         public NonTerminal<IAstElement> Property { get; private set; }
         public NonTerminal<IAstElement> Constructor { get; private set; }
         public NonTerminal<IAstElement> Function { get; private set; }
-        public NonTerminal<ParameterDefinition> Parameter { get; private set; }
-        public NonTerminal<ParameterDefinition> TypedParameter { get; private set; }
-        public NonTerminal<ParameterDefinition> UntypedParameter { get; private set; }
-        public NonTerminal<IEnumerable<ParameterDefinition>> ParameterList { get; private set; }
+        public NonTerminal<AstParameterDefinition> Parameter { get; private set; }
+        public NonTerminal<AstParameterDefinition> TypedParameter { get; private set; }
+        public NonTerminal<AstParameterDefinition> UntypedParameter { get; private set; }
+        public NonTerminal<IEnumerable<AstParameterDefinition>> ParameterList { get; private set; }
 
         private void ConstructDefinitions() {
             Definition = Transient<IAstElement>("Definition");
@@ -325,10 +325,10 @@ namespace Light.Parsing {
                 )
             );
             OptionalAccessLevel = new NonTerminal("OptionalAccessLevel");
-            ParameterList = NonTerminalWithCustomType("ParameterList", node => node.ChildAsts<ParameterDefinition>());
-            Parameter = Transient<ParameterDefinition>("Parameter");
-            TypedParameter = NonTerminalWithCustomType("TypedParameter", node => new ParameterDefinition(node.Child(1).Token.Text, node.ChildAst(TypeReference)));
-            UntypedParameter = NonTerminalWithCustomType("UntypedParameter", node => new ParameterDefinition(node.FindTokenAndGetText(), AstImplicitType.Instance));
+            ParameterList = NonTerminalWithCustomType("ParameterList", node => node.ChildAsts<AstParameterDefinition>());
+            Parameter = Transient<AstParameterDefinition>("Parameter");
+            TypedParameter = NonTerminalWithCustomType("TypedParameter", node => new AstParameterDefinition(node.Child(1).Token.Text, node.ChildAst(TypeReference)));
+            UntypedParameter = NonTerminalWithCustomType("UntypedParameter", node => new AstParameterDefinition(node.FindTokenAndGetText(), AstImplicitType.Instance));
         }
 
         private void SetDefinitionRules() {

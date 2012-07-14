@@ -22,8 +22,12 @@ namespace Light.Ast.References.Methods {
             get { return Method.Name; }
         }
 
-        public IEnumerable<IAstElement> Children() {
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
             return No.Elements;
         }
+
+        #endregion
     }
 }

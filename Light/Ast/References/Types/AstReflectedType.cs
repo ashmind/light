@@ -28,7 +28,7 @@ namespace Light.Ast.References.Types {
 
         #region IAstElement Members
 
-        IEnumerable<IAstElement> IAstElement.Children() {
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
             return No.Elements;
         }
 

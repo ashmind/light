@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.References;
-using Light.Ast.Types;
 
 namespace Light.Ast.Incomplete {
     public class AstImplicitType : IAstTypeReference {
@@ -15,18 +14,18 @@ namespace Light.Ast.Incomplete {
         private AstImplicitType() {
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.Children() {
-            return No.Elements;
-        }
-
-        #endregion
-
         #region IAstTypeReference Members
 
         IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<Expressions.IAstExpression> arguments) {
             throw new NotImplementedException("Implicit type can not resolve methods.");
+        }
+
+        #endregion
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
         }
 
         #endregion

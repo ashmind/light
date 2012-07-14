@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OfCompilation\FunctionTests.cs" />
     <Compile Include="OfParsing\DefinitionTests.cs" />
     <Compile Include="TestEnvironment.cs" />
     <Compile Include="OfCompilation\CompilationHelper.cs" />

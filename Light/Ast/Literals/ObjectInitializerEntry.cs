@@ -17,8 +17,8 @@ namespace Light.Ast.Literals {
 
         #region IAstElement Members
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            yield return this.Value;
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            yield return this.Value = transform(this.Value);
         }
 
         #endregion

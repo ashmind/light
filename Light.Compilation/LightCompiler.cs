@@ -85,23 +85,33 @@ namespace Light.Compilation {
                 throw new NotImplementedException("LightCompiler.CompileFunction: cannot compile " + methodAst + ".");
             }
 
-            CompileBody(method, methodAst.Body, module);
+            CompileParameters(method, methodAst, module);
+            CompileBody(method, methodAst, module);
             type.Methods.Add(method);
         }
 
-        private void CompileBody(MethodDefinition method, IEnumerable<IAstStatement> bodyAst, ModuleDefinition module) {
-            var body = method.Body.GetILProcessor();
-            foreach (var element in bodyAst) {
-                CompileCil(body, element, module);
+        private void CompileParameters(MethodDefinition method, MethodDefinitionBase methodAst, ModuleDefinition module) {
+            foreach (var parameter in methodAst.Parameters) {
+                var type = typeResolvers.Select(r => r.Resolve(parameter.Type, module)).First(t => t != null);
+                method.Parameters.Add(new ParameterDefinition(parameter.Name, ParameterAttributes.None, type));
             }
         }
 
-        private void CompileCil(ILProcessor body, IAstElement element, ModuleDefinition module) {
+        private void CompileBody(MethodDefinition method, Ast.Definitions.MethodDefinitionBase methodAst, ModuleDefinition module) {
+            var body = method.Body.GetILProcessor();
+            var context = new CilCompilationContext(methodAst, (e, c) => CompileCil(body, e, c), module);
+
+            foreach (var element in methodAst.Body) {
+                CompileCil(body, element, context);
+            }
+        }
+
+        private void CompileCil(ILProcessor body, IAstElement element, CilCompilationContext context) {
             var compiler = this.cilCompilers.SingleOrDefault(c => c.CanCompile(body, element));
             if (compiler == null)
                 throw new NotImplementedException("LightCompiler: No CilCompiler for " + element);
 
-            compiler.Compile(body, element, e => CompileCil(body, e, module), module);
+            compiler.Compile(body, element, context);
         }
 
         private TypeAttributes ToTypeAttribute(string definitionType) {

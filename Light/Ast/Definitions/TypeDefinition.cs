@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AshMind.Extensions;
 
 namespace Light.Ast.Definitions {
     public class TypeDefinition : IAstElement {
@@ -42,8 +41,8 @@ namespace Light.Ast.Definitions {
 
         #region IAstElement Members
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            return this.Members;
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return this.Members.Transform(transform);
         }
 
         #endregion

@@ -17,12 +17,16 @@ namespace Light.Ast.Incomplete {
             return this.Name;
         }
 
-        public IEnumerable<IAstElement> Children() {
-            return No.Elements;
-        }
-
         IAstTypeReference IAstExpression.ExpressionType {
             get { return null; }
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
+        }
+
+        #endregion
     }
 }

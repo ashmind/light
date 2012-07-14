@@ -6,8 +6,8 @@ namespace Light.Ast.Statements {
     public class ContinueStatement : IAstStatement {
         #region IAstElement Members
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            yield break;
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
         }
 
         #endregion

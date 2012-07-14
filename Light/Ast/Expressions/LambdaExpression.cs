@@ -18,12 +18,18 @@ namespace Light.Ast.Expressions {
             Body = body;
         }
 
-        public IEnumerable<IAstElement> Children() {
-            return this.Parameters.Concat(this.Body);
-        }
-
         public IAstTypeReference ExpressionType {
             get { throw new NotImplementedException("LambdaExpression.ExpressionType"); }
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return this.Parameters.Transform(transform).Concat(
+                this.Body = transform(this.Body)
+            );
+        }
+
+        #endregion
     }
 }

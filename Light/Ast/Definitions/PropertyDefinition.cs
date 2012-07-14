@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Light.Ast.Definitions {
     public class PropertyDefinition : IAstElement {
@@ -17,8 +16,8 @@ namespace Light.Ast.Definitions {
 
         #region IAstElement Members
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            yield break;
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
         }
 
         #endregion

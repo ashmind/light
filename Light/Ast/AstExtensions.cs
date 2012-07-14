@@ -4,18 +4,29 @@ using System.Linq;
 
 namespace Light.Ast {
     public static class AstExtensions {
-        public static TAstElement Child<TAstElement>(this IAstElement ancestor)
-            where TAstElement : IAstElement
+        private static readonly AstElementTransform IdentityTransform = e => e;
+
+        public static IEnumerable<IAstElement> Children(this IAstElement parent)
         {
-            Argument.RequireNotNull("ancestor", ancestor);
-            return ancestor.Children<TAstElement>().SingleOrDefault();
+            Argument.RequireNotNull("parent", parent);
+            return parent.VisitOrTransformChildren(IdentityTransform);
         }
 
-        public static IEnumerable<TAstElement> Children<TAstElement>(this IAstElement ancestor)
+        public static IEnumerable<TAstElement> Children<TAstElement>(this IAstElement parent)
             where TAstElement : IAstElement
         {
+            return parent.Children().OfType<TAstElement>();
+        }
+
+        public static IEnumerable<IAstElement> Descendants(this IAstElement ancestor) {
             Argument.RequireNotNull("ancestor", ancestor);
-            return ancestor.Children().OfType<TAstElement>();
+
+            foreach (var child in ancestor.Children()) {
+                yield return child;
+                foreach (var descendant in child.Descendants()) {
+                    yield return descendant;
+                }
+            }
         }
 
         public static IEnumerable<TAstElement> Descendants<TAstElement>(this IAstElement ancestor)
@@ -25,13 +36,58 @@ namespace Light.Ast {
             return ancestor.Descendants().OfType<TAstElement>();
         }
 
-        public static IEnumerable<IAstElement> Descendants(this IAstElement ancestor) {
-            Argument.RequireNotNull("ancestor", ancestor);
-            foreach (var child in ancestor.Children()) {
-                yield return child;
-                foreach (var descendant in child.Descendants()) {
-                    yield return descendant;
-                }
+        public static void TransformChildren(this IAstElement parent, AstElementTransform transform) {
+            Argument.RequireNotNull("parent", parent);
+            Argument.RequireNotNull("transform", transform);
+
+            var enumerator = parent.VisitOrTransformChildren(transform).GetEnumerator();
+            while (enumerator.MoveNext()) { }
+        }
+
+        public static void TransformChildren<TAstElement>(this IAstElement parent, AstElementTransform<TAstElement> transform)
+            where TAstElement : IAstElement
+        {
+            Argument.RequireNotNull("transform", transform);
+            parent.TransformChildren(c => {
+                if (!(c is TAstElement))
+                    return c;
+
+                return transform((TAstElement)c);
+            });
+        }
+
+        public static void TransformDescendants(this IAstElement ancestor, AstElementTransform transform) {
+            Argument.RequireNotNull("transform", transform);
+
+            ancestor.TransformChildren(c => {
+                c.TransformDescendants(transform);
+                return transform(c);
+            });
+        }
+
+        public static void TransformDescendants<TAstElement>(this IAstElement ancestor, AstElementTransform<TAstElement> transform)
+            where TAstElement : IAstElement
+        {
+            Argument.RequireNotNull("transform", transform);
+
+            ancestor.TransformDescendants(c => {
+                c.TransformDescendants(transform);
+                if (!(c is TAstElement))
+                    return c;
+
+                return transform((TAstElement)c);
+            });
+        }
+
+        public static IEnumerable<TAstElement> Transform<TAstElement>(this IList<TAstElement> elements, AstElementTransform transform)
+            where TAstElement : IAstElement
+        {
+            Argument.RequireNotNull("elements", elements);
+            Argument.RequireNotNull("transform", transform);
+
+            for (var i = 0; i < elements.Count; i++) {
+                elements[i] = (TAstElement)transform(elements[i]);
+                yield return elements[i];
             }
         }
     }

@@ -7,10 +7,10 @@ namespace Light.Compilation.Cil {
     public abstract class CilCompilerBase<TAstElement> : ICilCompiler
         where TAstElement : IAstElement
     {
-        public abstract void Compile(ILProcessor processor, TAstElement element, Action<IAstElement> recursiveCompile, ModuleDefinition module);
+        public abstract void Compile(ILProcessor processor, TAstElement element, CilCompilationContext context);
 
-        void ICilCompiler.Compile(ILProcessor processor, IAstElement element, Action<IAstElement> recursiveCompile, ModuleDefinition module) {
-            this.Compile(processor, (TAstElement)element, recursiveCompile, module);
+        void ICilCompiler.Compile(ILProcessor processor, IAstElement element, CilCompilationContext context) {
+            this.Compile(processor, (TAstElement)element, context);
         }
 
         bool ICilCompiler.CanCompile(ILProcessor processor, IAstElement element) {

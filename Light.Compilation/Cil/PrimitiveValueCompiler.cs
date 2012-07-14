@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AshMind.Extensions;
-using Light.Ast;
 using Light.Ast.Literals;
-using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace Light.Compilation.Cil {
@@ -16,7 +14,7 @@ namespace Light.Compilation.Cil {
             { typeof(bool),   CompileBoolean },
         };
 
-        public override void Compile(ILProcessor processor, PrimitiveValue value, Action<IAstElement> recursiveCompile, ModuleDefinition module) {
+        public override void Compile(ILProcessor processor, PrimitiveValue value, CilCompilationContext context) {
             var compile = typeBasedCompilers.GetValueOrDefault(value.ExpressionType.ActualType);
             if (compile == null)
                 throw new NotImplementedException("PrimitiveValueCompiler: cannot compile " + value.ExpressionType + ".");

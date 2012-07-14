@@ -8,7 +8,7 @@ using Mono.Cecil.Cil;
 namespace Light.Compilation.Cil {
     public interface ICilCompiler
     {
-        void Compile(ILProcessor processor, IAstElement element, Action<IAstElement> recursiveCompile, ModuleDefinition module);
+        void Compile(ILProcessor processor, IAstElement element, CilCompilationContext context);
         bool CanCompile(ILProcessor processor, IAstElement element);
     }
 }

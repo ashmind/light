@@ -33,9 +33,9 @@ namespace Light.Ast.Statements {
 
         #region IAstElement Members
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            yield return this.Source;
-            foreach (var element in this.Body) {
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            yield return this.Source = transform(this.Source);
+            foreach (var element in this.Body.Transform(transform)) {
                 yield return element;
             }
         }

@@ -14,13 +14,17 @@ namespace Light.Ast.Expressions {
         public BinaryOperator Operator { get; private set; }
         public IAstElement Right { get; private set; }
 
-        public IEnumerable<IAstElement> Children() {
-            yield return Left;
-            yield return Right;
-        }
-
         public References.IAstTypeReference ExpressionType {
             get { return Operator.ResultType; }
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            yield return this.Left = transform(this.Left);
+            yield return this.Right = transform(this.Right);
+        }
+
+        #endregion
     }
 }

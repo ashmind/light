@@ -14,8 +14,9 @@ namespace Light.Ast.Statements {
 
         #region IAstElement Members
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            yield return Value;
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            if (this.Value == null)
+                yield return this.Value = transform(Value);
         }
 
         #endregion

@@ -15,12 +15,16 @@ namespace Light.Ast.Literals {
             Elements = elements.AsReadOnly();
         }
 
-        public IEnumerable<IAstElement> Children() {
-            return this.Elements;
-        }
-
         public IAstTypeReference ExpressionType {
             get { throw new NotImplementedException("ObjectInitializer.ExpressionType"); }
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return this.Elements.Transform(transform);
+        }
+
+        #endregion
     }
 }

@@ -4,26 +4,28 @@ namespace Light.Processing {
     public abstract class ProcessingStepBase<TAstElement> : IProcessingStep 
         where TAstElement : class, IAstElement
     {
-        public virtual void ProcessBeforeChildren(TAstElement element, ProcessingContext context) {
+        public virtual IAstElement ProcessBeforeChildren(TAstElement element, ProcessingContext context) {
+            return element;
         }
 
-        public virtual void ProcessAfterChildren(TAstElement element, ProcessingContext context) {
+        public virtual IAstElement ProcessAfterChildren(TAstElement element, ProcessingContext context) {
+            return element;
         }
 
-        void IProcessingStep.ProcessBeforeChildren(IAstElement element, ProcessingContext context) {
+        IAstElement IProcessingStep.ProcessBeforeChildren(IAstElement element, ProcessingContext context) {
             var matched = element as TAstElement;
             if (matched == null)
-                return;
+                return element;
 
-            this.ProcessBeforeChildren(matched, context);
+            return this.ProcessBeforeChildren(matched, context);
         }
 
-        void IProcessingStep.ProcessAfterChildren(IAstElement element, ProcessingContext context) {
+        IAstElement IProcessingStep.ProcessAfterChildren(IAstElement element, ProcessingContext context) {
             var matched = element as TAstElement;
             if (matched == null)
-                return;
+                return element;
 
-            this.ProcessAfterChildren(matched, context);
+            return this.ProcessAfterChildren(matched, context);
         }
     }
 }

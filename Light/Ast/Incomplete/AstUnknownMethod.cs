@@ -12,14 +12,18 @@ namespace Light.Ast.Incomplete {
             this.Name = name;
         }
 
-        public IEnumerable<IAstElement> Children() {
-            yield break;
-        }
-
         #region IAstMethodReference Members
 
         IAstTypeReference IAstMethodReference.ReturnType {
             get { return null; }
+        }
+
+        #endregion
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
         }
 
         #endregion

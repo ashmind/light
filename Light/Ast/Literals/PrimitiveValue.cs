@@ -26,12 +26,16 @@ namespace Light.Ast.Literals {
 
         public AstReflectedType ExpressionType { get; private set; }
 
-        public IEnumerable<IAstElement> Children() {
-            return No.Elements;
-        }
-
         IAstTypeReference IAstExpression.ExpressionType {
             get { return this.ExpressionType; }
         }
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
+        }
+
+        #endregion
     }
 }

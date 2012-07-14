@@ -25,17 +25,21 @@ namespace Light.Ast.Expressions {
             }
         }
 
-        public IEnumerable<IAstElement> Children() {
-            if (this.Target != null)
-                yield return this.Target;
+        public IAstTypeReference ExpressionType {
+            get { return this.Method.ReturnType; }
+        }
 
-            foreach (var argument in this.Arguments) {
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            if (this.Target != null)
+                yield return this.Target = transform(this.Target);
+
+            foreach (var argument in this.Arguments.Transform(transform)) {
                 yield return argument;
             }
         }
 
-        public IAstTypeReference ExpressionType {
-            get { return this.Method.ReturnType; }
-        }
+        #endregion
     }
 }

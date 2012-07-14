@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Definitions {
-    public class ParameterDefinition : IAstElement {
+    public class AstParameterDefinition : IAstElement {
         private IAstTypeReference type;
         public string Name { get; private set; }
         public IAstTypeReference Type
@@ -16,7 +16,7 @@ namespace Light.Ast.Definitions {
             }
         }
 
-        public ParameterDefinition(string name, IAstTypeReference type) {
+        public AstParameterDefinition(string name, IAstTypeReference type) {
             Argument.RequireNotNullAndNotEmpty("name", name);
 
             this.Name = name;
@@ -25,8 +25,8 @@ namespace Light.Ast.Definitions {
 
         #region IAstElement Members
 
-        IEnumerable<IAstElement> IAstElement.Children() {
-            return No.Elements;
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            yield return this.Type = (IAstTypeReference)transform(this.Type);
         }
 
         #endregion

@@ -11,18 +11,18 @@ namespace Light.Ast.Incomplete {
             this.Name = name;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.Children() {
-            return No.Elements;
-        }
-
-        #endregion
-
         #region IAstTypeReference Members
 
         IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<Expressions.IAstExpression> arguments) {
             throw new NotImplementedException("Unknown type can not resolve methods.");
+        }
+
+        #endregion
+
+        #region IAstElement Members
+
+        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
         }
 
         #endregion
