@@ -16,16 +16,18 @@ namespace Light.Tests.OfParsing {
             Assert.AreEqual(expectedResult, visitor.Describe(result.Root));
         }
 
-        public static void IsParsedTo<TAstElement>(string code, Expression<Func<TAstElement, bool>> condition) {
-            IsParsedTo(code, root => root.Children().FirstOrDefault() ?? root, condition);
+        public static void IsParsedTo<TAstElement>(string code, Expression<Func<TAstElement, bool>> condition) 
+            where TAstElement : class, IAstElement
+        {
+            IsParsedTo(code, root => root.Child<TAstElement>() ?? root as TAstElement, condition);
         }
 
-        public static void IsParsedTo<TAstElement>(string code, Func<IAstElement, IAstElement> getElementFromResult, Expression<Func<TAstElement, bool>> condition) {
+        public static void IsParsedTo<TAstElement>(string code, Func<IAstElement, TAstElement> getElementFromResult, Expression<Func<TAstElement, bool>> condition) {
             var result = new LightParser().Parse(code);
             AssertEx.That(() => !result.HasErrors);
 
             var element = getElementFromResult(result.Root);
-            Assert.IsInstanceOfType<TAstElement>(element);
+            Assert.IsNotNull(element);
             AssertEx.That(Expression.Lambda<Func<bool>>(Expression.Invoke(condition, Expression.Constant(element))));
         }
     }

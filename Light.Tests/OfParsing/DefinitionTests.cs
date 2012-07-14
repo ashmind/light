@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.Incomplete;
 using MbUnit.Framework;
@@ -13,6 +14,20 @@ namespace Light.Tests.OfParsing {
         [Row("interface X\r\nend", "interface")]
         public void Types(string code, string definitionType) {
             ParseAssert.IsParsedTo<TypeDefinition>(code, t => t.Name == "X" && t.DefinitionType == definitionType);
+        }
+
+        [Test]
+        public void TypedAutoPropertyWithoutAssignment() {
+            var code = @"
+                class X
+                    string x
+                end
+            ".Trim();
+
+            ParseAssert.IsParsedTo(
+                code, r => r.Descendant<PropertyDefinition>(),
+                f => f.Name == "x" && f.Type.Name == "string"
+            );
         }
 
         [Test]

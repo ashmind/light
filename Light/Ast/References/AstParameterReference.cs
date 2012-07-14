@@ -9,6 +9,7 @@ namespace Light.Ast.References {
         public AstParameterDefinition Parameter { get; private set; }
 
         public AstParameterReference(AstParameterDefinition parameter) {
+            Argument.RequireNotNull("parameter", parameter);
             Parameter = parameter;
         }
 
@@ -24,6 +25,14 @@ namespace Light.Ast.References {
 
         IAstTypeReference IAstExpression.ExpressionType {
             get { return this.Parameter.Type; }
+        }
+
+        #endregion
+
+        #region IAstReference Members
+
+        string IAstReference.Name {
+            get { return this.Parameter.Name; }
         }
 
         #endregion

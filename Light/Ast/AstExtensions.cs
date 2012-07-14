@@ -18,6 +18,13 @@ namespace Light.Ast {
             return parent.Children().OfType<TAstElement>();
         }
 
+        public static TAstElement Child<TAstElement>(this IAstElement parent)
+            where TAstElement : IAstElement 
+        {
+            Argument.RequireNotNull("parent", parent);
+            return parent.Children<TAstElement>().SingleOrDefault();
+        }
+
         public static IEnumerable<IAstElement> Descendants(this IAstElement ancestor) {
             Argument.RequireNotNull("ancestor", ancestor);
 
@@ -34,6 +41,13 @@ namespace Light.Ast {
         {
             Argument.RequireNotNull("ancestor", ancestor);
             return ancestor.Descendants().OfType<TAstElement>();
+        }
+
+        public static TAstElement Descendant<TAstElement>(this IAstElement ancestor)
+            where TAstElement : IAstElement
+        {
+            Argument.RequireNotNull("ancestor", ancestor);
+            return ancestor.Descendants<TAstElement>().SingleOrDefault();
         }
 
         public static void TransformChildren(this IAstElement parent, AstElementTransform transform) {

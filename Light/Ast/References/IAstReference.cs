@@ -5,5 +5,6 @@ using System.Text;
 
 namespace Light.Ast.References {
     public interface IAstReference : IAstElement {
+        string Name { get; }
     }
 }

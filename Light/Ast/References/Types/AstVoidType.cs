@@ -30,5 +30,13 @@ namespace Light.Ast.References.Types {
         }
 
         #endregion
+
+        #region IAstReference Members
+
+        string IAstReference.Name {
+            get { return "void"; }
+        }
+
+        #endregion
     }
 }
