@@ -79,7 +79,7 @@ namespace Light.Compilation {
                 if (methodAst.Compilation.EntryPoint)
                     type.Module.EntryPoint = method;
             }
-            else if (methodAst is Ast.Definitions.ConstructorDefinition) {
+            else if (methodAst is Ast.Definitions.AstConstructorDefinition) {
                 method = CecilHelper.CreateConstructor(type);
                 method.Attributes |= MethodAttributes.Public;
             }

@@ -62,6 +62,7 @@
     <Compile Include="Cil\CallCompiler.cs" />
     <Compile Include="Cil\CilCompilationContext.cs" />
     <Compile Include="Cil\AssignmentCompiler.cs" />
+    <Compile Include="Cil\BaseConstructorCallCompiler.cs" />
     <Compile Include="Cil\NewCompiler.cs" />
     <Compile Include="Cil\PropertyReferenceCompiler.cs" />
     <Compile Include="Cil\ParameterReferenceCompiler.cs" />

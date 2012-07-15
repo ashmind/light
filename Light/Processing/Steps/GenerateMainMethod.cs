@@ -5,6 +5,7 @@ using AshMind.Extensions;
 using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.References.Types;
+using Light.Ast.Statements;
 
 namespace Light.Processing.Steps {
     public class GenerateMainMethod : ProcessingStepBase<AstRoot> {
@@ -16,6 +17,12 @@ namespace Light.Processing.Steps {
             var main = new FunctionDefinition("Main", No.Parameters, statements, AstVoidType.Instance) {
                 Compilation = { Static = true, EntryPoint = true }
             };
+            if (!main.Body.Any())
+                return root;
+
+            // TODO: this should be done by GenerateReturns, but the ordering behavior is somewhat incorrect right now
+            if (!main.Descendants<ReturnStatement>().Any())
+                main.Body.Add(new ReturnStatement());
 
             root.Elements.RemoveWhere(s => s is IAstStatement);
 

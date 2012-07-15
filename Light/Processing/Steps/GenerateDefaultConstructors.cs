@@ -10,10 +10,10 @@ namespace Light.Processing.Steps {
         }
 
         public override IAstElement ProcessBeforeChildren(AstTypeDefinition type, ProcessingContext context) {
-            if (type.Children<ConstructorDefinition>().Any())
+            if (type.Children<AstConstructorDefinition>().Any())
                 return type;
 
-            type.Members.Add(new ConstructorDefinition());
+            type.Members.Add(new AstConstructorDefinition());
             return type;
         }
     }

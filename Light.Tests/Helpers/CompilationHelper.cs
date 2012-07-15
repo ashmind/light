@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using Autofac;
 using Gallio.Framework;
 using Light.Ast;
 using Light.Compilation;
+using Light.Tests.OfCompilation;
 using MbUnit.Framework;
 
-namespace Light.Tests.OfCompilation {
+namespace Light.Tests.Helpers {
     public static class CompilationHelper {
         public static dynamic CompileAndEvaluate(string expression) {
             return CompileAndGetInstance(string.Format(@"
@@ -54,24 +54,28 @@ namespace Light.Tests.OfCompilation {
             var compiler = TestEnvironment.Container.Resolve<LightCompiler>();
             compiler.Compile((AstRoot)parsed.Root, stream, compilationArguments);
 
-            // for debugging
-            WriteAssemblyOnDiskForDebugging(stream, assemblyName, target);
-            return Assembly.Load(stream.ToArray());
+            var bytes = stream.ToArray();
+            var assembly = Assembly.Load(bytes);
+            WriteAssemblyOnDiskAndPEVerify(assembly, bytes, target);
+            return assembly;
         }
 
         private static string GetAssemblyName() {
             var stepName = TestContext.CurrentContext.TestStep.Name;
-            var stepNameCleanedUp = Regex.Replace(stepName, @"[^\w\d]+", ".").Trim('.');
+            var stepNameCleanedUp = Regex.Replace(stepName, @"[^\w\d\.]+", "_").Trim('_');
             return stepNameCleanedUp;
         }
 
         // you should be able to find assemblies in c:\Users\<user>\AppData\Local\Temp\Light.Tests\
-        private static void WriteAssemblyOnDiskForDebugging(MemoryStream stream, string assemblyName, CompilationTarget target) {
-            var debuggingHelperDirectory = Path.Combine(Path.GetTempPath(), "Light.Tests");
-            Directory.CreateDirectory(debuggingHelperDirectory);
+        private static void WriteAssemblyOnDiskAndPEVerify(Assembly assembly, byte[] bytes, CompilationTarget target) {
+            var outputDirectory = Path.Combine(Path.GetTempPath(), "Light.Tests");
+            Directory.CreateDirectory(outputDirectory);
 
             var extension = target == CompilationTarget.Console ? ".exe" : ".dll";
-            File.WriteAllBytes(Path.Combine(debuggingHelperDirectory, assemblyName + extension), stream.ToArray());
+
+            var path = Path.Combine(outputDirectory, assembly.GetName().Name + extension);
+            File.WriteAllBytes(path, bytes);
+            PEVerifier.Verify(path, assembly);
         }
     }
 }

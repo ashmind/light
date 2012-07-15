@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.Compilation;
+using Light.Tests.Helpers;
 using MbUnit.Framework;
 
 namespace Light.Tests.OfCompilation {

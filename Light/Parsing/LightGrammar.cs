@@ -318,7 +318,7 @@ namespace Light.Parsing {
             TypeMemberList = NonTerminal("TypeMemberList", node => node.ChildAsts<IAstDefinition>());
             OptionalTypeContent = NonTerminal("OptionalTypeContent", node => node.ChildAst(TypeMemberList) ?? Enumerable.Empty<IAstDefinition>());
             Property = NonTerminal("Property", node => new AstPropertyDefinition(node.Child(2).Token.Text, node.ChildAst(TypeReference)));
-            Constructor = NonTerminal("Constructor", node => new ConstructorDefinition(node.ChildAst(ParameterList), node.ChildAst(OptionalBodyOfStatements)));
+            Constructor = NonTerminal("Constructor", node => new AstConstructorDefinition(node.ChildAst(ParameterList), node.ChildAst(OptionalBodyOfStatements)));
             Function = NonTerminal(
                 "Function",
                 node =>  new FunctionDefinition(
