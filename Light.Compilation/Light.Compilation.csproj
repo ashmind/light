@@ -59,15 +59,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cil\CallCompiler.cs" />
+    <Compile Include="Cil\Compilers\CallCompiler.cs" />
     <Compile Include="Cil\CilCompilationContext.cs" />
-    <Compile Include="Cil\AssignmentCompiler.cs" />
-    <Compile Include="Cil\BaseConstructorCallCompiler.cs" />
-    <Compile Include="Cil\NewCompiler.cs" />
-    <Compile Include="Cil\PropertyReferenceCompiler.cs" />
-    <Compile Include="Cil\ParameterReferenceCompiler.cs" />
-    <Compile Include="Cil\PrimitiveValueCompiler.cs" />
-    <Compile Include="Cil\ReturnCompiler.cs" />
+    <Compile Include="Cil\Compilers\AssignmentCompiler.cs" />
+    <Compile Include="Cil\Compilers\BaseConstructorCallCompiler.cs" />
+    <Compile Include="Cil\Compilers\VariableReferenceCompiler.cs" />
+    <Compile Include="Cil\Compilers\VariableDefinitionCompiler.cs" />
+    <Compile Include="Cil\Compilers\NewCompiler.cs" />
+    <Compile Include="Cil\Compilers\PropertyReferenceCompiler.cs" />
+    <Compile Include="Cil\Compilers\ParameterReferenceCompiler.cs" />
+    <Compile Include="Cil\Compilers\PrimitiveValueCompiler.cs" />
+    <Compile Include="Cil\Compilers\ReturnCompiler.cs" />
     <Compile Include="CompilationArguments.cs" />
     <Compile Include="Definitions\DefinitionBuilderBase.cs" />
     <Compile Include="Definitions\DefinitionBuildingContext.cs" />

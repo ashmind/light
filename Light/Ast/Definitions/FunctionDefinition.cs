@@ -5,7 +5,7 @@ using AshMind.Extensions;
 using Light.Ast.References;
 
 namespace Light.Ast.Definitions {
-    public class FunctionDefinition : MethodDefinitionBase {
+    public class FunctionDefinition : AstMethodDefinitionBase {
         private IAstTypeReference returnType;
 
         public string Name { get; private set; }

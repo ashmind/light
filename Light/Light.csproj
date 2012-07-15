@@ -63,14 +63,14 @@
     <Compile Include="Ast\Definitions\AstConstructorDefinition.cs" />
     <Compile Include="Ast\Definitions\AstPropertyDefinition.cs" />
     <Compile Include="Ast\Definitions\IAstDefinition.cs" />
-    <Compile Include="Ast\Definitions\MethodDefinitionBase.cs" />
+    <Compile Include="Ast\Definitions\AstMethodDefinitionBase.cs" />
     <Compile Include="Ast\Definitions\AstTypeDefinition.cs" />
     <Compile Include="Ast\Definitions\FunctionDefinition.cs" />
     <Compile Include="Ast\Definitions\TypeDefintionTypes.cs" />
     <Compile Include="Ast\Errors\AstMissingMethod.cs" />
     <Compile Include="Ast\Expressions\BinaryExpression.cs" />
     <Compile Include="Ast\Expressions\CallExpression.cs" />
-    <Compile Include="Ast\Expressions\IAstExpression.cs" />
+    <Compile Include="Ast\IAstExpression.cs" />
     <Compile Include="Ast\Expressions\IndexerExpression.cs" />
     <Compile Include="Ast\Expressions\LambdaExpression.cs" />
     <Compile Include="Ast\Expressions\MemberExpression.cs" />
@@ -87,6 +87,7 @@
     <Compile Include="Ast\No.cs" />
     <Compile Include="Ast\References\AstParameterReference.cs" />
     <Compile Include="Ast\References\AstPropertyReference.cs" />
+    <Compile Include="Ast\References\AstVariableReference.cs" />
     <Compile Include="Ast\References\IAstConstructorReference.cs" />
     <Compile Include="Ast\References\IAstMethodReference.cs" />
     <Compile Include="Ast\References\IAstReference.cs" />
@@ -101,7 +102,7 @@
     <Compile Include="Ast\Statements\ReturnStatement.cs" />
     <Compile Include="Ast\Statements\IfOrUnlessStatement.cs" />
     <Compile Include="Ast\Statements\ForStatement.cs" />
-    <Compile Include="Ast\Statements\VariableDefinition.cs" />
+    <Compile Include="Ast\Statements\AstVariableDefinition.cs" />
     <Compile Include="Ast\Definitions\ImportDefinition.cs" />
     <Compile Include="Ast\Literals\PrimitiveValue.cs" />
     <Compile Include="Ast\Expressions\BinaryOperator.cs" />
@@ -125,6 +126,8 @@
     <Compile Include="Processing\ProcessingStepBase.cs" />
     <Compile Include="Processing\Steps\AddImportToScope.cs" />
     <Compile Include="Processing\Steps\AddPropertyToScope.cs" />
+    <Compile Include="Processing\Steps\AddVariableToScope.cs" />
+    <Compile Include="Processing\Steps\TypeInference\InferVariableTypes.cs" />
     <Compile Include="Processing\Steps\GenerateBaseConstructorCalls.cs" />
     <Compile Include="Processing\Steps\ResolveConstructorReferences.cs" />
     <Compile Include="Processing\Steps\DefineTypeScope.cs" />
@@ -133,7 +136,7 @@
     <Compile Include="Processing\Steps\ResolveMethodReferences.cs" />
     <Compile Include="Processing\Steps\ResolveIdentifiers.cs" />
     <Compile Include="Processing\Steps\GenerateMainMethod.cs" />
-    <Compile Include="Processing\Steps\InferFunctionReturnTypes.cs" />
+    <Compile Include="Processing\Steps\TypeInference\InferFunctionReturnTypes.cs" />
     <Compile Include="Processing\Steps\GenerateReturns.cs" />
     <Compile Include="Processing\Steps\GenerateDefaultConstructors.cs" />
     <Compile Include="Processing\IProcessingStep.cs" />

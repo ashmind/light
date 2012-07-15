@@ -56,7 +56,7 @@ namespace Light.Compilation {
         }
 
         private void CompileMember(TypeDefinition type, IAstDefinition memberAst, DefinitionBuildingContext context) {
-            var functionAst = memberAst as MethodDefinitionBase;
+            var functionAst = memberAst as AstMethodDefinitionBase;
             if (functionAst != null) {
                 CompileFunction(type, functionAst, context);
             }
@@ -65,7 +65,7 @@ namespace Light.Compilation {
             }
         }
 
-        private void CompileFunction(TypeDefinition type, MethodDefinitionBase methodAst, DefinitionBuildingContext context) {
+        private void CompileFunction(TypeDefinition type, AstMethodDefinitionBase methodAst, DefinitionBuildingContext context) {
             MethodDefinition method;
             if (methodAst is Ast.Definitions.FunctionDefinition) {
                 var functionAst = methodAst as FunctionDefinition;
@@ -92,15 +92,15 @@ namespace Light.Compilation {
             CompileBody(method, methodAst, context);
         }
 
-        private void CompileParameters(MethodDefinition method, MethodDefinitionBase methodAst, DefinitionBuildingContext context) {
+        private void CompileParameters(MethodDefinition method, AstMethodDefinitionBase methodAst, DefinitionBuildingContext context) {
             foreach (var parameter in methodAst.Parameters) {
                 method.Parameters.Add(new ParameterDefinition(parameter.Name, ParameterAttributes.None, context.ConvertReference(parameter.Type)));
             }
         }
 
-        private void CompileBody(MethodDefinition method, Ast.Definitions.MethodDefinitionBase methodAst, DefinitionBuildingContext parentContext) {
+        private void CompileBody(MethodDefinition method, Ast.Definitions.AstMethodDefinitionBase methodAst, DefinitionBuildingContext parentContext) {
             var body = method.Body.GetILProcessor();
-            var context = new CilCompilationContext(methodAst, (e, c) => CompileCil(body, e, c), parentContext);
+            var context = new CilCompilationContext(method, methodAst, (e, c) => CompileCil(body, e, c), parentContext);
 
             foreach (var element in methodAst.Body) {
                 CompileCil(body, element, context);

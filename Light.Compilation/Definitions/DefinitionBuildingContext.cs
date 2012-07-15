@@ -15,15 +15,15 @@ namespace Light.Compilation.Definitions {
             : base(module, referenceProviders) {
         }
 
-        public void Add(AstTypeDefinition typeAst, TypeDefinition type) {
+        public void MapDefinition(AstTypeDefinition typeAst, TypeDefinition type) {
             references.Add(typeAst, type);
         }
 
-        public void Add(MethodDefinitionBase methodAst, MethodDefinition method) {
+        public void MapDefinition(AstMethodDefinitionBase methodAst, MethodDefinition method) {
             references.Add(methodAst, method);
         }
 
-        public void Add(AstPropertyDefinition propertyAst, FieldDefinition field) {
+        public void MapDefinition(AstPropertyDefinition propertyAst, FieldDefinition field) {
             references.Add(propertyAst, field);
         }
 

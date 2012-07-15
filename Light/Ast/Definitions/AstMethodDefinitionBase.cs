@@ -3,14 +3,14 @@ using System.Linq;
 using Light.Compilation.Instructions;
 
 namespace Light.Ast.Definitions {
-    public abstract class MethodDefinitionBase : IAstDefinition {
-        protected MethodDefinitionBase() {
+    public abstract class AstMethodDefinitionBase : IAstDefinition {
+        protected AstMethodDefinitionBase() {
             this.Parameters = new List<AstParameterDefinition>();
             this.Body = new List<IAstStatement>();
             this.Compilation = new MethodCompilation();
         }
 
-        protected MethodDefinitionBase(IEnumerable<AstParameterDefinition> parameters, IEnumerable<IAstStatement> body) {
+        protected AstMethodDefinitionBase(IEnumerable<AstParameterDefinition> parameters, IEnumerable<IAstStatement> body) {
             var parametersAsList = parameters.ToList();
             var bodyAsList = body.ToList();
 

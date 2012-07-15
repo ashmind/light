@@ -8,7 +8,6 @@ using Autofac;
 using Gallio.Framework;
 using Light.Ast;
 using Light.Compilation;
-using Light.Tests.OfCompilation;
 using MbUnit.Framework;
 
 namespace Light.Tests.Helpers {
@@ -16,12 +15,12 @@ namespace Light.Tests.Helpers {
         public static dynamic CompileAndEvaluate(string expression) {
             return CompileAndGetInstance(string.Format(@"
                 import System
-                public class _
+                public class Test
                     public function Evaluate()
                         return {0}
                     end
                 end
-            ", expression).Trim(), "_").Evaluate();
+            ", expression).Trim(), "Test").Evaluate();
         }
 
         public static Assembly CompileFromResource(string resourceName, CompilationTarget target = CompilationTarget.Library) {

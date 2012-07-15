@@ -7,11 +7,11 @@ using Light.Ast.Statements;
 using Light.Ast.Types;
 
 namespace Light.Processing.Steps {
-    public class GenerateReturns : ProcessingStepBase<MethodDefinitionBase> {
+    public class GenerateReturns : ProcessingStepBase<AstMethodDefinitionBase> {
         public GenerateReturns() : base(ProcessingStage.PreCompilation) {
         }
 
-        public override IAstElement ProcessAfterChildren(MethodDefinitionBase method, ProcessingContext context) {
+        public override IAstElement ProcessAfterChildren(AstMethodDefinitionBase method, ProcessingContext context) {
             if (method.Body.OfType<ReturnStatement>().Any())
                 return method;
 

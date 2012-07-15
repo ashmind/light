@@ -8,7 +8,7 @@ using Light.Ast.References;
 using Light.Ast.References.Types;
 using Light.Ast.Statements;
 
-namespace Light.Processing.Steps {
+namespace Light.Processing.Steps.TypeInference {
     public class InferFunctionReturnTypes : ProcessingStepBase<FunctionDefinition> {
         public InferFunctionReturnTypes() : base(ProcessingStage.TypeInference) {
         }

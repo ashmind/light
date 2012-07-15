@@ -13,11 +13,11 @@ namespace Light.Ast.Incomplete {
 
         #region IAstTypeReference Members
 
-        IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<Expressions.IAstExpression> arguments) {
+        IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
             throw new NotImplementedException("Unknown type can not resolve methods.");
         }
 
-        IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<Expressions.IAstExpression> arguments) {
+        IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
             throw new NotImplementedException("Unknown type can not resolve constructors.");
         }
 

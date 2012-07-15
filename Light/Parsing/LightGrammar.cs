@@ -266,7 +266,11 @@ namespace Light.Parsing {
                 (IAstElement)node.ChildAst(1),
                 (IAstElement)node.ChildAst(2)
             ));
-            VariableDefinition = NonTerminal("VariableDefinition", node => new VariableDefinition(node.ChildNodes[1].Token.Text, null));
+            VariableDefinition = NonTerminal("VariableDefinition", node => new AstVariableDefinition(
+                node.Child(1).Token.Text,
+                AstImplicitType.Instance,
+                (IAstExpression)node.Child(2).ChildAst(1)
+            ));
             Assignment = NonTerminal("Assignment", node => new AssignmentStatement((IAstAssignable)node.ChildAst(0), (IAstExpression)node.ChildAst(2)));
             AssignmentLeftHandSide = Transient<IAstElement>("AssignmentLeftHandSide");
             ReturnStatement = NonTerminal("Return", node => new ReturnStatement((IAstExpression)node.ChildAst(1)));

@@ -11,7 +11,7 @@ namespace Light.Compilation.Definitions {
             var fieldDefinition = new FieldDefinition(propertyOrField.Name, FieldAttributes.Private, type);
             
             typeDefinition.Fields.Add(fieldDefinition);
-            context.Add(propertyOrField, fieldDefinition);
+            context.MapDefinition(propertyOrField, fieldDefinition);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast;
 using Light.Ast.Expressions;
 using Light.Ast.References;
 using Light.Ast.Statements;
