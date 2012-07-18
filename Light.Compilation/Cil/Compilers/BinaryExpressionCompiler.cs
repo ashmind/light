@@ -9,8 +9,14 @@ using Mono.Cecil.Cil;
 
 namespace Light.Compilation.Cil.Compilers {
     public class BinaryExpressionCompiler : CilCompilerBase<BinaryExpression> {
-        private IDictionary<Tuple<Type, string>, OpCode> BuiltOpCodes = new Dictionary<Tuple<Type, string>, OpCode> {
-            { Tuple.Create(typeof(int), "+"), OpCodes.Add }
+        private readonly IDictionary<Tuple<Type, string>, OpCode> BuiltInOpCodes = new Dictionary<Tuple<Type, string>, OpCode> {
+            { Tuple.Create(typeof(int), "+"),  OpCodes.Add },
+            { Tuple.Create(typeof(int), "-"),  OpCodes.Sub },
+            { Tuple.Create(typeof(int), "*"),  OpCodes.Mul },
+            { Tuple.Create(typeof(int), "/"),  OpCodes.Div },
+            { Tuple.Create(typeof(int), "<"),  OpCodes.Clt },
+            { Tuple.Create(typeof(int), ">"),  OpCodes.Cgt },
+            { Tuple.Create(typeof(int), "=="), OpCodes.Ceq }
         };
 
         public override void Compile(ILProcessor processor, BinaryExpression binary, CilCompilationContext context) {
@@ -31,7 +37,7 @@ namespace Light.Compilation.Cil.Compilers {
             var key = Tuple.Create(type, binary.Operator.Name);
 
             OpCode code;
-            var found = BuiltOpCodes.TryGetValue(key, out code);
+            var found = BuiltInOpCodes.TryGetValue(key, out code);
             if (!found)
                 throw new NotImplementedException("BinaryExpressionCompiler: could not find OpCode for " + key);
 

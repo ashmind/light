@@ -24,7 +24,15 @@ namespace Light.Tests.OfCompilation {
         }
 
         [Test]
-        [Row("1+1", 2)]
+        [Row("1+1",      2)]
+        [Row("1*1",      1)]
+        [Row("1/1",      1)]
+        [Row("1-1",      0)]
+        [Row("1>1",      false)]
+        [Row("1<1",      false)]
+        [Row("1==1",     true)]
+        [Row("'x'+'x'",  "xx")]
+        [Row("'x'=='x'", true)]
         public void ReturnResultOfBinary(string expressionString, object expectedValue) {
             var compiled = CompileAndGetClassWith(@"
                 public function GetValue()
