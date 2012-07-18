@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.Errors;
-using Light.Ast.Expressions;
 using Light.Ast.References.Methods;
 
 namespace Light.Ast.References.Types {
@@ -14,8 +13,9 @@ namespace Light.Ast.References.Types {
             this.ActualType = type;
         }
 
-        public IAstMethodReference ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
-            var method = this.ActualType.GetMethod(name, arguments.Select(a => ((AstReflectedType)a.ExpressionType).ActualType).ToArray());
+        public virtual IAstMethodReference ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
+            var types = arguments.Select(a => ((AstReflectedType)a.ExpressionType).ActualType).ToArray();
+            var method = this.ActualType.GetMethod(name, types);
             if (method == null)
                 return new AstMissingMethod(name, this);
 
@@ -57,5 +57,18 @@ namespace Light.Ast.References.Types {
         }
 
         #endregion
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as AstReflectedType);
+        }
+
+        public bool Equals(AstReflectedType type) {
+            return type != null
+                && Equals(this.ActualType, type.ActualType);
+        }
+
+        public override int GetHashCode() {
+            return this.ActualType.GetHashCode();
+        }
     }
 }

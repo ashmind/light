@@ -5,7 +5,7 @@ using AshMind.Extensions;
 using Light.Ast.References;
 
 namespace Light.Ast.Definitions {
-    public class FunctionDefinition : AstMethodDefinitionBase {
+    public class AstFunctionDefinition : AstMethodDefinitionBase {
         private IAstTypeReference returnType;
 
         public string Name { get; private set; }
@@ -17,7 +17,7 @@ namespace Light.Ast.Definitions {
             }
         }
 
-        public FunctionDefinition(string name, IEnumerable<AstParameterDefinition> parameters, IEnumerable<IAstStatement> body, IAstTypeReference returnType)
+        public AstFunctionDefinition(string name, IEnumerable<AstParameterDefinition> parameters, IEnumerable<IAstStatement> body, IAstTypeReference returnType)
             : base(parameters, body)
         {
             Argument.RequireNotNullAndNotEmpty("name", name);

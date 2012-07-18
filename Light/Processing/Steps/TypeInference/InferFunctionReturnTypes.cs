@@ -9,11 +9,11 @@ using Light.Ast.References.Types;
 using Light.Ast.Statements;
 
 namespace Light.Processing.Steps.TypeInference {
-    public class InferFunctionReturnTypes : ProcessingStepBase<FunctionDefinition> {
+    public class InferFunctionReturnTypes : ProcessingStepBase<AstFunctionDefinition> {
         public InferFunctionReturnTypes() : base(ProcessingStage.TypeInference) {
         }
 
-        public override IAstElement ProcessAfterChildren(FunctionDefinition function, ProcessingContext context) {
+        public override IAstElement ProcessAfterChildren(AstFunctionDefinition function, ProcessingContext context) {
             if (function.ReturnType != AstImplicitType.Instance)
                 return function;
 
@@ -21,8 +21,8 @@ namespace Light.Processing.Steps.TypeInference {
             return function;
         }
 
-        private static IAstTypeReference InferReturnType(FunctionDefinition function) {
-            var returns = function.Descendants<ReturnStatement>().ToArray();
+        private static IAstTypeReference InferReturnType(AstFunctionDefinition function) {
+            var returns = function.Descendants<AstReturnStatement>().ToArray();
             if (returns.Length == 0 || returns.All(r => r.Result == null))
                 return AstVoidType.Instance;
 

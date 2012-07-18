@@ -18,7 +18,7 @@ namespace Light.Ast.Incomplete {
         }
 
         IAstTypeReference IAstExpression.ExpressionType {
-            get { return null; }
+            get { return AstUnknownType.WithNoName; }
         }
 
         #region IAstElement Members

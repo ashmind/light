@@ -24,6 +24,19 @@ namespace Light.Tests.OfCompilation {
         }
 
         [Test]
+        [Row("1+1", 2)]
+        public void ReturnResultOfBinary(string expressionString, object expectedValue) {
+            var compiled = CompileAndGetClassWith(@"
+                public function GetValue()
+                    return " + expressionString + @"
+                end
+            ");
+            var value = compiled.GetValue();
+
+            Assert.AreEqual(expectedValue, value);
+        }
+
+        [Test]
         [Row(typeof(string), "string", "x")]
         public void ReturnArgument<T>(string argumentType, T value) {
             var compiled = CompileAndGetClassWith(@"

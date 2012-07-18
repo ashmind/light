@@ -7,11 +7,11 @@ using Light.Ast.References;
 using Light.Processing.Scoping;
 
 namespace Light.Processing.Steps {
-    public class DefineFunctionScope : ProcessingStepBase<FunctionDefinition> {
+    public class DefineFunctionScope : ProcessingStepBase<AstFunctionDefinition> {
         public DefineFunctionScope() : base(ProcessingStage.ScopeDefinition) {
         }
 
-        public override IAstElement ProcessBeforeChildren(FunctionDefinition function, ProcessingContext context) {
+        public override IAstElement ProcessBeforeChildren(AstFunctionDefinition function, ProcessingContext context) {
             var scope = new Scope();
             foreach (var parameter in function.Parameters) {
                 scope.Add(parameter.Name, new AstParameterReference(parameter));
@@ -21,7 +21,7 @@ namespace Light.Processing.Steps {
             return function;
         }
 
-        public override IAstElement ProcessAfterChildren(FunctionDefinition function, ProcessingContext context) {
+        public override IAstElement ProcessAfterChildren(AstFunctionDefinition function, ProcessingContext context) {
             context.ScopeStack.Pop();
             return function;
         }

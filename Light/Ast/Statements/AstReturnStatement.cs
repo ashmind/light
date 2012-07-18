@@ -4,13 +4,13 @@ using System.Linq;
 using Light.Ast.Expressions;
 
 namespace Light.Ast.Statements {
-    public class ReturnStatement : IAstStatement {
+    public class AstReturnStatement : IAstStatement {
         public IAstExpression Result { get; private set; }
 
-        public ReturnStatement() {
+        public AstReturnStatement() {
         }
 
-        public ReturnStatement(IAstExpression result) {
+        public AstReturnStatement(IAstExpression result) {
             Result = result;
         }
 

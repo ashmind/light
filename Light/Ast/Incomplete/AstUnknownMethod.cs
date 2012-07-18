@@ -15,7 +15,7 @@ namespace Light.Ast.Incomplete {
         #region IAstMethodReference Members
 
         IAstTypeReference IAstMethodReference.ReturnType {
-            get { return null; }
+            get { return AstUnknownType.WithNoName; }
         }
 
         #endregion

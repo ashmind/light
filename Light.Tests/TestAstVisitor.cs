@@ -21,7 +21,7 @@ namespace Light.Tests {
             builder.Append("{");
 
             this.Visit(binary.Left, builder);
-            builder.Append(" ").Append(binary.Operator.Symbol).Append(" ");
+            builder.Append(" ").Append(binary.Operator.Name).Append(" ");
             this.Visit(binary.Right, builder);
 
             builder.Append("}");

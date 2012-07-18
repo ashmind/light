@@ -14,15 +14,15 @@ namespace Light.Processing.Steps {
 
         public override IAstElement ProcessAfterChildren(AstRoot root, ProcessingContext context) {
             var statements = root.Children<IAstStatement>();
-            var main = new FunctionDefinition("Main", No.Parameters, statements, AstVoidType.Instance) {
+            var main = new AstFunctionDefinition("Main", No.Parameters, statements, AstVoidType.Instance) {
                 Compilation = { Static = true, EntryPoint = true }
             };
             if (!main.Body.Any())
                 return root;
 
             // TODO: this should be done by GenerateReturns, but the ordering behavior is somewhat incorrect right now
-            if (!main.Descendants<ReturnStatement>().Any())
-                main.Body.Add(new ReturnStatement());
+            if (!main.Descendants<AstReturnStatement>().Any())
+                main.Body.Add(new AstReturnStatement());
 
             root.Elements.RemoveWhere(s => s is IAstStatement);
 

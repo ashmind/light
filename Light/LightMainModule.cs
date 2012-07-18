@@ -10,6 +10,7 @@ namespace Light {
     public class LightMainModule : Module {
         protected override void Load(ContainerBuilder builder) {
             builder.RegisterAssemblyTypes(ThisAssembly).As<IProcessingStep>();
+            builder.RegisterType<LightParser>().AsSelf();
             builder.RegisterType<BuiltInTypesNameSource>().As<INameSource>();
             builder.RegisterType<LightProcessor>().AsSelf();
         }

@@ -67,8 +67,8 @@ namespace Light.Compilation {
 
         private void CompileFunction(TypeDefinition type, AstMethodDefinitionBase methodAst, DefinitionBuildingContext context) {
             MethodDefinition method;
-            if (methodAst is Ast.Definitions.FunctionDefinition) {
-                var functionAst = methodAst as FunctionDefinition;
+            if (methodAst is Ast.Definitions.AstFunctionDefinition) {
+                var functionAst = methodAst as AstFunctionDefinition;
                 var returnType = context.ConvertReference(functionAst.ReturnType);
 
                 var attributes = MethodAttributes.Public;

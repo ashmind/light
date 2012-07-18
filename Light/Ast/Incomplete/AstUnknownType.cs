@@ -5,7 +5,12 @@ using Light.Ast.References;
 
 namespace Light.Ast.Incomplete {
     public class AstUnknownType : IAstTypeReference {
+        public static AstUnknownType WithNoName { get; private set; }
         public string Name { get; private set; }
+        
+        static AstUnknownType() {
+            WithNoName = new AstUnknownType("");
+        }
 
         public AstUnknownType(string name) {
             this.Name = name;

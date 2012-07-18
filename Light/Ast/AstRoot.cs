@@ -6,10 +6,13 @@ namespace Light.Ast {
     public class AstRoot : IAstElement {
         public IList<IAstElement> Elements { get; private set; }
 
+        public AstRoot(params IAstElement[] elements) : this((IEnumerable<IAstElement>)elements) {
+        }
+
         public AstRoot(IEnumerable<IAstElement> elements) {
-            var elmentList = elements.ToList();
-            Argument.RequireNotNullAndNotContainsNull("elements", elmentList);
-            Elements = elmentList;
+            var elementList = elements.ToList();
+            Argument.RequireNotNullAndNotContainsNull("elements", elementList);
+            Elements = elementList;
         }
 
         #region IAstElement Members

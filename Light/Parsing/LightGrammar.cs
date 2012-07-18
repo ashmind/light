@@ -95,7 +95,7 @@ namespace Light.Parsing {
         public NonTerminal<IAstExpression> Expression { get; private set; }
         public NonTerminal<IAstExpression> Literal { get; private set; }
         public NonTerminal<IAstExpression> BinaryExpression { get; private set; }
-        public NonTerminal<BinaryOperator> BinaryOperator { get; private set; }
+        public NonTerminal<IAstMethodReference> BinaryOperator { get; private set; }
         public NonTerminal<IEnumerable<IAstExpression>> CommaSeparatedExpressionListStar { get; private set; }
         public NonTerminal<IAstExpression> ListInitializer { get; private set; }
         public NonTerminal<IAstExpression> ObjectInitializer { get; private set; }
@@ -125,11 +125,11 @@ namespace Light.Parsing {
             Expression = Transient<IAstExpression>("Expression");
             BinaryExpression = NonTerminal("BinaryExpression", node => new BinaryExpression(
                 (IAstExpression)node.ChildNodes[0].AstNode,
-                (BinaryOperator)node.ChildNodes[1].AstNode,
+                (IAstMethodReference)node.ChildNodes[1].AstNode,
                 (IAstExpression)node.ChildNodes[2].AstNode
             ));
 
-            BinaryOperator = NonTerminalWithCustomType("BinaryOperator", node => new BinaryOperator(node.FindTokenAndGetText()));
+            BinaryOperator = NonTerminalWithCustomType<IAstMethodReference>("BinaryOperator", node => new AstUnknownMethod(node.FindTokenAndGetText()));
 
             CommaSeparatedExpressionListStar = NonTerminal("CommaSeparatedExpressionListStar", node => node.ChildAsts<IAstExpression>());
             ListInitializer = NonTerminal("ListInitializer", node => new ListInitializer(AstElementsInStarChild(node, 0)));
@@ -273,7 +273,7 @@ namespace Light.Parsing {
             ));
             Assignment = NonTerminal("Assignment", node => new AssignmentStatement((IAstAssignable)node.ChildAst(0), (IAstExpression)node.ChildAst(2)));
             AssignmentLeftHandSide = Transient<IAstElement>("AssignmentLeftHandSide");
-            ReturnStatement = NonTerminal("Return", node => new ReturnStatement((IAstExpression)node.ChildAst(1)));
+            ReturnStatement = NonTerminal("Return", node => new AstReturnStatement((IAstExpression)node.ChildAst(1)));
         }
 
         private void SetStatementRules() {
@@ -325,7 +325,7 @@ namespace Light.Parsing {
             Constructor = NonTerminal("Constructor", node => new AstConstructorDefinition(node.ChildAst(ParameterList), node.ChildAst(OptionalBodyOfStatements)));
             Function = NonTerminal(
                 "Function",
-                node =>  new FunctionDefinition(
+                node =>  new AstFunctionDefinition(
                     node.Child(Name).Token.Text,
                     node.ChildAst(ParameterList),
                     node.ChildAst(OptionalBodyOfStatements),

@@ -1,24 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Light.Ast.Incomplete;
-using Light.Ast.References;
 
-namespace Light.Ast.Errors {
-    public class AstMissingMethod : IAstMethodReference {
+namespace Light.Ast.References.Methods {
+    public class AstBuiltInOperator : IAstMethodReference {
         public string Name { get; private set; }
         public IAstTypeReference DeclaringType { get; private set; }
+        public IAstTypeReference ReturnType { get; private set; }
 
-        public AstMissingMethod(string name, IAstTypeReference declaringType) {
+        public AstBuiltInOperator(string name, IAstTypeReference leftType, IAstTypeReference resultType) {
             Argument.RequireNotNullAndNotEmpty("name", name);
-            Argument.RequireNotNull("declaringType", declaringType);
-
             this.Name = name;
-            this.DeclaringType = declaringType;
-        }
-
-        public IAstTypeReference ReturnType {
-            get { return AstUnknownType.WithNoName; }
+            this.DeclaringType = leftType; // irrelevant
+            this.ReturnType = resultType;
         }
 
         #region IAstElement Members

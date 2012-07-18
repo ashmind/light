@@ -35,12 +35,12 @@ namespace Light.Tests.OfParsing {
 
         [Test]
         public void FunctionWithNoParameters() {
-            ParseAssert.IsParsedTo<FunctionDefinition>("function X()\r\nend", f => f.Name == "X");
+            ParseAssert.IsParsedTo<AstFunctionDefinition>("function X()\r\nend", f => f.Name == "X");
         }
 
         [Test]
         public void FunctionWithUntypedParameters() {
-            ParseAssert.IsParsedTo<FunctionDefinition>(
+            ParseAssert.IsParsedTo<AstFunctionDefinition>(
                 "function X(a, b, c)\r\nend",
                 f => f.Name == "X"
                   && f.Parameters.All(p => p.Type is AstImplicitType)
@@ -50,7 +50,7 @@ namespace Light.Tests.OfParsing {
 
         [Test]
         public void FunctionWithTypedParameters() {
-            ParseAssert.IsParsedTo<FunctionDefinition>(
+            ParseAssert.IsParsedTo<AstFunctionDefinition>(
                 "function X(integer a, string b, boolean c)\r\nend",
                 f => f.Name == "X"
                   && f.Parameters.Select(p => p.Type).Cast<AstUnknownType>().Select(t => t.Name).SequenceEqual(new[] { "integer", "string", "boolean" })
@@ -60,7 +60,7 @@ namespace Light.Tests.OfParsing {
 
         [Test]
         public void FunctionWithMixedParameters() {
-            ParseAssert.IsParsedTo<FunctionDefinition>(
+            ParseAssert.IsParsedTo<AstFunctionDefinition>(
                 "function X(integer a, b, boolean c)\r\nend",
                 f => f.Name == "X" // not checking parameter types, too complex
                   && f.Parameters.Select(p => p.Name).SequenceEqual(new[] { "a", "b", "c" })

@@ -63,6 +63,7 @@
     <Compile Include="Cil\CilCompilationContext.cs" />
     <Compile Include="Cil\Compilers\AssignmentCompiler.cs" />
     <Compile Include="Cil\Compilers\BaseConstructorCallCompiler.cs" />
+    <Compile Include="Cil\Compilers\BinaryExpressionCompiler.cs" />
     <Compile Include="Cil\Compilers\VariableReferenceCompiler.cs" />
     <Compile Include="Cil\Compilers\VariableDefinitionCompiler.cs" />
     <Compile Include="Cil\Compilers\NewCompiler.cs" />
