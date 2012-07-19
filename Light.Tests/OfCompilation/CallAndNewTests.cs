@@ -20,22 +20,25 @@ namespace Light.Tests.OfCompilation {
         }
 
         [Test]
-        public void NearbyMethodCallWithNoArguments() {
-            var caller = CompilationHelper.CompileAndGetInstance(@"
+        [Row("", "3", "", 3)]
+        [Row("string value",  "value", "'abc'", "abc")]
+        [Row("integer value", "value", "3",     3)]
+        public void NearbyMethodCall(string parameters, string returnValue, string arguments, object expectedValue) {
+            var caller = CompilationHelper.CompileAndGetInstance(string.Format(@"
                 public class Callee
-                    function Return3()
-                        return 3
+                    function GetValue({0})
+                        return {2}
                     end
                 end
                 
                 public class Caller
-                    function ReturnFromCallee()
+                    function GetValueFromCallee()
                         let callee = new Callee()
-                        return callee.Return3()
+                        return callee.GetValue({1})
                     end
                 end
-            ".Trim(), "Caller");
-            Assert.AreEqual(3, caller.ReturnFromCallee());
+            ", parameters, arguments, returnValue).Trim(), "Caller");
+            Assert.AreEqual(expectedValue, caller.GetValueFromCallee());
         }
     }
 }

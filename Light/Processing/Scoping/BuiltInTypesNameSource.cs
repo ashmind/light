@@ -12,7 +12,8 @@ namespace Light.Processing.Scoping {
 
         public BuiltInTypesNameSource() {
             Types = new Dictionary<string, AstReflectedType> {
-                {"string", new AstReflectedType(typeof(string)) }
+                {"string", new AstReflectedType(typeof(string)) },
+                {"integer", new AstReflectedType(typeof(int)) }
             };
         }
 
