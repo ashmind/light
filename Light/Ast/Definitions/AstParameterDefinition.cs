@@ -30,5 +30,9 @@ namespace Light.Ast.Definitions {
         }
 
         #endregion
+
+        public override string ToString() {
+            return (this.Type + " " + this.Name).Trim();
+        }
     }
 }

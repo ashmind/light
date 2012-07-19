@@ -49,5 +49,9 @@ namespace Light.Ast.Incomplete {
         }
 
         #endregion
+
+        public override string ToString() {
+            return "";
+        }
     }
 }

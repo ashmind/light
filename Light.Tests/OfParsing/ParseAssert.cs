@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Light.Ast;
+using Light.Description;
 using MbUnit.Framework;
 
 namespace Light.Tests.OfParsing {
     public static class ParseAssert {
-        public static void IsParsedTo(string code, string expectedResult, bool includeTypesOfValues = false) {
+        public static void IsParsedTo(string code, string expectedResult, bool includeExpressionType = false) {
             var parser = new LightParser();
             var result = parser.Parse(code);
-
-            var visitor = new TestAstVisitor { IncludesTypesOfValues = includeTypesOfValues };
             AssertEx.That(() => !result.HasErrors);
-            Assert.AreEqual(expectedResult, visitor.Describe(result.Root));
+
+            var resultString = result.Root.ToString();
+            var resultExpression = result.Root as IAstExpression;
+            if (resultExpression != null && includeExpressionType)
+                resultString = resultString + ": " + new LightTypeDescriber().Describe(resultExpression.ExpressionType);
+            
+            Assert.AreEqual(expectedResult, resultString);
         }
 
         public static void IsParsedTo<TAstElement>(string code, Expression<Func<TAstElement, bool>> condition) 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Irony.Parsing;
 using Light.Ast;
@@ -185,9 +186,13 @@ namespace Light.Parsing {
 
             ArgumentList = Transient<IEnumerable<IAstExpression>>("ArgumentList");
 
-            LambdaExpression = NonTerminal(
-                "Lambda", node => new LambdaExpression(new[] { (IAstElement)node.ChildAst(0) }, (IAstElement)node.ChildAst(1))
-            );
+            LambdaExpression = NonTerminal("Lambda", node => {
+                var parametersRaw = node.FirstChild.FirstChild.AstNode;
+                var parameters = parametersRaw as IEnumerable<AstParameterDefinition>
+                              ?? new[] { (AstParameterDefinition)parametersRaw };
+
+                return new AstLambdaExpression(parameters, (IAstElement)node.ChildAst(1));
+            });
         }
 
         private void SetExpressionRules() {
@@ -223,7 +228,7 @@ namespace Light.Parsing {
             NewExpression.Rule = "new" + TypeReference + (ArgumentList | Empty) + (ObjectInitializer | Empty);
             ArgumentList.Rule = "(" + CommaSeparatedExpressionListStar + ")";
 
-            LambdaExpression.Rule = UntypedParameter + "=>" + Expression;
+            LambdaExpression.Rule = (UntypedParameter | "(" + ParameterList + ")") + "=>" + Expression;
         }
 
         private static NonTerminal<IAstExpression> NonTerminal(string name, Func<ParseTreeNode, IAstExpression> nodeCreator) {

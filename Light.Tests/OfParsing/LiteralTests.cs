@@ -6,26 +6,26 @@ namespace Light.Tests.OfParsing {
     [TestFixture]
     public class LiteralTests {
         [Test]
-        [Row( "1",       "{1: Int32}")]
-        [Row("10",       "{10: Int32}")]
-        [Row("10000000", "{10000000: Int32}")]
-        [Row("1.1",      "{1.1: Double}")]
-        [Row("1e3",      "{1000: Double}")]
+        [Row( "1",       "1: Int32")]
+        [Row("10",       "10: Int32")]
+        [Row("10000000", "10000000: Int32")]
+        [Row("1.1",      "1.1: Double")]
+        [Row("1e3",      "1000: Double")]
         public void Number(string literal, string expectedResult) {
-            ParseAssert.IsParsedTo(literal, expectedResult, includeTypesOfValues: true);
+            ParseAssert.IsParsedTo(literal, expectedResult, includeExpressionType: true);
         }
 
         [Test]
-        [Row("'a'", "{'a': String}")]
+        [Row("'a'", "'a': String")]
         public void String(string literal, string expectedResult) {
-            ParseAssert.IsParsedTo(literal, expectedResult, includeTypesOfValues: true);
+            ParseAssert.IsParsedTo(literal, expectedResult, includeExpressionType: true);
         }
 
         [Test]
-        [Row("true",  "{true: Boolean}")]
-        [Row("false", "{false: Boolean}")]
+        [Row("true",  "true: Boolean")]
+        [Row("false", "false: Boolean")]
         public void Boolean(string literal, string expectedResult) {
-            ParseAssert.IsParsedTo(literal, expectedResult, includeTypesOfValues: true);
+            ParseAssert.IsParsedTo(literal, expectedResult, includeExpressionType: true);
         }
 
         [Test]

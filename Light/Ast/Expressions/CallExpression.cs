@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Light.Ast.References;
+using Light.Internal;
 
 namespace Light.Ast.Expressions {
     public class CallExpression : IAstExpression, IAstStatement {
@@ -41,5 +43,18 @@ namespace Light.Ast.Expressions {
         }
 
         #endregion
+
+        public override string ToString() {
+            var builder = new StringBuilder();
+            if (this.Target != null)
+                builder.Append(this.Target).Append(".");
+
+            builder.Append(this.Method)
+                   .Append("(")
+                   .AppendJoin(", ", this.Arguments)
+                   .Append(")");
+
+            return builder.ToString();
+        }
     }
 }

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using AshMind.Extensions;
 using Light.Ast.References;
+using Light.Internal;
 
 namespace Light.Ast.Expressions {
     public class IndexerExpression : IAstExpression {
@@ -32,5 +34,15 @@ namespace Light.Ast.Expressions {
         }
 
         #endregion
+
+        public override string ToString() {
+            var builder = new StringBuilder();
+            builder.Append(this.Target)
+                   .Append("[")
+                   .AppendJoin(", ", this.Arguments)
+                   .Append("]");
+
+            return builder.ToString();
+        }
     }
 }

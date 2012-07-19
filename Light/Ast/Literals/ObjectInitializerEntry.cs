@@ -22,5 +22,9 @@ namespace Light.Ast.Literals {
         }
 
         #endregion
+
+        public override string ToString() {
+            return this.Name + ": " + this.Value;
+        }
     }
 }

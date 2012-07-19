@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="OfCompilation\ClassMemberTests.cs" />
     <Compile Include="OfCompilation\FunctionTests.cs" />
+    <Compile Include="OfParsing\LambdaTests.cs" />
     <Compile Include="OfParsing\DefinitionTests.cs" />
     <Compile Include="Helpers\PEVerifier.cs" />
     <Compile Include="TestEnvironment.cs" />
@@ -73,7 +74,6 @@
     <Compile Include="OfParsing\ProgramTests.cs" />
     <Compile Include="Resource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestAstVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Light.Compilation\Light.Compilation.csproj">
