@@ -5,7 +5,7 @@ using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.References;
 
-namespace Light.Processing.Steps {
+namespace Light.Processing.Steps.ScopeDefinition {
     public class AddPropertyToScope : ProcessingStepBase<AstPropertyDefinition> {
         public AddPropertyToScope() : base(ProcessingStage.ScopeDefinition) {
         }

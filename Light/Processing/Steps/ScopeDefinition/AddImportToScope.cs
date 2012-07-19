@@ -5,7 +5,7 @@ using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Processing.Scoping;
 
-namespace Light.Processing.Steps {
+namespace Light.Processing.Steps.ScopeDefinition {
     public class AddImportToScope : ProcessingStepBase<ImportDefinition> {
         public AddImportToScope() : base(ProcessingStage.ScopeDefinition) {
         }

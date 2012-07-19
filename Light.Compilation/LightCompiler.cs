@@ -37,35 +37,47 @@ namespace Light.Compilation {
 
             var module = assembly.MainModule;
             var context = new DefinitionBuildingContext(module, this.referenceProviders);
-            foreach (var typeAst in root.Descendants<Ast.Definitions.AstTypeDefinition>()) {
-                CompileType(module, typeAst, context);
+            
+            foreach (var typeAst in root.Descendants<AstTypeDefinition>()) {
+                DefineType(module, typeAst, context);
+            }
+
+            foreach (var type in module.Types) {
+                foreach (var method in type.Methods) {
+                    CompileMethod(method, context.GetAst(method), context);
+                }
             }
 
             assembly.Write(toStream);
         }
 
-        private void CompileType(ModuleDefinition module, Ast.Definitions.AstTypeDefinition typeAst, DefinitionBuildingContext context) {
+        private void DefineType(ModuleDefinition module, Ast.Definitions.AstTypeDefinition typeAst, DefinitionBuildingContext context) {
             var type = new TypeDefinition("", typeAst.Name, TypeAttributes.Public | ToTypeAttribute(typeAst.DefinitionType)) {
                 BaseType = module.Import(typeof(object))
             };
-            module.Types.Add(type);            
+            module.Types.Add(type);
 
             foreach (var memberAst in typeAst.Members) {
-                CompileMember(type, memberAst, context);
+                DefineMember(type, memberAst, context);
             }
+            context.MapDefinition(typeAst, type);
         }
 
-        private void CompileMember(TypeDefinition type, IAstDefinition memberAst, DefinitionBuildingContext context) {
+        private void DefineMember(TypeDefinition type, IAstDefinition memberAst, DefinitionBuildingContext context) {
             var functionAst = memberAst as AstMethodDefinitionBase;
             if (functionAst != null) {
-                CompileFunction(type, functionAst, context);
+                DefineFunction(type, functionAst, context);
+                return;
             }
-            else {
-                CompileDefinition(type, memberAst, context);
-            }
+
+            var builder = this.builders.SingleOrDefault(c => c.CanBuild(memberAst, type));
+            if (builder == null)
+                throw new NotImplementedException("LightCompiler: No DefinitionBuilder for " + memberAst + " under " + type + ".");
+
+            builder.Build(memberAst, type, context);
         }
 
-        private void CompileFunction(TypeDefinition type, AstMethodDefinitionBase methodAst, DefinitionBuildingContext context) {
+        private void DefineFunction(TypeDefinition type, AstMethodDefinitionBase methodAst, DefinitionBuildingContext context) {
             MethodDefinition method;
             if (methodAst is Ast.Definitions.AstFunctionDefinition) {
                 var functionAst = methodAst as AstFunctionDefinition;
@@ -88,31 +100,23 @@ namespace Light.Compilation {
             }
 
             type.Methods.Add(method);
-            CompileParameters(method, methodAst, context);
-            CompileBody(method, methodAst, context);
+            context.MapDefinition(methodAst, method);
+            DefineParameters(method, methodAst, context);
         }
 
-        private void CompileParameters(MethodDefinition method, AstMethodDefinitionBase methodAst, DefinitionBuildingContext context) {
+        private void DefineParameters(MethodDefinition method, AstMethodDefinitionBase methodAst, DefinitionBuildingContext context) {
             foreach (var parameter in methodAst.Parameters) {
                 method.Parameters.Add(new ParameterDefinition(parameter.Name, ParameterAttributes.None, context.ConvertReference(parameter.Type)));
             }
         }
 
-        private void CompileBody(MethodDefinition method, Ast.Definitions.AstMethodDefinitionBase methodAst, DefinitionBuildingContext parentContext) {
+        private void CompileMethod(MethodDefinition method, AstMethodDefinitionBase methodAst, DefinitionBuildingContext parentContext) {
             var body = method.Body.GetILProcessor();
             var context = new CilCompilationContext(method, methodAst, (e, c) => CompileCil(body, e, c), parentContext);
 
             foreach (var element in methodAst.Body) {
                 CompileCil(body, element, context);
             }
-        }
-
-        private void CompileDefinition(IMemberDefinition parent, IAstDefinition definitionAst, DefinitionBuildingContext context) {
-            var builder = this.builders.SingleOrDefault(c => c.CanBuild(definitionAst, parent));
-            if (builder == null)
-                throw new NotImplementedException("LightCompiler: No DefinitionBuilder for " + definitionAst + " under " + parent + ".");
-
-            builder.Build(definitionAst, parent, context);
         }
 
         private void CompileCil(ILProcessor body, IAstElement element, CilCompilationContext context) {

@@ -15,6 +15,10 @@ namespace Light.Compilation.Definitions {
             : base(module, referenceProviders) {
         }
 
+        public AstMethodDefinitionBase GetAst(MethodDefinition method) {
+            return (AstMethodDefinitionBase)references.Single(r => r.Value == method).Key;
+        }
+
         public void MapDefinition(AstTypeDefinition typeAst, TypeDefinition type) {
             references.Add(typeAst, type);
         }

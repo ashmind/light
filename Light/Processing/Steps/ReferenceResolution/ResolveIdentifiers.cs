@@ -6,7 +6,7 @@ using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
 using Light.Ast.References;
 
-namespace Light.Processing.Steps {
+namespace Light.Processing.Steps.ReferenceResolution {
     public class ResolveIdentifiers : ProcessingStepBase<IAstElement> {
         public ResolveIdentifiers() : base(ProcessingStage.ReferenceResolution) {
         }
@@ -33,10 +33,13 @@ namespace Light.Processing.Steps {
             RequireExactlyOne(resolved, name);
 
             var typeReference = resolved[0] as IAstTypeReference;
-            if (typeReference == null)
-                throw new NotImplementedException("ResolveIdentifiers: " + resolved[0] + " is not yet supported.");
+            if (typeReference == null) {
+                typeReference = ((IAstExpression)resolved[0]).ExpressionType;
+            }
+            else {
+                call.Target = null;
+            }
 
-            call.Target = null;
             ((AstUnknownMethod)call.Method).DeclaringType = typeReference;
             return call;
         }
