@@ -7,5 +7,6 @@ Obj
 *.vs10x
 /$libraries/Irony/
 _ReSharper.*
+_NCrunch*
 *.crunchsolution.cache
 /TestResults/
