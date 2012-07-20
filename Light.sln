@@ -9,6 +9,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Compilation", "Light.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Shell", "Light.Shell\Light.Shell.csproj", "{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vsip", "Vsip", "{D67334A4-46FB-4095-B615-452D22DA02AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Vsip", "Vsip\Light.Vsip\Light.Vsip.csproj", "{6F8B3019-803D-4E88-8A69-21865F6B8996}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Vsip.IntegrationTests", "Vsip\Light.Vsip.IntegrationTests\Light.Vsip.IntegrationTests.csproj", "{EB48EFB9-0A28-43BE-A119-7A535E118CDA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{F6F9C326-FDC1-4C0B-AE50-67517636E66D}"
+	ProjectSection(SolutionItems) = preProject
+		VsipKey.snk = VsipKey.snk
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +28,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
+		Vsip Debug|Any CPU = Vsip Debug|Any CPU
+		Vsip Debug|Mixed Platforms = Vsip Debug|Mixed Platforms
+		Vsip Debug|x86 = Vsip Debug|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -29,6 +43,11 @@ Global
 		{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}.Release|x86.ActiveCfg = Release|Any CPU
+		{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}.Vsip Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}.Vsip Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}.Vsip Debug|Mixed Platforms.ActiveCfg = Vsip Debug|Any CPU
+		{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}.Vsip Debug|Mixed Platforms.Build.0 = Vsip Debug|Any CPU
+		{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}.Vsip Debug|x86.ActiveCfg = Debug|Any CPU
 		{9BD63839-5A33-470E-B550-7DD93667AB87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9BD63839-5A33-470E-B550-7DD93667AB87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BD63839-5A33-470E-B550-7DD93667AB87}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -39,6 +58,11 @@ Global
 		{9BD63839-5A33-470E-B550-7DD93667AB87}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9BD63839-5A33-470E-B550-7DD93667AB87}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{9BD63839-5A33-470E-B550-7DD93667AB87}.Release|x86.ActiveCfg = Release|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Vsip Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Vsip Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Vsip Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Vsip Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9BD63839-5A33-470E-B550-7DD93667AB87}.Vsip Debug|x86.ActiveCfg = Debug|Any CPU
 		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -49,6 +73,11 @@ Global
 		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Release|x86.ActiveCfg = Release|Any CPU
+		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Vsip Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Vsip Debug|Any CPU.Build.0 = Debug|Any CPU
+		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Vsip Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Vsip Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}.Vsip Debug|x86.ActiveCfg = Debug|Any CPU
 		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Debug|Mixed Platforms.Build.0 = Debug|x86
@@ -59,8 +88,43 @@ Global
 		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Release|Mixed Platforms.Build.0 = Release|x86
 		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Release|x86.ActiveCfg = Release|x86
 		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Release|x86.Build.0 = Release|x86
+		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Vsip Debug|Any CPU.ActiveCfg = Debug|x86
+		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Vsip Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Vsip Debug|Mixed Platforms.Build.0 = Debug|x86
+		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Vsip Debug|x86.ActiveCfg = Debug|x86
+		{AFE5B149-4874-42F6-AA02-CEBDB05B0B88}.Vsip Debug|x86.Build.0 = Debug|x86
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Release|x86.ActiveCfg = Release|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Vsip Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Vsip Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Vsip Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Vsip Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6F8B3019-803D-4E88-8A69-21865F6B8996}.Vsip Debug|x86.ActiveCfg = Debug|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Release|x86.ActiveCfg = Release|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Vsip Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Vsip Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Vsip Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Vsip Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA}.Vsip Debug|x86.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6F8B3019-803D-4E88-8A69-21865F6B8996} = {D67334A4-46FB-4095-B615-452D22DA02AF}
+		{EB48EFB9-0A28-43BE-A119-7A535E118CDA} = {D67334A4-46FB-4095-B615-452D22DA02AF}
 	EndGlobalSection
 EndGlobal
