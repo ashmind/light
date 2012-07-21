@@ -24,27 +24,6 @@ namespace Light.Tests.OfCompilation {
         }
 
         [Test]
-        [Row("1+1",      2)]
-        [Row("1*1",      1)]
-        [Row("1/1",      1)]
-        [Row("1-1",      0)]
-        [Row("1>1",      false)]
-        [Row("1<1",      false)]
-        [Row("1==1",     true)]
-        [Row("'x'+'x'",  "xx")]
-        [Row("'x'=='x'", true)]
-        public void ReturnResultOfBinary(string expressionString, object expectedValue) {
-            var compiled = CompileAndGetClassWith(@"
-                public function GetValue()
-                    return " + expressionString + @"
-                end
-            ");
-            var value = compiled.GetValue();
-
-            Assert.AreEqual(expectedValue, value);
-        }
-
-        [Test]
         [Row(typeof(string), "string", "x")]
         public void ReturnArgument<T>(string argumentType, T value) {
             var compiled = CompileAndGetClassWith(@"
