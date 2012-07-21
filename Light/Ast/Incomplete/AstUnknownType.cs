@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Incomplete {
-    public class AstUnknownType : IAstTypeReference {
+    public class AstUnknownType : AstElementBase, IAstTypeReference {
         public static AstUnknownType WithNoName { get; private set; }
         public string Name { get; private set; }
         
@@ -16,6 +16,10 @@ namespace Light.Ast.Incomplete {
             this.Name = name;
         }
 
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
+        }
+
         #region IAstTypeReference Members
 
         IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
@@ -24,14 +28,6 @@ namespace Light.Ast.Incomplete {
 
         IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
             throw new NotImplementedException("Unknown type can not resolve constructors.");
-        }
-
-        #endregion
-
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
-            return No.Elements;
         }
 
         #endregion

@@ -5,7 +5,7 @@ using Light.Ast.Errors;
 using Light.Ast.Expressions;
 
 namespace Light.Ast.References.Types {
-    public class AstVoidType : IAstTypeReference {
+    public class AstVoidType : AstElementBase, IAstTypeReference {
         public static AstVoidType Instance { get; private set; }
 
         static AstVoidType() {
@@ -13,6 +13,10 @@ namespace Light.Ast.References.Types {
         }
 
         private AstVoidType() {
+        }
+
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
         }
 
         #region IAstTypeReference Members
@@ -23,14 +27,6 @@ namespace Light.Ast.References.Types {
 
         IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
             return null;
-        }
-
-        #endregion
-
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
-            return No.Elements;
         }
 
         #endregion

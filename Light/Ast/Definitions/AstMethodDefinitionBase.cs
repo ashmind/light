@@ -3,7 +3,7 @@ using System.Linq;
 using Light.Compilation.Instructions;
 
 namespace Light.Ast.Definitions {
-    public abstract class AstMethodDefinitionBase : IAstDefinition {
+    public abstract class AstMethodDefinitionBase : AstElementBase, IAstDefinition {
         protected AstMethodDefinitionBase() {
             this.Parameters = new List<AstParameterDefinition>();
             this.Body = new List<IAstStatement>();
@@ -27,19 +27,11 @@ namespace Light.Ast.Definitions {
         public IList<IAstStatement> Body { get; private set; }
         public MethodCompilation Compilation { get; private set; }
 
-        public virtual IEnumerable<IAstElement> Children() {
-            return this.Parameters.Cast<IAstElement>().Concat(this.Body);
-        }
-
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return Enumerable.Concat(
                 Parameters.Transform(transform).Cast<IAstElement>(),
                 Body.Transform(transform)
             );
         }
-
-        #endregion
     }
 }

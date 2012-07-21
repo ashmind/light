@@ -3,9 +3,10 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using Autofac;
+using Autofac.Core;
 using Light.Vsip.Internal;
 using Light.Vsip.Language;
-using Microsoft.VisualStudio.Package;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.OLE.Interop;
 
@@ -38,10 +39,12 @@ namespace Light.Vsip
         protected override void Initialize() {
             Trace.WriteLine (string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this));
 
+            var container = SetupAutofac();
+
             // http://msdn.microsoft.com/en-us/library/bb166498.aspx
 
             // Proffer the service.
-            var languageService = new LightLanguageService();
+            var languageService = container.Resolve<LightLanguageService>();
             languageService.SetSite(this);
             ((IServiceContainer)this).AddService(typeof(LightLanguageService), languageService, true);
 
@@ -58,6 +61,13 @@ namespace Light.Vsip
             }
 
             base.Initialize();
+        }
+
+        private IContainer SetupAutofac() {
+            var builder = new ContainerBuilder();
+            builder.RegisterType<LightLanguageService>().AsSelf();
+            builder.RegisterAssemblyModules(typeof(LightProcessor).Assembly);
+            return builder.Build();
         }
 
         protected override void Dispose(bool disposing) {

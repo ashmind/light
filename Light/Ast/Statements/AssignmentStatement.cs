@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.Expressions;
 
 namespace Light.Ast.Statements {
-    public class AssignmentStatement : IAstStatement {
+    public class AssignmentStatement : AstElementBase, IAstStatement {
         private IAstAssignable target;
         private IAstExpression value;
 
@@ -28,14 +28,10 @@ namespace Light.Ast.Statements {
             this.Target = target;
             this.Value = value;
         }
-
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.Target = (IAstAssignable)transform(this.Target);
             yield return this.Value = (IAstExpression)transform(this.Value);
         }
-
-        #endregion
     }
 }

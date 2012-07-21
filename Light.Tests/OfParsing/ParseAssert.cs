@@ -13,7 +13,7 @@ namespace Light.Tests.OfParsing {
             var result = parser.Parse(code);
             AssertEx.That(() => !result.HasErrors);
 
-            var resultString = result.Root.ToString();
+            var resultString = new AstToCodeTransformer().Transform(result.Root);
             var resultExpression = result.Root as IAstExpression;
             if (resultExpression != null && includeExpressionType)
                 resultString = resultString + ": " + new LightTypeDescriber().Describe(resultExpression.ExpressionType);

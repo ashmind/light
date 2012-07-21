@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Light.Ast.Expressions;
 using Light.Ast.References;
 using Light.Ast.References.Types;
 
 namespace Light.Ast.Literals {
-    public class StringWithInterpolation : IAstExpression {
+    public class StringWithInterpolation : AstElementBase, IAstExpression {
         private static readonly IAstTypeReference StringType = new AstReflectedType(typeof(string));
 
         public string Text { get; private set; }
@@ -19,12 +18,8 @@ namespace Light.Ast.Literals {
             get { return StringType; }
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return No.Elements;
         }
-
-        #endregion
     }
 }

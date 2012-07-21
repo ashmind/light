@@ -6,7 +6,7 @@ using Light.Ast.References;
 using Light.Internal;
 
 namespace Light.Ast.Expressions {
-    public class CallExpression : IAstExpression, IAstStatement {
+    public class CallExpression : AstElementBase, IAstExpression, IAstStatement {
         private IAstMethodReference method;
         public IAstElement Target { get; set; }
         public IList<IAstExpression> Arguments { get; private set; }
@@ -31,30 +31,13 @@ namespace Light.Ast.Expressions {
             get { return this.Method.ReturnType; }
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             if (this.Target != null)
                 yield return this.Target = transform(this.Target);
 
             foreach (var argument in this.Arguments.Transform(transform)) {
                 yield return argument;
             }
-        }
-
-        #endregion
-
-        public override string ToString() {
-            var builder = new StringBuilder();
-            if (this.Target != null)
-                builder.Append(this.Target).Append(".");
-
-            builder.Append(this.Method)
-                   .Append("(")
-                   .AppendJoin(", ", this.Arguments)
-                   .Append(")");
-
-            return builder.ToString();
         }
     }
 }

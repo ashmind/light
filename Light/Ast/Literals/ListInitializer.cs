@@ -2,30 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Light.Ast.Expressions;
 using Light.Ast.References;
 using Light.Internal;
 
 namespace Light.Ast.Literals {
-    public class ListInitializer : IAstExpression {
+    public class ListInitializer : AstElementBase, IAstExpression {
         public IList<IAstElement> Elements { get; private set; }
 
-        public ListInitializer(params IAstElement[] elements) {
-            Argument.RequireNotNullAndNotContainsNull("elements", elements);
-            Elements = elements.ToList();
+        public ListInitializer(IEnumerable<IAstElement> elements) {
+            var elementList = elements.ToList();
+            Argument.RequireNotNullAndNotContainsNull("elements", elementList);
+            Elements = elementList;
         }
 
         public IAstTypeReference ExpressionType {
             get { throw new NotImplementedException("ListInitializer.ExpressionType"); }
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return this.Elements.Transform(transform);
         }
-
-        #endregion
 
         public override string ToString() {
             var builder = new StringBuilder();

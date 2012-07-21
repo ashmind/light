@@ -2,20 +2,16 @@ using System.Collections.Generic;
 using System.Reflection;
 
 namespace Light.Ast.References.Methods {
-    public class AstReflectedConstructor : IAstConstructorReference {
+    public class AstReflectedConstructor : AstElementBase, IAstConstructorReference {
         public ConstructorInfo Constructor { get; private set; }
 
         public AstReflectedConstructor(ConstructorInfo constructor) {
             this.Constructor = constructor;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return No.Elements;
         }
-
-        #endregion
 
         #region IAstReference Members
 

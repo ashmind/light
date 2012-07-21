@@ -52,6 +52,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
             var resolved = context.Resolve(identifier.Name);
             RequireExactlyOne(resolved, identifier.Name);
 
+            resolved[0].SourceSpan = identifier.SourceSpan;
             return resolved[0];
         }
 

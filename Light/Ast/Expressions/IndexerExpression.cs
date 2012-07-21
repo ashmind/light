@@ -1,39 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using AshMind.Extensions;
 using Light.Ast.References;
 using Light.Internal;
 
 namespace Light.Ast.Expressions {
-    public class IndexerExpression : IAstExpression {
-        public IAstElement Target { get; private set; }
-        public ReadOnlyCollection<IAstElement> Arguments { get; private set; }
+    public class IndexerExpression : AstElementBase, IAstExpression {
+        private IAstElement target;
+        public IList<IAstElement> Arguments { get; private set; }
 
-        public IndexerExpression(IAstElement target, params IAstElement[] arguments) {
-            Argument.RequireNotNull("target", target);
-            Argument.RequireNotNullAndNotContainsNull("arguments", arguments);
+        public IndexerExpression(IAstElement target, IEnumerable<IAstElement> arguments) {
+            var argumentList = arguments.ToList();
+            Argument.RequireNotNullAndNotContainsNull("arguments", argumentList);
 
             this.Target = target;
-            this.Arguments = arguments.AsReadOnly();
+            this.Arguments = argumentList;
+        }
+
+        public IAstElement Target {
+            get { return this.target; }
+            set {
+                Argument.RequireNotNull("value", value);
+                this.target = value;
+            }
         }
 
         public IAstTypeReference ExpressionType {
             get { throw new NotImplementedException("IndexerExpression.ExpressionType"); }
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.Target = transform(this.Target);
             foreach (var argument in this.Arguments.Transform(transform)) {
                 yield return argument;
             }
         }
-
-        #endregion
 
         public override string ToString() {
             var builder = new StringBuilder();

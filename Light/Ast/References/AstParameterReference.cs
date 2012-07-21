@@ -5,7 +5,7 @@ using Light.Ast.Definitions;
 using Light.Ast.Expressions;
 
 namespace Light.Ast.References {
-    public class AstParameterReference : IAstExpression, IAstReference {
+    public class AstParameterReference : AstElementBase, IAstExpression, IAstReference {
         public AstParameterDefinition Parameter { get; private set; }
 
         public AstParameterReference(AstParameterDefinition parameter) {
@@ -13,13 +13,9 @@ namespace Light.Ast.References {
             Parameter = parameter;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return No.Elements;
         }
-
-        #endregion
 
         #region IAstExpression Members
 

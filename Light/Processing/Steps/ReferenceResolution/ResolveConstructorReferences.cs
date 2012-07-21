@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast;
 using Light.Ast.Expressions;
 
-namespace Light.Processing.Steps {
+namespace Light.Processing.Steps.ReferenceResolution {
     public class ResolveConstructorReferences : ProcessingStepBase<AstNewExpression> {
         public ResolveConstructorReferences() : base(ProcessingStage.ReferenceResolution) {
         }
@@ -14,6 +14,8 @@ namespace Light.Processing.Steps {
                 return @new;
 
             @new.Constructor = @new.Type.ResolveConstructor(@new.Arguments);
+            @new.Constructor.SourceSpan = @new.Type.SourceSpan;
+
             return @new;
         }
     }

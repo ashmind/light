@@ -5,11 +5,15 @@ using Light.Ast.Definitions;
 using Light.Ast.References.Methods;
 
 namespace Light.Ast.References.Types {
-    public class AstDefinedType : IAstTypeReference {
+    public class AstDefinedType : AstElementBase, IAstTypeReference {
         public AstTypeDefinition Definition { get; private set; }
 
         public AstDefinedType(AstTypeDefinition type) {
             this.Definition = type;
+        }
+
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
         }
 
         #region IAstTypeReference Members
@@ -34,14 +38,6 @@ namespace Light.Ast.References.Types {
 
         object IAstReference.Target {
             get { return this.Definition; }
-        }
-
-        #endregion
-
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
-            return No.Elements;
         }
 
         #endregion

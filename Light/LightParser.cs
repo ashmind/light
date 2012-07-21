@@ -5,6 +5,7 @@ using System.Linq;
 using Irony.Parsing;
 
 using Light.Ast;
+using Light.Internal;
 using Light.Parsing;
 
 namespace Light {
@@ -27,12 +28,7 @@ namespace Light {
             return new ParsingMessage(
                 ironyMessage.Message,
                 (ParsingMessageKind)ironyMessage.Level,
-                new Parsing.SourceLocation(
-                    ironyMessage.Location.Line,
-                    ironyMessage.Location.Column,
-                    ironyMessage.Location.Position,
-                    source
-                )
+                ParsingConverter.FromIrony(ironyMessage.Location, source)
             );
         }
     }

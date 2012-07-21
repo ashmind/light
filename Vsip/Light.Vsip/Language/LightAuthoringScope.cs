@@ -1,22 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast;
+using Light.Ast.References;
+using Light.Description;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Package;
 using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Light.Vsip.Language {
     public class LightAuthoringScope : AuthoringScope {
-        private readonly object ast;
+        private readonly IAstElement ast;
 
-        public LightAuthoringScope(object ast) {
+        public LightAuthoringScope(IAstElement ast) {
             this.ast = ast;
         }
 
         // ParseReason.QuickInfo
         public override string GetDataTipText(int line, int col, out TextSpan span) {
             span = new TextSpan();
-            return null;
+            if (this.ast == null)
+                return null;
+
+            var matches = this.ast.Descendants().Where(
+                d => d.SourceSpan.Start.Line == line
+                  && d.SourceSpan.Start.Column <= col
+                  && d.SourceSpan.End.Column >= col
+            ).OrderBy(d => d.SourceSpan.Length);
+            var element = matches.FirstOrDefault();
+
+            if (element == null)
+                return null;
+
+            span = new TextSpan {
+                iStartLine = element.SourceSpan.Start.Line,
+                iStartIndex = element.SourceSpan.Start.Column,
+                iEndLine = element.SourceSpan.End.Line,
+                iEndIndex = element.SourceSpan.End.Column,
+            };
+            var result = new AstToDetailsTransformer().Transform(element);
+            return result.Length != 0 ? result : null;
         }
 
         // ParseReason.CompleteWord
@@ -54,5 +77,4 @@ namespace Light.Vsip.Language {
             return null;
         }
     }
-
 }

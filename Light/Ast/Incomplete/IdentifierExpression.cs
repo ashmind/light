@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Light.Ast.Expressions;
 using Light.Ast.References;
 
 namespace Light.Ast.Incomplete {
-    public class IdentifierExpression : IAstExpression, IAstAssignable {
+    public class IdentifierExpression : AstElementBase, IAstExpression, IAstAssignable, IAstReference {
         public string Name { get; private set; }
 
         public IdentifierExpression(string name) {
@@ -21,10 +20,14 @@ namespace Light.Ast.Incomplete {
             get { return AstUnknownType.WithNoName; }
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return No.Elements;
+        }
+
+        #region IAstReference Members
+
+        object IAstReference.Target {
+            get { return null; }
         }
 
         #endregion

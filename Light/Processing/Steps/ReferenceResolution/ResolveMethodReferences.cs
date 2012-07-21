@@ -5,7 +5,7 @@ using Light.Ast;
 using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
 
-namespace Light.Processing.Steps {
+namespace Light.Processing.Steps.ReferenceResolution {
     public class ResolveMethodReferences : ProcessingStepBase<CallExpression> {
         public ResolveMethodReferences() : base(ProcessingStage.ReferenceResolution) {
         }
@@ -17,7 +17,9 @@ namespace Light.Processing.Steps {
             if (call.Method.DeclaringType == null)
                 throw new NotImplementedException("ResolveMethodReferences: DeclaringType not set on " + call.Method + ".");
 
+            var sourceSpan = call.Method.SourceSpan;
             call.Method = call.Method.DeclaringType.ResolveMethod(call.Method.Name, call.Arguments);
+            call.Method.SourceSpan = sourceSpan;
             return call;
         }
     }

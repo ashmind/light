@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Light.Ast.Definitions {
-    public class AstTypeDefinition : IAstDefinition {
+    public class AstTypeDefinition : AstElementBase, IAstDefinition {
         private string definitionType;
         public string Name { get; private set; }
 
@@ -32,12 +32,8 @@ namespace Light.Ast.Definitions {
             this.Members = membersList;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return this.Members.Transform(transform);
         }
-
-        #endregion
     }
 }

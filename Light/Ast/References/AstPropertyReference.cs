@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using Light.Ast.Definitions;
-using Light.Ast.Expressions;
 
 namespace Light.Ast.References {
-    public class AstPropertyReference : IAstReference, IAstExpression, IAstAssignable {
+    public class AstPropertyReference : AstElementBase, IAstReference, IAstExpression, IAstAssignable {
         public AstPropertyDefinition Property { get; private set; }
 
         public AstPropertyReference(AstPropertyDefinition property) {
@@ -11,13 +10,9 @@ namespace Light.Ast.References {
             this.Property = property;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return No.Elements;
         }
-
-        #endregion
 
         #region IAstExpression Members
 

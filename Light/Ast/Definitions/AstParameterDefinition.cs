@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Definitions {
-    public class AstParameterDefinition : IAstElement {
+    public class AstParameterDefinition : AstElementBase {
         private IAstTypeReference type;
         public string Name { get; private set; }
         public IAstTypeReference Type
@@ -23,13 +23,9 @@ namespace Light.Ast.Definitions {
             this.Type = type;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.Type = (IAstTypeReference)transform(this.Type);
         }
-
-        #endregion
 
         public override string ToString() {
             return (this.Type + " " + this.Name).Trim();

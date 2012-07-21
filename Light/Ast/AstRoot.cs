@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Light.Ast {
-    public class AstRoot : IAstElement {
+    public class AstRoot : AstElementBase {
         public IList<IAstElement> Elements { get; private set; }
 
         public AstRoot(params IAstElement[] elements) : this((IEnumerable<IAstElement>)elements) {
@@ -15,16 +15,8 @@ namespace Light.Ast {
             Elements = elementList;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return this.Elements.Transform(transform);
-        }
-
-        #endregion
-
-        public override string ToString() {
-            return string.Join(Environment.NewLine, this.Elements);
         }
     }
 }

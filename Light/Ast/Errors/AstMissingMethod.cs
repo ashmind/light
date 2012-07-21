@@ -5,7 +5,7 @@ using Light.Ast.Incomplete;
 using Light.Ast.References;
 
 namespace Light.Ast.Errors {
-    public class AstMissingMethod : IAstMethodReference {
+    public class AstMissingMethod : AstElementBase, IAstMethodReference {
         public string Name { get; private set; }
         public IAstTypeReference DeclaringType { get; private set; }
 
@@ -21,13 +21,9 @@ namespace Light.Ast.Errors {
             get { return AstUnknownType.WithNoName; }
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return No.Elements;
         }
-
-        #endregion
 
         #region IAstReference Members
 

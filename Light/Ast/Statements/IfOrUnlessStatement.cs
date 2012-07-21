@@ -1,33 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using AshMind.Extensions;
 
 namespace Light.Ast.Statements {
-    public class IfOrUnlessStatement : IAstStatement {
-        public IfOrUnlessKind Kind { get; private set; }
-        public IAstElement Condition { get; private set; }
-        public ReadOnlyCollection<IAstElement> Body { get; private set; }
+    public class IfOrUnlessStatement : AstElementBase, IAstStatement {
+        private IAstElement condition;
+        public IfOrUnlessKind Kind { get; set; }
+        public IList<IAstElement> Body { get; private set; }
 
-        public IfOrUnlessStatement(IfOrUnlessKind kind, IAstElement condition, params IAstElement[] body) {
-            Argument.RequireNotNull("condition", condition);
-            Argument.RequireNotNullNotEmptyAndNotContainsNull("body", body);
+        public IfOrUnlessStatement(IfOrUnlessKind kind, IAstElement condition, IEnumerable<IAstElement> body) {
+            var bodyList = body.ToList();
+            Argument.RequireNotNullNotEmptyAndNotContainsNull("body", bodyList);
 
-            Kind = kind;
-            Condition = condition;
-            Body = body.AsReadOnly();
+            this.Kind = kind;
+            this.Condition = condition;
+            this.Body = bodyList;
         }
 
-        #region IAstElement Members
+        public IAstElement Condition {
+            get { return this.condition; }
+            set {
+                Argument.RequireNotNull("value", value);
+                this.condition = value;
+            }
+        }
 
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.Condition = transform(this.Condition);
             foreach (var element in this.Body.Transform(transform)) {
                 yield return element;
             }
         }
-
-        #endregion
     }
 }

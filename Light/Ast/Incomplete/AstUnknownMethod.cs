@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Incomplete {
-    public class AstUnknownMethod : IAstMethodReference {
+    public class AstUnknownMethod : AstElementBase, IAstMethodReference {
         public string Name { get; private set; }
         public IAstTypeReference DeclaringType { get; set; }
 
@@ -12,18 +12,14 @@ namespace Light.Ast.Incomplete {
             this.Name = name;
         }
 
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
+        }
+
         #region IAstMethodReference Members
 
         IAstTypeReference IAstMethodReference.ReturnType {
             get { return AstUnknownType.WithNoName; }
-        }
-
-        #endregion
-
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
-            return No.Elements;
         }
 
         #endregion

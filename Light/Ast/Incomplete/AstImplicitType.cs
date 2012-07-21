@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Incomplete {
-    public class AstImplicitType : IAstTypeReference {
+    public class AstImplicitType : AstElementBase, IAstTypeReference {
         public static AstImplicitType Instance { get; private set; }
 
         static AstImplicitType() {
@@ -12,6 +12,10 @@ namespace Light.Ast.Incomplete {
         }
 
         private AstImplicitType() {
+        }
+
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
+            return No.Elements;
         }
 
         #region IAstTypeReference Members
@@ -22,14 +26,6 @@ namespace Light.Ast.Incomplete {
         
         IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
             throw new NotImplementedException("Implicit type can not resolve constructors.");
-        }
-
-        #endregion
-
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
-            return No.Elements;
         }
 
         #endregion

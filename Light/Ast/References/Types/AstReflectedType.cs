@@ -5,7 +5,7 @@ using Light.Ast.Errors;
 using Light.Ast.References.Methods;
 
 namespace Light.Ast.References.Types {
-    public class AstReflectedType : IAstTypeReference {
+    public class AstReflectedType : AstElementBase, IAstTypeReference {
         public Type ActualType { get; private set; }
 
         public AstReflectedType(Type type) {
@@ -30,17 +30,13 @@ namespace Light.Ast.References.Types {
             return new AstReflectedConstructor(constructor);
         }
 
-        public override string ToString() {
-            return this.ActualType.ToString();
-        }
-
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return No.Elements;
         }
 
-        #endregion
+        public override string ToString() {
+            return this.ActualType.ToString();
+        }
 
         #region IAstReference Members
 

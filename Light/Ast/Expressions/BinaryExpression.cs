@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
-    public class BinaryExpression : IAstExpression {
+    public class BinaryExpression : AstElementBase, IAstExpression {
         private IAstExpression left;
         private IAstMethodReference @operator;
         private IAstExpression right;
@@ -39,19 +39,15 @@ namespace Light.Ast.Expressions {
             }
         }
 
-        public References.IAstTypeReference ExpressionType {
+        public IAstTypeReference ExpressionType {
             get { return Operator.ReturnType; }
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.Left = (IAstExpression)transform(this.Left);
             yield return this.Operator = (IAstMethodReference)transform(this.Operator);
             yield return this.Right = (IAstExpression)transform(this.Right);
         }
-
-        #endregion
 
         public override string ToString() {
             return string.Format("{0} {1} {2}", this.Left, this.Operator, this.Right);

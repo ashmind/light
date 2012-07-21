@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
-    public class AstNewExpression : IAstExpression {
+    public class AstNewExpression : AstElementBase, IAstExpression {
         private IAstTypeReference type;
         public IAstTypeReference Type {
             get { return type; }
@@ -31,9 +31,7 @@ namespace Light.Ast.Expressions {
             get { return this.Type; }
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.Type = (IAstTypeReference)transform(this.Type);
             foreach (var argument in this.Arguments.Transform(transform)) {
                 yield return argument;
@@ -43,7 +41,5 @@ namespace Light.Ast.Expressions {
             
             yield return this.Initializer = transform(this.Initializer);
         }
-
-        #endregion
     }
 }

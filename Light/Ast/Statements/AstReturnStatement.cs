@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Light.Ast.Expressions;
 
 namespace Light.Ast.Statements {
-    public class AstReturnStatement : IAstStatement {
+    public class AstReturnStatement : AstElementBase, IAstStatement {
         public IAstExpression Result { get; private set; }
 
         public AstReturnStatement() {
@@ -14,13 +13,9 @@ namespace Light.Ast.Statements {
             Result = result;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             if (this.Result != null)
                 yield return this.Result = (IAstExpression)transform(this.Result);
         }
-
-        #endregion
     }
 }

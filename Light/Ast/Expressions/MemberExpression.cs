@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
-    public class MemberExpression : IAstExpression, IAstAssignable {
+    public class MemberExpression : AstElementBase, IAstExpression, IAstAssignable {
         public IAstElement Target { get; private set; }
         public string Name { get; private set; }
 
@@ -24,13 +24,9 @@ namespace Light.Ast.Expressions {
             get { throw new NotImplementedException("MemberExpression.ExpressionType"); }
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             if (this.Target != null)
                 yield return this.Target = transform(this.Target);
         }
-
-        #endregion
     }
 }

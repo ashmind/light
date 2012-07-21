@@ -5,13 +5,15 @@ using Light.Ast;
 using Light.Ast.Incomplete;
 using Light.Ast.References;
 
-namespace Light.Processing.Steps {
+namespace Light.Processing.Steps.ReferenceResolution {
     public class ResolveTypeReferences : ProcessingStepBase<AstUnknownType> {
         public ResolveTypeReferences() : base(ProcessingStage.ReferenceResolution) {
         }
 
         public override IAstElement ProcessAfterChildren(AstUnknownType type, ProcessingContext context) {
-            return ResolveSingleType(context, type.Name);
+            var resolved = ResolveSingleType(context, type.Name);
+            resolved.SourceSpan = type.SourceSpan;
+            return resolved;
         }
 
         private static IAstReference ResolveSingleType(ProcessingContext context, string name) {

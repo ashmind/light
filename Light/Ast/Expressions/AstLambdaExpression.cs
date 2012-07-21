@@ -9,7 +9,7 @@ using Light.Ast.References;
 using Light.Internal;
 
 namespace Light.Ast.Expressions {
-    public class AstLambdaExpression : IAstExpression {
+    public class AstLambdaExpression : AstElementBase, IAstExpression {
         private IAstElement body;
         public IList<AstParameterDefinition> Parameters { get; private set; }
 
@@ -33,15 +33,11 @@ namespace Light.Ast.Expressions {
             get { throw new NotImplementedException("LambdaExpression.ExpressionType"); }
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return this.Parameters.Transform(transform).Concat(
                 this.Body = transform(this.Body)
             );
         }
-
-        #endregion
 
         public override string ToString() {
             var needsBrackets = this.Parameters.Count > 1 || !(this.Parameters[0].Type is AstImplicitType);

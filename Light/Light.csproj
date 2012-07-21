@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Argument.cs" />
+    <Compile Include="Ast\AstElementBase.cs" />
     <Compile Include="Ast\AstExtensions.cs" />
     <Compile Include="Ast\AstRoot.cs" />
     <Compile Include="Ast\AstElementTransform.cs" />
@@ -127,11 +128,21 @@
     <Compile Include="Ast\Incomplete\AstImplicitType.cs" />
     <Compile Include="Ast\References\IAstTypeReference.cs" />
     <Compile Include="Compilation\Instructions\MethodCompilation.cs" />
+    <Compile Include="Description\AstToDetailsTransformer.cs" />
+    <Compile Include="Description\AstToStringTransformer.cs" />
+    <Compile Include="Description\AstToStringTransformer.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AstToStringTransformer.Generated.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Description\AstToCodeTransformer.cs" />
     <Compile Include="Description\LightTypeDescriber.cs" />
+    <Compile Include="Internal\ParsingConverter.cs" />
     <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Internal\NonTerminal.cs" />
     <Compile Include="Internal\StringBuilderExtensions.cs" />
     <Compile Include="LightMainModule.cs" />
+    <Compile Include="Parsing\SourceSpan.cs" />
     <Compile Include="Processing\ProcessingContext.cs" />
     <Compile Include="Processing\ProcessingStage.cs" />
     <Compile Include="Processing\Scoping\BuiltInTypesNameSource.cs" />
@@ -168,9 +179,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Description\AstToStringTransformer.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AstToStringTransformer.Generated.cs</LastGenOutput>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Irony.Ast;
 using Irony.Parsing;
+using Light.Ast;
 using Light.Parsing;
+using Light.Processing;
 using Light.Vsip.Internal;
 using Microsoft.VisualStudio.Package;
 using Microsoft.VisualStudio.TextManager.Interop;
@@ -13,15 +14,22 @@ using Microsoft.VisualStudio.TextManager.Interop;
 namespace Light.Vsip.Language {
     [Guid(Guids.LanguageServiceString)]
     public class LightLanguageService : LanguageService {
+        private static readonly HashSet<ProcessingStage> ProcessingStages = new HashSet<ProcessingStage> {
+            ProcessingStage.ScopeDefinition,
+            ProcessingStage.ReferenceResolution
+        };
+
         private readonly LightGrammar grammar;
-        private readonly Parser parser;
+        private readonly LightParser parser;
+        private readonly LightProcessor processor;
 
         private LanguagePreferences preferences;
         private LightScanner scanner;
 
-        public LightLanguageService() {
-            grammar = new LightGrammar();
-            parser = new Parser(grammar);
+        public LightLanguageService(LightGrammar grammar, LightParser parser, LightProcessor processor) {
+            this.grammar = grammar;
+            this.parser = parser;
+            this.processor = processor;
         }
 
         public override LanguagePreferences GetLanguagePreferences() {
@@ -55,24 +63,19 @@ namespace Light.Vsip.Language {
         public override AuthoringScope ParseSource(ParseRequest req) {
             Debug.Print("ParseSource at ({0}:{1}), reason {2}", req.Line, req.Col, req.Reason);
             var source = (LightSource)this.GetSource(req.FileName);
-
             switch (req.Reason) {
                 case ParseReason.Check:
-                    // This is where you perform your syntax highlighting.
-                    // Parse entire source as given in req.Text.
-                    // Store results in the AuthoringScope object.
-                    var parsed = parser.Parse(req.Text, req.FileName);
-                    source.Ast = parsed.Root.AstNode;
-
-                    if (parsed.ParserMessages.Count > 0) {
-                        foreach (var error in parsed.ParserMessages) {
+                    var parsed = ParseAndProcess(req.Text);
+                    if (parsed.Messages.Count > 0) {
+                        foreach (var message in parsed.Messages) {
                             var span = new TextSpan();
-                            span.iStartLine = span.iEndLine = error.Location.Line;
-                            span.iStartIndex = error.Location.Column;
-                            span.iEndIndex = error.Location.Position;
-                            req.Sink.AddError(req.FileName, error.Message, span, Severity.Error);
+                            span.iStartLine = span.iEndLine = message.Location.Line;
+                            span.iStartIndex = message.Location.Column - 1;
+                            span.iEndIndex = message.Location.Column;
+                            req.Sink.AddError(req.FileName, message.Text, span, Severity.Error);
                         }
                     }
+                    source.Parsed = parsed;
                     break;
 
                 case ParseReason.DisplayMemberList:
@@ -96,7 +99,20 @@ namespace Light.Vsip.Language {
                     break;
             }
 
-            return new LightAuthoringScope(source.Ast);
+            return new LightAuthoringScope(source.Parsed != null ? source.Parsed.Root : null);
+        }
+
+        private ParsingResult ParseAndProcess(string text) {
+            var parsed = parser.Parse(text);
+            try {
+                processor.Process(parsed.Root, ProcessingStages);
+            }
+            catch {
+                // here lies the evil
+                // temporary, until good error reporting is implemented in processor steps
+            }
+
+            return parsed;
         }
 
         public override string GetFormatFilterList() {

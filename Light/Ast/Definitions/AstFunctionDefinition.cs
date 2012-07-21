@@ -25,8 +25,11 @@ namespace Light.Ast.Definitions {
             this.ReturnType = returnType;
         }
 
-        public override IEnumerable<IAstElement> Children() {
-            return base.Children().Concat(this.ReturnType);
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
+            foreach (var child in base.VisitOrTransformChildren(transform)) {
+                yield return child;
+            }
+            yield return this.ReturnType = (IAstTypeReference)transform(this.ReturnType);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Irony.Parsing;
 using Light.Ast;
@@ -70,9 +69,9 @@ namespace Light.Parsing {
 
         public void ConstructNameAndTypeRules() {
             Name = new IdentifierTerminal("Name");
-            DotSeparatedName = NonTerminalWithCustomType("DotSeparatedName", n => new CompositeName(n.ChildNodes.Select(c => c.Token.Text).ToArray()));
+            DotSeparatedName = NonTerminalThatIsNotAstElement("DotSeparatedName", n => new CompositeName(n.ChildNodes.Select(c => c.Token.Text).ToArray()));
 
-            TypeReference = NonTerminalWithCustomType("TypeReference", n => (IAstTypeReference)new AstUnknownType(n.Child(Name).Token.Text)); // WIP
+            TypeReference = NonTerminalWithSpecificType("TypeReference", n => (IAstTypeReference)new AstUnknownType(n.Child(Name).Token.Text)); // WIP
             TypeReferenceListPlus = new NonTerminal("TypeReferenceListPlus");
         }
 
@@ -117,8 +116,14 @@ namespace Light.Parsing {
 
         private void ConstructExpressions() {
             Number = new NumberLiteral("Number", NumberOptions.Default, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
-            SingleQuotedString = new StringLiteral("SingleQuotedString", "'", StringOptions.NoEscapes, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
-            DoubleQuotedString = new StringLiteral("DoubleQuotedString", "\"", StringOptions.NoEscapes, (c, node) => node.AstNode = new StringWithInterpolation((string)node.Token.Value));
+            SingleQuotedString = new StringLiteral(
+                "SingleQuotedString", "'", StringOptions.NoEscapes,
+                ToActualNodeCreator(n => new PrimitiveValue(n.Token.Value))
+            );
+            DoubleQuotedString = new StringLiteral(
+                "DoubleQuotedString", "\"", StringOptions.NoEscapes,
+                ToActualNodeCreator(n => new StringWithInterpolation((string)n.Token.Value))
+            );
 
             Boolean = NonTerminal("Boolean", n => new PrimitiveValue(n.FindTokenAndGetText() == "true"));
             
@@ -130,7 +135,7 @@ namespace Light.Parsing {
                 (IAstExpression)node.ChildNodes[2].AstNode
             ));
 
-            BinaryOperator = NonTerminalWithCustomType<IAstMethodReference>("BinaryOperator", node => new AstUnknownMethod(node.FindTokenAndGetText()));
+            BinaryOperator = NonTerminalWithSpecificType<IAstMethodReference>("BinaryOperator", node => new AstUnknownMethod(node.FindTokenAndGetText()));
 
             CommaSeparatedExpressionListStar = NonTerminal("CommaSeparatedExpressionListStar", node => node.ChildAsts<IAstExpression>());
             ListInitializer = NonTerminal("ListInitializer", node => new ListInitializer(AstElementsInStarChild(node, 0)));
@@ -159,7 +164,7 @@ namespace Light.Parsing {
 
                     var indexer = item as IndexerExpression;
                     if (indexer != null) {
-                        result = new IndexerExpression(new MemberExpression(result, ((IdentifierExpression)indexer.Target).Name), indexer.Arguments.ToArray());
+                        result = new IndexerExpression(new MemberExpression(result, ((IdentifierExpression)indexer.Target).Name), indexer.Arguments);
                         continue;
                     }
 
@@ -232,11 +237,11 @@ namespace Light.Parsing {
         }
 
         private static NonTerminal<IAstExpression> NonTerminal(string name, Func<ParseTreeNode, IAstExpression> nodeCreator) {
-            return new NonTerminal<IAstExpression>(name, nodeCreator);
+            return NonTerminalWithSpecificType(name, nodeCreator);
         }
 
         private static NonTerminal<IEnumerable<IAstExpression>> NonTerminal(string name, Func<ParseTreeNode, IEnumerable<IAstExpression>> nodeCreator) {
-            return new NonTerminal<IEnumerable<IAstExpression>>(name, nodeCreator);
+            return NonTerminalThatIsNotAstElement(name, nodeCreator);
         }
 
         #endregion
@@ -269,7 +274,7 @@ namespace Light.Parsing {
                 // (if|unless) <1> \r\n <2>
                 (IfOrUnlessKind)Enum.Parse(typeof(IfOrUnlessKind), node.Child(0).Child(0).Token.Text, true),
                 (IAstElement)node.ChildAst(1),
-                (IAstElement)node.ChildAst(2)
+                new[] { (IAstElement)node.ChildAst(2) }
             ));
             VariableDefinition = NonTerminal("VariableDefinition", node => new AstVariableDefinition(
                 node.Child(1).Token.Text,
@@ -338,10 +343,10 @@ namespace Light.Parsing {
                 )
             );
             OptionalAccessLevel = new NonTerminal("OptionalAccessLevel");
-            ParameterList = NonTerminalWithCustomType("ParameterList", node => node.ChildAsts<AstParameterDefinition>());
+            ParameterList = NonTerminalThatIsNotAstElement("ParameterList", node => node.ChildAsts<AstParameterDefinition>());
             Parameter = Transient<AstParameterDefinition>("Parameter");
-            TypedParameter = NonTerminalWithCustomType("TypedParameter", node => new AstParameterDefinition(node.Child(1).Token.Text, node.ChildAst(TypeReference)));
-            UntypedParameter = NonTerminalWithCustomType("UntypedParameter", node => new AstParameterDefinition(node.FindTokenAndGetText(), AstImplicitType.Instance));
+            TypedParameter = NonTerminalWithSpecificType("TypedParameter", node => new AstParameterDefinition(node.Child(1).Token.Text, node.ChildAst(TypeReference)));
+            UntypedParameter = NonTerminalWithSpecificType("UntypedParameter", node => new AstParameterDefinition(node.FindTokenAndGetText(), AstImplicitType.Instance));
         }
 
         private void SetDefinitionRules() {
@@ -362,33 +367,53 @@ namespace Light.Parsing {
         }
 
         private static NonTerminal<IAstDefinition> NonTerminal(string name, Func<ParseTreeNode, IAstDefinition> nodeCreator) {
-            return new NonTerminal<IAstDefinition>(name, nodeCreator);
+            return NonTerminalWithSpecificType(name, nodeCreator);
         }
 
         private static NonTerminal<IEnumerable<IAstDefinition>> NonTerminal(string name, Func<ParseTreeNode, IEnumerable<IAstDefinition>> nodeCreator) {
-            return new NonTerminal<IEnumerable<IAstDefinition>>(name, nodeCreator);
+            return NonTerminalThatIsNotAstElement(name, nodeCreator);
         }
 
         #endregion
 
         private static NonTerminal<IAstElement> NonTerminal(string name, Func<ParseTreeNode, IAstElement> nodeCreator) {
-            return new NonTerminal<IAstElement>(name, nodeCreator);
+            return NonTerminalWithSpecificType(name, nodeCreator);
         }
 
         private static NonTerminal<IEnumerable<IAstElement>> NonTerminal(string name, Func<ParseTreeNode, IEnumerable<IAstElement>> nodeCreator) {
-            return new NonTerminal<IEnumerable<IAstElement>>(name, nodeCreator);
+            return NonTerminalThatIsNotAstElement(name, nodeCreator);
         }
 
         private static NonTerminal<IAstStatement> NonTerminal(string name, Func<ParseTreeNode, IAstStatement> nodeCreator) {
-            return new NonTerminal<IAstStatement>(name, nodeCreator);
+            return NonTerminalWithSpecificType(name, nodeCreator);
         }
 
         private static NonTerminal<IEnumerable<IAstStatement>> NonTerminal(string name, Func<ParseTreeNode, IEnumerable<IAstStatement>> nodeCreator) {
-            return new NonTerminal<IEnumerable<IAstStatement>>(name, nodeCreator);
+            return NonTerminalThatIsNotAstElement(name, nodeCreator);
         }
 
-        private static NonTerminal<TAstNode> NonTerminalWithCustomType<TAstNode>(string name, Func<ParseTreeNode, TAstNode> nodeCreator) {
-            return new NonTerminal<TAstNode>(name, nodeCreator);
+        private static NonTerminal<TAstElement> NonTerminalWithSpecificType<TAstElement>(string name, Func<ParseTreeNode, TAstElement> nodeCreator)
+            where TAstElement : IAstElement
+        {
+            return new NonTerminal<TAstElement>(name) {
+                AstNodeCreator = ToActualNodeCreator(nodeCreator)
+            };
+        }
+
+        private static NonTerminal<TAstNode> NonTerminalThatIsNotAstElement<TAstNode>(string name, Func<ParseTreeNode, TAstNode> nodeCreator) {
+            return new NonTerminal<TAstNode>(name) {
+                AstNodeCreator = (c, n) => n.AstNode = nodeCreator(n)
+            };
+        }
+
+        private static AstNodeCreator ToActualNodeCreator<TAstElement>(Func<ParseTreeNode, TAstElement> nodeCreator) 
+            where TAstElement : IAstElement
+        {
+            return (c, n) => {
+                var element = nodeCreator(n);
+                element.SourceSpan = ParsingConverter.FromIrony(n.Span, c.Source.Text);
+                n.AstNode = element;
+            };
         }
 
         private NonTerminal<TAstNode> Transient<TAstNode>(string name) {
@@ -397,12 +422,12 @@ namespace Light.Parsing {
             return nonTerminal;
         }
 
-        private IAstElement[] AstElementsInStarChild(ParseTreeNode parent, int index) {
+        private IEnumerable<IAstElement> AstElementsInStarChild(ParseTreeNode parent, int index) {
             var child = parent.ChildNodes.ElementAtOrDefault(index);
             if (child == null)
-                return new IAstElement[0];
+                return No.Elements;
 
-            return child.ChildNodes.Select(n => (IAstElement)n.AstNode).ToArray();
+            return child.ChildNodes.Select(n => (IAstElement)n.AstNode);
         }
     }
 }

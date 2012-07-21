@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Statements {
-    public class AstVariableDefinition : IAstStatement {
+    public class AstVariableDefinition : AstElementBase, IAstStatement {
         private IAstTypeReference type;
 
         public string Name { get; private set; }
@@ -24,14 +24,10 @@ namespace Light.Ast.Statements {
             this.AssignedValue = value;
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             if (this.AssignedValue != null)
                 yield return this.AssignedValue = (IAstExpression)transform(this.AssignedValue);
             yield return this.Type = (IAstTypeReference)transform(this.Type);
         }
-
-        #endregion
     }
 }

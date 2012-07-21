@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Light.Ast.Statements {
-    public class ForStatement : IAstStatement {
+    public class ForStatement : AstElementBase, IAstStatement {
         private IAstElement source;
         private string variableName;
 
@@ -31,15 +31,11 @@ namespace Light.Ast.Statements {
             Body = body.ToList();
         }
 
-        #region IAstElement Members
-
-        IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.Source = transform(this.Source);
             foreach (var element in this.Body.Transform(transform)) {
                 yield return element;
             }
         }
-
-        #endregion
     }
 }
