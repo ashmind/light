@@ -64,6 +64,7 @@
     <Compile Include="Cil\Compilers\AssignmentCompiler.cs" />
     <Compile Include="Cil\Compilers\BaseConstructorCallCompiler.cs" />
     <Compile Include="Cil\Compilers\BinaryExpressionCompiler.cs" />
+    <Compile Include="Cil\Compilers\ListInitializerCompiler.cs" />
     <Compile Include="Cil\Compilers\FunctionReferenceExpressionCompiler.cs" />
     <Compile Include="Cil\Compilers\VariableReferenceCompiler.cs" />
     <Compile Include="Cil\Compilers\VariableDefinitionCompiler.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Definitions\DefinitionBuildingContext.cs" />
     <Compile Include="Definitions\IDefinitionBuilder.cs" />
     <Compile Include="Definitions\PropertyOrFieldDefinitionBuilder.cs" />
+    <Compile Include="Internal\ILProcessorExtensions.cs" />
     <Compile Include="LightCompilationModule.cs" />
     <Compile Include="CompilationTarget.cs" />
     <Compile Include="Internal\CecilHelper.cs" />

@@ -18,9 +18,5 @@ namespace Light.Ast.Literals {
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.Value = transform(this.Value);
         }
-
-        public override string ToString() {
-            return this.Name + ": " + this.Value;
-        }
     }
 }

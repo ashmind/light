@@ -138,7 +138,7 @@ namespace Light.Parsing {
             BinaryOperator = NonTerminalWithSpecificType<IAstMethodReference>("BinaryOperator", node => new AstUnknownMethod(node.FindTokenAndGetText()));
 
             CommaSeparatedExpressionListStar = NonTerminal("CommaSeparatedExpressionListStar", node => node.ChildAsts<IAstExpression>());
-            ListInitializer = NonTerminal("ListInitializer", node => new ListInitializer(AstElementsInStarChild(node, 0)));
+            ListInitializer = NonTerminal("ListInitializer", node => new AstListInitializer(AstElementsInStarChild(node, 0).Cast<IAstExpression>()));
             ObjectInitializer = NonTerminal("ObjectInitializer", node => new ObjectInitializer(AstElementsInStarChild(node, 0)));
             ObjectInitializerElementList = new NonTerminal("ObjectInitializerElementList");
             ObjectInitializerElement = NonTerminal("ObjectInitializerElement", node => new ObjectInitializerEntry(

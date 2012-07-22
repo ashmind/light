@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OfCompilation\ClassMemberTests.cs" />
+    <Compile Include="OfCompilation\ListInitializerTests.cs" />
     <Compile Include="OfCompilation\DelegateTests.cs" />
     <Compile Include="OfCompilation\OperatorTests.cs" />
     <Compile Include="OfCompilation\FunctionTests.cs" />

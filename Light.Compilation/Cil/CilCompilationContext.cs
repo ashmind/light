@@ -30,6 +30,15 @@ namespace Light.Compilation.Cil {
             this.compile(element, this);
         }
 
+        public VariableDefinition DefineVariable(string name, IAstTypeReference type) {
+            var variableDefinition = new VariableDefinition(name, this.ConvertReference(type));
+
+            this.Method.Body.InitLocals = true;
+            this.Method.Body.Variables.Add(variableDefinition);
+
+            return variableDefinition;
+        }
+
         public void MapDefinition(AstVariableDefinition variableAst, VariableDefinition variable) {
             locals.Add(variableAst, variable);
         }

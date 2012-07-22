@@ -7,11 +7,7 @@ using Mono.Cecil.Cil;
 namespace Light.Compilation.Cil.Compilers {
     public class VariableDefinitionCompiler : CilCompilerBase<AstVariableDefinition> {
         public override void Compile(ILProcessor processor, AstVariableDefinition variable, CilCompilationContext context) {
-            var variableDefinition = new VariableDefinition(variable.Name, context.ConvertReference(variable.Type));
-            
-            context.Method.Body.InitLocals = true;
-            context.Method.Body.Variables.Add(variableDefinition);
-
+            var variableDefinition = context.DefineVariable(variable.Name, variable.Type);
             context.MapDefinition(variable, variableDefinition);
 
             if (variable.AssignedValue == null)

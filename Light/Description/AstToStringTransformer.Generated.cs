@@ -219,7 +219,7 @@ namespace Light.Description {
                 return;
             }
 			
-            var listInitializer = element as ListInitializer;
+            var listInitializer = element as AstListInitializer;
             if (listInitializer != null) {
                 AppendListInitializer(builder, listInitializer);
                 return;
@@ -394,7 +394,7 @@ namespace Light.Description {
             builder.Append(indexerExpression);
         }
 
-        protected virtual void AppendListInitializer(StringBuilder builder, ListInitializer listInitializer) {
+        protected virtual void AppendListInitializer(StringBuilder builder, AstListInitializer listInitializer) {
             builder.Append(listInitializer);
         }
 

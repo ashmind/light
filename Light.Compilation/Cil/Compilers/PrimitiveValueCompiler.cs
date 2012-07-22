@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AshMind.Extensions;
 using Light.Ast.Literals;
+using Light.Compilation.Internal;
 using Mono.Cecil.Cil;
 
 namespace Light.Compilation.Cil {
@@ -23,7 +24,7 @@ namespace Light.Compilation.Cil {
         }
 
         private static void CompileInt32(ILProcessor processor, PrimitiveValue value) {
-            processor.Emit(OpCodes.Ldc_I4, (int)value.Value);
+            processor.EmitLdcI4((int)value.Value);
         }
 
         private static void CompileDouble(ILProcessor processor, PrimitiveValue value) {

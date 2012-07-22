@@ -67,7 +67,7 @@ namespace Light.Tests.Helpers {
 
         // you should be able to find assemblies in c:\Users\<user>\AppData\Local\Temp\Light.Tests\
         private static void WriteAssemblyOnDiskAndPEVerify(Assembly assembly, byte[] bytes, CompilationTarget target) {
-            var outputDirectory = Path.Combine(Path.GetTempPath(), "Light.Tests");
+            var outputDirectory = Path.Combine(Path.GetTempPath(), "Light.Tests", TestContext.CurrentContext.Parent.Parent.Test.Name);
             Directory.CreateDirectory(outputDirectory);
 
             var extension = target == CompilationTarget.Console ? ".exe" : ".dll";

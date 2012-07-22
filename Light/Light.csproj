@@ -94,7 +94,7 @@
     <Compile Include="Ast\Incomplete\AstUnknownType.cs" />
     <Compile Include="Ast\Incomplete\IdentifierExpression.cs" />
     <Compile Include="Ast\Literals\ObjectInitializer.cs" />
-    <Compile Include="Ast\Literals\ListInitializer.cs" />
+    <Compile Include="Ast\Literals\AstListInitializer.cs" />
     <Compile Include="Ast\Literals\ObjectInitializerEntry.cs" />
     <Compile Include="Ast\Literals\StringWithInterpolation.cs" />
     <Compile Include="Ast\Expressions\AstNewExpression.cs" />

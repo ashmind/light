@@ -7,6 +7,7 @@ using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
+using Light.Ast.Literals;
 
 namespace Light.Description {
     public class AstToCodeTransformer : AstToStringTransformer {
@@ -66,6 +67,23 @@ namespace Light.Description {
                 builder.Append(" ");
 
             builder.Append(parameter.Name);
+        }
+
+        protected override void AppendListInitializer(StringBuilder builder, AstListInitializer initializer) {
+            builder.Append("[");
+            AppendAll(builder, ", ", initializer.Elements);
+            builder.Append("]");
+        }
+
+        protected override void AppendObjectInitializer(StringBuilder builder, ObjectInitializer initializer) {
+            builder.Append("{");
+            AppendAll(builder, ", ", initializer.Elements);
+            builder.Append("}");
+        }
+
+        protected override void AppendObjectInitializerEntry(StringBuilder builder, ObjectInitializerEntry entry) {
+            builder.Append(entry.Name).Append(": ");
+            Append(builder, entry.Value);
         }
     }
 }
