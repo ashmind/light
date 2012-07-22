@@ -13,15 +13,15 @@
 <#
 var projectFile = Host.ResolvePath(@"..\Light.csproj");
 var files = XDocument.Load(projectFile)
-					 .Descendants("{http://schemas.microsoft.com/developer/msbuild/2003}Compile")
-					 .Attributes("Include")
-					 .Select(a => Host.ResolvePath(Path.Combine(@"..\", a.Value)));
+                     .Descendants("{http://schemas.microsoft.com/developer/msbuild/2003}Compile")
+                     .Attributes("Include")
+                     .Select(a => Host.ResolvePath(Path.Combine(@"..\", a.Value)));
 
 var parser = new CSharpParser();
 var classes = files.Select(f => parser.Parse(File.ReadAllText(f), f))
-				   .SelectMany(ast => ast.Descendants.OfType<TypeDeclaration>())
-				   .Where(t => t.ClassType == ClassType.Class
-						    && !t.HasModifier(Modifiers.Abstract));
+                   .SelectMany(ast => ast.Descendants.OfType<TypeDeclaration>())
+                   .Where(t => t.ClassType == ClassType.Class
+                            && !t.HasModifier(Modifiers.Abstract));
 
 var astElementTypes = classes.Where(c => c.BaseTypes.OfType<SimpleType>().Any(t => t.Identifier.Contains("AstElement")));
 
@@ -29,13 +29,13 @@ var namespaces = astElementTypes.Select(t => t.Ancestors.OfType<NamespaceDeclara
 
 Func<string, string> toCamelCase = s => Char.ToLowerInvariant(s[0]) + s.Substring(1);
 var visitable = astElementTypes.Select(c => c.Name)
-				               .Select(n => new {
-									TypeName = n,
-									MethodName = "Append" + n.Replace("Ast", ""),
-								    VariableName = toCamelCase(n.Replace("Ast", ""))
-							   })
-							   .OrderBy(x => x.TypeName)
-							   .ToArray();
+                               .Select(n => new {
+                                   TypeName = n,
+                                   MethodName = "Append" + n.Replace("Ast", ""),
+                                   VariableName = toCamelCase(n.Replace("Ast", ""))
+                               })
+                               .OrderBy(x => x.TypeName)
+                               .ToArray();
 #>
 
 using System.Text;
@@ -55,7 +55,7 @@ namespace Light.Description {
 			
             <# }			
         #>builder.Append(element);
-		}
+        }
 
         <# foreach (var x in visitable) {			
       #>protected virtual void <#= x.MethodName #>(StringBuilder builder, <#= x.TypeName #> <#= x.VariableName #>) {
