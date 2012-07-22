@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Light.Ast.References;
 
@@ -19,6 +20,10 @@ namespace Light.Ast.Incomplete {
 
         IAstTypeReference IAstMethodReference.ReturnType {
             get { return AstUnknownType.WithNoName; }
+        }
+
+        ReadOnlyCollection<IAstTypeReference> IAstMethodReference.ParameterTypes {
+            get { throw new NotImplementedException("AstUnknownMethod.ParameterTypes"); }
         }
 
         #endregion

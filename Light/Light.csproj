@@ -155,6 +155,7 @@
     <Compile Include="Processing\Scoping\ExternalNamespaceNameSource.cs" />
     <Compile Include="Processing\Scoping\Scope.cs" />
     <Compile Include="Processing\ProcessingStepBase.cs" />
+    <Compile Include="Processing\Steps\ReferenceResolution\ResolveFunctionReferenceExpressionTypes.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveMethodGroupsInCalls.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddImportToScope.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddPropertyToScope.cs" />

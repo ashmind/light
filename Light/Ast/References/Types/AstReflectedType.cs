@@ -15,10 +15,11 @@ namespace Light.Ast.References.Types {
         }
 
         public IAstMethodReference ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
-            var types = arguments.Select(a => ((AstReflectedType)a.ExpressionType).ActualType).ToArray();
+            var astTypes = arguments.Select(a => a.ExpressionType).ToArray();
+            var types = astTypes.Cast<AstReflectedType>().Select(t => t.ActualType).ToArray();
             var method = this.ActualType.GetMethod(name, types);
             if (method == null)
-                return new AstMissingMethod(name);
+                return new AstMissingMethod(name, astTypes);
 
             return new AstReflectedMethod(method);
         }

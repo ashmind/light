@@ -78,7 +78,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
             var resolved = names.Select(n => declaringType.ResolveMethod(n, new[] {binary.Left, binary.Right}))
                                 .FirstOrDefault(r => !(r is AstMissingMethod));
 
-            resolved = resolved ?? new AstMissingMethod(operatorName);
+            resolved = resolved ?? new AstMissingMethod(operatorName, new[] { binary.Left.ExpressionType, binary.Right.ExpressionType });
             return resolved;
         }
     }

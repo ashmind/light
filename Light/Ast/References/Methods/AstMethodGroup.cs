@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Light.Ast.Incomplete;
 
 namespace Light.Ast.References.Methods {
@@ -25,6 +26,14 @@ namespace Light.Ast.References.Methods {
 
         object IAstReference.Target {
             get { return this.Methods; }
+        }
+
+        #endregion
+
+        #region IAstMethodReference Members
+
+        ReadOnlyCollection<IAstTypeReference> IAstMethodReference.ParameterTypes {
+            get { throw new NotImplementedException("AstMethodGroup.ParameterTypes"); }
         }
 
         #endregion
