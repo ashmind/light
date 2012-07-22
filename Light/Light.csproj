@@ -141,6 +141,7 @@
       <DependentUpon>AstToStringTransformer.Generated.tt</DependentUpon>
     </Compile>
     <Compile Include="Description\AstToCodeTransformer.cs" />
+    <Compile Include="Description\ObjectFormatter.cs" />
     <Compile Include="Description\TypeFormatter.cs" />
     <Compile Include="Internal\ParsingConverter.cs" />
     <Compile Include="Internal\IronyExtensions.cs" />

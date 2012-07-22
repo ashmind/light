@@ -20,6 +20,9 @@ namespace Light.Description {
             if (typeof(Delegate).IsAssignableFrom(type))
                 return FormatDelegate(type);
 
+            if (type.IsArray)
+                return "[" + Format(type.GetElementType()) + "]";
+
             return type.Name;
         }
 

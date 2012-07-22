@@ -59,7 +59,7 @@ namespace Light.Interpreter {
             
             try {
                 var result = CompileAndEvaluate(expression);
-                WriteLine(ConsoleColor.White, "{0}: {1}", result, DescribeType(result));
+                WriteLine(ConsoleColor.White, Describe(result));
             }
             catch (Exception ex) {
                 WriteLine(ConsoleColor.Red, (object)ex.Message);
@@ -92,11 +92,14 @@ namespace Light.Interpreter {
             return evaluate.Invoke(null, null);
         }
         
-        private static string DescribeType(object result) {
+        private static string Describe(object result) {
             if (result == null)
-                return "Null";
+                return "null: Null";
 
-            return new TypeFormatter().Format(result.GetType());
+            var typeString = new TypeFormatter().Format(result.GetType());
+            var valueString = new ObjectFormatter().Format(result);
+
+            return valueString + ": " + typeString;
         }
 
         private static void WriteMessages(ParsingResult parsed) {
