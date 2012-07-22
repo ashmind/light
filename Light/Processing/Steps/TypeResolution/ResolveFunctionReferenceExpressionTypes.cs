@@ -6,10 +6,10 @@ using Light.Ast.Expressions;
 using Light.Ast.References;
 using Light.Ast.References.Types;
 
-namespace Light.Processing.Steps.ReferenceResolution {
+namespace Light.Processing.Steps.TypeResolution {
     public class ResolveFunctionReferenceExpressionTypes : ProcessingStepBase<AstFunctionReferenceExpression> {
         public ResolveFunctionReferenceExpressionTypes()
-            : base(ProcessingStage.ReferenceResolution) {
+            : base(ProcessingStage.TypeResolution) {
         }
 
         public override IAstElement ProcessAfterChildren(AstFunctionReferenceExpression expression, ProcessingContext context) {

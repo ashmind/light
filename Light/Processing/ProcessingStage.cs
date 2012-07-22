@@ -7,7 +7,7 @@ namespace Light.Processing {
     public enum ProcessingStage {
         ScopeDefinition,
         ReferenceResolution,
-        TypeInference,
+        TypeResolution,
         Compilation
     }
 }

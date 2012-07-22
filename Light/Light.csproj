@@ -141,7 +141,7 @@
       <DependentUpon>AstToStringTransformer.Generated.tt</DependentUpon>
     </Compile>
     <Compile Include="Description\AstToCodeTransformer.cs" />
-    <Compile Include="Description\LightTypeDescriber.cs" />
+    <Compile Include="Description\TypeFormatter.cs" />
     <Compile Include="Internal\ParsingConverter.cs" />
     <Compile Include="Internal\IronyExtensions.cs" />
     <Compile Include="Internal\NonTerminal.cs" />
@@ -155,7 +155,7 @@
     <Compile Include="Processing\Scoping\ExternalNamespaceNameSource.cs" />
     <Compile Include="Processing\Scoping\Scope.cs" />
     <Compile Include="Processing\ProcessingStepBase.cs" />
-    <Compile Include="Processing\Steps\ReferenceResolution\ResolveFunctionReferenceExpressionTypes.cs" />
+    <Compile Include="Processing\Steps\TypeResolution\ResolveFunctionReferenceExpressionTypes.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveMethodGroupsInCalls.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddImportToScope.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddPropertyToScope.cs" />
@@ -163,14 +163,14 @@
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveOperatorReferences.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddTypeToScope.cs" />
     <Compile Include="Ast\References\Types\AstDefinedType.cs" />
-    <Compile Include="Processing\Steps\TypeInference\InferVariableTypes.cs" />
+    <Compile Include="Processing\Steps\TypeResolution\InferVariableTypes.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveConstructorReferences.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\DefineTypeScope.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveTypeReferences.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\DefineFunctionScope.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveMemberReferences.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveIdentifiers.cs" />
-    <Compile Include="Processing\Steps\TypeInference\InferFunctionReturnTypes.cs" />
+    <Compile Include="Processing\Steps\TypeResolution\InferFunctionReturnTypes.cs" />
     <Compile Include="Processing\IProcessingStep.cs" />
     <Compile Include="Parsing\LightGrammar.cs" />
     <Compile Include="LightParser.cs" />

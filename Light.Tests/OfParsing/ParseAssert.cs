@@ -16,7 +16,7 @@ namespace Light.Tests.OfParsing {
             var resultString = new AstToCodeTransformer().Transform(result.Root);
             var resultExpression = result.Root as IAstExpression;
             if (resultExpression != null && includeExpressionType)
-                resultString = resultString + ": " + new LightTypeDescriber().Describe(resultExpression.ExpressionType);
+                resultString = resultString + ": " + new TypeFormatter().Format(resultExpression.ExpressionType);
             
             Assert.AreEqual(expectedResult, resultString);
         }

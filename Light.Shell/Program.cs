@@ -7,8 +7,10 @@ using Autofac;
 using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.Incomplete;
+using Light.Ast.Names;
 using Light.Ast.Statements;
 using Light.Compilation;
+using Light.Description;
 using Light.Parsing;
 
 namespace Light.Interpreter {
@@ -46,8 +48,13 @@ namespace Light.Interpreter {
 
             var expression = parsed.Root as IAstExpression;
             if (expression == null) {
-                WriteLine(ConsoleColor.Red, "Expected expression, received {0} instead.", parsed.Root.Children().First().GetType().Name);
-                return true;
+                var root = (AstRoot)parsed.Root;
+                if (root.Elements.Count > 1 || !(root.Elements[0] is IAstExpression)) {
+                    WriteLine(ConsoleColor.Red, "Expected expression, received {0} instead.", string.Join(",", root.Elements.Select(e => e.GetType().Name)));
+                    return true;
+                }
+
+                expression = (IAstExpression)root.Elements[0];
             }
             
             try {
@@ -55,19 +62,22 @@ namespace Light.Interpreter {
                 WriteLine(ConsoleColor.White, "{0}: {1}", result, DescribeType(result));
             }
             catch (Exception ex) {
-                WriteLine(ConsoleColor.Red, ex);
+                WriteLine(ConsoleColor.Red, (object)ex.Message);
             }
 
             return true;
         }
 
         private static object CompileAndEvaluate(IAstExpression expression) {
-            var ast = new AstRoot(new AstTypeDefinition(
-                TypeDefintionTypes.Class, "Interactive",
-                new AstFunctionDefinition("Evaluate", No.Parameters, new[] { new AstReturnStatement(expression) }, AstImplicitType.Instance) {
-                    Compilation = { Static = true }
-                }
-            ));
+            var ast = new AstRoot(
+                new ImportDefinition(new CompositeName("System")),
+                new AstTypeDefinition(
+                    TypeDefintionTypes.Class, "Interactive",
+                    new AstFunctionDefinition("Evaluate", No.Parameters, new[] { new AstReturnStatement(expression) }, AstImplicitType.Instance) {
+                        Compilation = { Static = true }
+                    }
+                )
+            );
             ast = (AstRoot)processor.Process(ast);
 
             var stream = new MemoryStream();
@@ -86,7 +96,7 @@ namespace Light.Interpreter {
             if (result == null)
                 return "Null";
 
-            return result.GetType().Name;
+            return new TypeFormatter().Format(result.GetType());
         }
 
         private static void WriteMessages(ParsingResult parsed) {

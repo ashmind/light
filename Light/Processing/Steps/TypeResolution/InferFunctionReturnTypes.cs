@@ -8,9 +8,9 @@ using Light.Ast.References;
 using Light.Ast.References.Types;
 using Light.Ast.Statements;
 
-namespace Light.Processing.Steps.TypeInference {
+namespace Light.Processing.Steps.TypeResolution {
     public class InferFunctionReturnTypes : ProcessingStepBase<AstFunctionDefinition> {
-        public InferFunctionReturnTypes() : base(ProcessingStage.TypeInference) {
+        public InferFunctionReturnTypes() : base(ProcessingStage.TypeResolution) {
         }
 
         public override IAstElement ProcessAfterChildren(AstFunctionDefinition function, ProcessingContext context) {

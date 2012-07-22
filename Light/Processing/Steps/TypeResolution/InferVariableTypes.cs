@@ -5,9 +5,9 @@ using Light.Ast;
 using Light.Ast.Incomplete;
 using Light.Ast.Statements;
 
-namespace Light.Processing.Steps.TypeInference {
+namespace Light.Processing.Steps.TypeResolution {
     public class InferVariableTypes : ProcessingStepBase<AstVariableDefinition> {
-        public InferVariableTypes() : base(ProcessingStage.TypeInference) {
+        public InferVariableTypes() : base(ProcessingStage.TypeResolution) {
         }
 
         public override IAstElement ProcessAfterChildren(AstVariableDefinition variable, ProcessingContext context) {
