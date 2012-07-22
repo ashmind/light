@@ -6,7 +6,6 @@ using Light.Ast.References;
 namespace Light.Ast.Incomplete {
     public class AstUnknownMethod : AstElementBase, IAstMethodReference {
         public string Name { get; private set; }
-        public IAstTypeReference DeclaringType { get; set; }
 
         public AstUnknownMethod(string name) {
             this.Name = name;
@@ -19,6 +18,10 @@ namespace Light.Ast.Incomplete {
         #region IAstMethodReference Members
 
         IAstTypeReference IAstMethodReference.ReturnType {
+            get { return AstUnknownType.WithNoName; }
+        }
+
+        IAstTypeReference IAstMethodReference.DeclaringType {
             get { return AstUnknownType.WithNoName; }
         }
 

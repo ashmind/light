@@ -12,10 +12,6 @@ namespace Light.Processing.Steps.ReferenceResolution {
         }
 
         public override IAstElement ProcessBeforeChildren(IAstElement element, ProcessingContext context) {
-            var call = element as CallExpression;
-            if (call != null && call.Target is IdentifierExpression)
-                return ProcessCall(call, context);
-
             var member = element as MemberExpression;
             if (member != null && member.Target is IdentifierExpression)
                 return ProcessMember(member, context);
@@ -25,23 +21,6 @@ namespace Light.Processing.Steps.ReferenceResolution {
                 return ProcessIdentifier(identifier, context);
 
             return element;
-        }
-
-        private IAstElement ProcessCall(CallExpression call, ProcessingContext context) {
-            var name = (call.Target as IdentifierExpression).Name;
-            var resolved = context.Resolve(name);
-            RequireExactlyOne(resolved, name);
-
-            var typeReference = resolved[0] as IAstTypeReference;
-            if (typeReference == null) {
-                typeReference = ((IAstExpression)resolved[0]).ExpressionType;
-            }
-            else {
-                call.Target = null;
-            }
-
-            ((AstUnknownMethod)call.Method).DeclaringType = typeReference;
-            return call;
         }
 
         private IAstElement ProcessMember(MemberExpression member, ProcessingContext context) {

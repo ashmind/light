@@ -4,6 +4,7 @@ using System.Linq;
 using Light.Ast;
 using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
+using Light.Ast.References;
 
 namespace Light.Processing.Steps.ReferenceResolution {
     public class ResolveMethodReferences : ProcessingStepBase<CallExpression> {
@@ -14,11 +15,12 @@ namespace Light.Processing.Steps.ReferenceResolution {
             if (!(call.Method is AstUnknownMethod))
                 return call;
 
-            if (call.Method.DeclaringType == null)
-                throw new NotImplementedException("ResolveMethodReferences: DeclaringType not set on " + call.Method + ".");
+            var declaringType = call.Target as IAstTypeReference; // static call
+            if (declaringType == null)
+                declaringType = ((IAstExpression)call.Target).ExpressionType;
 
             var sourceSpan = call.Method.SourceSpan;
-            call.Method = call.Method.DeclaringType.ResolveMethod(call.Method.Name, call.Arguments);
+            call.Method = declaringType.ResolveMethod(call.Method.Name, call.Arguments);
             call.Method.SourceSpan = sourceSpan;
             return call;
         }

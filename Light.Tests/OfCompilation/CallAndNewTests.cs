@@ -23,7 +23,7 @@ namespace Light.Tests.OfCompilation {
         [Row("", "3", "", 3)]
         [Row("string value",  "value", "'abc'", "abc")]
         [Row("integer value", "value", "3",     3)]
-        public void NearbyMethodCall(string parameters, string returnValue, string arguments, object expectedValue) {
+        public void NearbyMethodCallOnNewObject(string parameters, string returnValue, string arguments, object expectedValue) {
             var caller = CompilationHelper.CompileAndGetInstance(string.Format(@"
                 public class Callee
                     function GetValue({0})
@@ -39,6 +39,49 @@ namespace Light.Tests.OfCompilation {
                 end
             ", parameters, arguments, returnValue).Trim(), "Caller");
             Assert.AreEqual(expectedValue, caller.GetValueFromCallee());
+        }
+
+        [Test]
+        [Row("'abc'", "abc")]
+        [Row("3",     3)]
+        public void NearbyMethodCallOnParameter(string returnValue, object expectedValue) {
+            var compiled = CompilationHelper.CompileCode(string.Format(@"
+                public class Callee
+                    function GetValue()
+                        return {0}
+                    end
+                end
+                
+                public class Caller
+                    function GetValueFromCallee(Callee callee)
+                        return callee.GetValue()
+                    end
+                end
+            ", returnValue).Trim());
+
+            var callee = (dynamic)Activator.CreateInstance(compiled.GetType("Callee"));
+            var caller = (dynamic)Activator.CreateInstance(compiled.GetType("Caller"));
+            Assert.AreEqual(expectedValue, caller.GetValueFromCallee(callee));
+        }
+
+        [Test]
+        public void ExternalMethodCallOnValueFromNearbyCall() {
+            var caller = CompilationHelper.CompileAndGetInstance(string.Format(@"
+                public class Callee
+                    function GetValue()
+                        return 'abc'
+                    end
+                end
+                
+                public class Caller
+                    function GetValueFromCallee()
+                        let callee = new Callee()
+                        return callee.GetValue().Substring(1)
+                    end
+                end
+            ").Trim(), "Caller");
+
+            Assert.AreEqual("bc", caller.GetValueFromCallee());
         }
     }
 }
