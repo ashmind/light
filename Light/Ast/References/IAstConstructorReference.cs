@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Light.Ast.References {
-    public interface IAstConstructorReference : IAstReference {
+    public interface IAstConstructorReference : IAstMemberReference {
     }
 }

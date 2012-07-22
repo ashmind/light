@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Light.Ast.Errors;
 using Light.Ast.References.Methods;
 
@@ -13,13 +14,13 @@ namespace Light.Ast.References.Types {
             this.ActualType = type;
         }
 
-        public virtual IAstMethodReference ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
+        public IAstMethodReference ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
             var types = arguments.Select(a => ((AstReflectedType)a.ExpressionType).ActualType).ToArray();
             var method = this.ActualType.GetMethod(name, types);
             if (method == null)
-                return new AstMissingMethod(name, this);
+                return new AstMissingMethod(name);
 
-            return new AstReflectedMethod(method, this);
+            return new AstReflectedMethod(method);
         }
 
         public IAstConstructorReference ResolveConstructor(IEnumerable<IAstExpression> arguments) {
@@ -28,6 +29,20 @@ namespace Light.Ast.References.Types {
                 return null;
 
             return new AstReflectedConstructor(constructor);
+        }
+
+        public IAstMemberReference ResolveMember(string name) {
+            var members = this.ActualType.GetMember(name);
+            if (members.Length == 0)
+                return null;
+
+            if (!members.All(m => m is MethodInfo))
+                throw new NotImplementedException("AstReflectedType.ResolveMember: " + members.First(m => !(m is MethodInfo)).GetType() + " is not yet supported.");
+
+            if (members.Length == 1)
+                return new AstReflectedMethod((MethodInfo)members[0]);
+
+            return new AstMethodGroup(name, members.Select(m => new AstReflectedMethod((MethodInfo)m)).ToArray());
         }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {

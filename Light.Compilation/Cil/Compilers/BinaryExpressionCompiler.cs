@@ -25,16 +25,16 @@ namespace Light.Compilation.Cil.Compilers {
 
             var builtIn = binary.Operator as AstBuiltInOperator;
             if (builtIn != null) {
-                EmitBuiltInOperator(processor, binary);
+                EmitBuiltInOperator(processor, builtIn);
                 return;
             }
 
             processor.Emit(OpCodes.Call, context.ConvertReference(binary.Operator));
         }
 
-        private void EmitBuiltInOperator(ILProcessor processor, BinaryExpression binary) {
-            var type = ((AstReflectedType)binary.Operator.DeclaringType).ActualType;
-            var key = Tuple.Create(type, binary.Operator.Name);
+        private void EmitBuiltInOperator(ILProcessor processor, AstBuiltInOperator @operator) {
+            var type = ((AstReflectedType)@operator.OperandType).ActualType;
+            var key = Tuple.Create(type, @operator.Name);
 
             OpCode code;
             var found = BuiltInOpCodes.TryGetValue(key, out code);

@@ -5,34 +5,32 @@ using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
     public class CallExpression : AstElementBase, IAstExpression, IAstStatement {
-        private IAstMethodReference method;
-        public IAstElement Target { get; set; }
+        public IAstCallable callee;
         public IList<IAstExpression> Arguments { get; private set; }
 
-        public CallExpression(IAstElement target, IAstMethodReference method, IList<IAstExpression> arguments) {
-            Argument.RequireNotNullAndNotContainsNull("arguments", arguments);
+        public CallExpression(IAstCallable callee, IEnumerable<IAstExpression> arguments) {
+            Argument.RequireNotNull("arguments", arguments);
+            var argumentList = arguments.ToList();
+            Argument.RequireNotContainsNull("arguments", argumentList);
 
-            this.Target = target;
-            this.Method = method;
-            this.Arguments = arguments.ToList();
+            this.Callee = callee;
+            this.Arguments = argumentList;
         }
 
-        public IAstMethodReference Method {
-            get { return this.method; }
+        public IAstCallable Callee {
+            get { return this.callee; }
             set {
                 Argument.RequireNotNull("value", value);
-                this.method = value;
+                this.callee = value;
             }
         }
 
         public IAstTypeReference ExpressionType {
-            get { return this.Method.ReturnType; }
+            get { return callee.ReturnType; }
         }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
-            if (this.Target != null)
-                yield return this.Target = transform(this.Target);
-
+            yield return this.Callee = (IAstCallable)transform(this.Callee);
             foreach (var argument in this.Arguments.Transform(transform)) {
                 yield return argument;
             }

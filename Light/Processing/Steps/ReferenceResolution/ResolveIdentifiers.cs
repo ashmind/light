@@ -7,27 +7,11 @@ using Light.Ast.Incomplete;
 using Light.Ast.References;
 
 namespace Light.Processing.Steps.ReferenceResolution {
-    public class ResolveIdentifiers : ProcessingStepBase<IAstElement> {
+    public class ResolveIdentifiers : ProcessingStepBase<IdentifierExpression> {
         public ResolveIdentifiers() : base(ProcessingStage.ReferenceResolution) {
         }
 
-        public override IAstElement ProcessBeforeChildren(IAstElement element, ProcessingContext context) {
-            var member = element as MemberExpression;
-            if (member != null && member.Target is IdentifierExpression)
-                return ProcessMember(member, context);
-
-            var identifier = element as IdentifierExpression;
-            if (identifier != null)
-                return ProcessIdentifier(identifier, context);
-
-            return element;
-        }
-
-        private IAstElement ProcessMember(MemberExpression member, ProcessingContext context) {
-            throw new NotImplementedException("ResolveIdentifiers.ProcessMember");
-        }
-
-        private IAstElement ProcessIdentifier(IdentifierExpression identifier, ProcessingContext context) {
+        public override IAstElement ProcessBeforeChildren(IdentifierExpression identifier, ProcessingContext context) {
             var resolved = context.Resolve(identifier.Name);
             RequireExactlyOne(resolved, identifier.Name);
 

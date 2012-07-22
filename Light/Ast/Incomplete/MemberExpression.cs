@@ -4,34 +4,27 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Incomplete {
-    public class IdentifierExpression : AstElementBase, IAstExpression, IAstAssignable, IAstReference, IAstCallable {
+    public class MemberExpression : AstElementBase, IAstExpression, IAstAssignable, IAstCallable {
+        public IAstElement Target { get; private set; }
         public string Name { get; private set; }
 
-        public IdentifierExpression(string name) {
+        public MemberExpression(IAstElement target, string name) {
+            Argument.RequireNotNull("target", target);
             Argument.RequireNotNullAndNotEmpty("name", name);
+
+            this.Target = target;
             this.Name = name;
         }
 
-        public override string ToString() {
-            return this.Name;
-        }
-
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
-            return No.Elements;
+            if (this.Target != null)
+                yield return this.Target = transform(this.Target);
         }
 
         #region IAstExpression Members
 
         IAstTypeReference IAstExpression.ExpressionType {
             get { return AstUnknownType.WithNoName; }
-        }
-
-        #endregion
-
-        #region IAstReference Members
-
-        object IAstReference.Target {
-            get { return null; }
         }
 
         #endregion

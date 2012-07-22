@@ -7,14 +7,11 @@ using Light.Ast.References;
 namespace Light.Ast.Errors {
     public class AstMissingMethod : AstElementBase, IAstMethodReference {
         public string Name { get; private set; }
-        public IAstTypeReference DeclaringType { get; private set; }
 
-        public AstMissingMethod(string name, IAstTypeReference declaringType) {
+        public AstMissingMethod(string name) {
             Argument.RequireNotNullAndNotEmpty("name", name);
-            Argument.RequireNotNull("declaringType", declaringType);
 
             this.Name = name;
-            this.DeclaringType = declaringType;
         }
 
         public IAstTypeReference ReturnType {

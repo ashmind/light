@@ -51,6 +51,12 @@ namespace Light.Description {
                 return;
             }
 			
+            var functionReferenceExpression = element as AstFunctionReferenceExpression;
+            if (functionReferenceExpression != null) {
+                AppendFunctionReferenceExpression(builder, functionReferenceExpression);
+                return;
+            }
+			
             var implicitType = element as AstImplicitType;
             if (implicitType != null) {
                 AppendImplicitType(builder, implicitType);
@@ -250,7 +256,7 @@ namespace Light.Description {
             }
 			
             builder.Append(element);
-		}
+        }
 
         protected virtual void AppendAssignmentStatement(StringBuilder builder, AssignmentStatement assignmentStatement) {
             builder.Append(assignmentStatement);
@@ -274,6 +280,10 @@ namespace Light.Description {
 
         protected virtual void AppendDefinedType(StringBuilder builder, AstDefinedType definedType) {
             builder.Append(definedType);
+        }
+
+        protected virtual void AppendFunctionReferenceExpression(StringBuilder builder, AstFunctionReferenceExpression functionReferenceExpression) {
+            builder.Append(functionReferenceExpression);
         }
 
         protected virtual void AppendImplicitType(StringBuilder builder, AstImplicitType implicitType) {

@@ -22,10 +22,14 @@ namespace Light.Ast.References.Types {
         #region IAstTypeReference Members
 
         IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
-            return new AstMissingMethod(name, this);
+            return new AstMissingMethod(name);
         }
 
         IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
+            return null;
+        }
+
+        IAstMemberReference IAstTypeReference.ResolveMember(string name) {
             return null;
         }
 

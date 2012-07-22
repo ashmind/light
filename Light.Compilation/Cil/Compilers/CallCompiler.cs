@@ -8,14 +8,18 @@ using Mono.Cecil.Cil;
 namespace Light.Compilation.Cil.Compilers {
     public class CallCompiler : CilCompilerBase<CallExpression> {
         public override void Compile(ILProcessor processor, CallExpression call, CilCompilationContext context) {
-            if (call.Target != null && !(call.Target is IAstTypeReference))
-                context.Compile(call.Target);
+            var function = call.Callee as AstFunctionReferenceExpression;
+            if (function == null)
+                throw new NotImplementedException("CallCompiler: " + call.Callee.GetType().Name + " is not yet supported as call.Callee.");
+
+            if (function.Target != null && !(function.Target is IAstTypeReference))
+                context.Compile(function.Target);
 
             foreach (var argument in call.Arguments) {
                 context.Compile(argument);
             }
 
-            processor.Emit(OpCodes.Call, context.ConvertReference(call.Method));
+            processor.Emit(OpCodes.Call, context.ConvertReference(function.Reference));
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast.References;
 
 namespace Light.Ast.Definitions {
-    public class AstPropertyDefinition : AstElementBase, IAstDefinition {
+    public class AstPropertyDefinition : AstElementBase, IAstMemberDefinition {
         private IAstTypeReference type;
         public string Name { get; private set; }
 

@@ -36,15 +36,5 @@ namespace Light.Ast.Expressions {
                 yield return argument;
             }
         }
-
-        public override string ToString() {
-            var builder = new StringBuilder();
-            builder.Append(this.Target)
-                   .Append("[")
-                   .AppendJoin(", ", this.Arguments)
-                   .Append("]");
-
-            return builder.ToString();
-        }
     }
 }

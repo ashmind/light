@@ -26,9 +26,5 @@ namespace Light.Ast.Definitions {
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.Type = (IAstTypeReference)transform(this.Type);
         }
-
-        public override string ToString() {
-            return (this.Type + " " + this.Name).Trim();
-        }
     }
 }

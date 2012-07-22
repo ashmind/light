@@ -16,7 +16,7 @@ namespace Light.Description {
             var first = true;
             foreach (var element in elements) {
                 if (!first)
-                    builder.AppendLine();
+                    builder.Append(delimiter);
 
                 Append(builder, element);
                 first = false;

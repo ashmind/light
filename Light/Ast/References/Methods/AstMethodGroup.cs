@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
+using Light.Ast.Incomplete;
 
 namespace Light.Ast.References.Methods {
-    public class AstBuiltInOperator : AstElementBase, IAstMethodReference {
+    public class AstMethodGroup : AstElementBase, IAstMethodReference {
         public string Name { get; private set; }
-        public IAstTypeReference OperandType { get; private set; }
+        public IAstMethodReference[] Methods { get; private set; }
         public IAstTypeReference ReturnType { get; private set; }
 
-        public AstBuiltInOperator(string name, IAstTypeReference operandType, IAstTypeReference resultType) {
+        public AstMethodGroup(string name, IAstMethodReference[] methods) {
             Argument.RequireNotNullAndNotEmpty("name", name);
-            Argument.RequireNotNull("operandType", operandType);
-            Argument.RequireNotNull("resultType", resultType);
+            Argument.RequireNotNull("methods", methods);
 
             this.Name = name;
-            this.OperandType = operandType;
-            this.ReturnType = resultType;
+            this.Methods = methods;
+            this.ReturnType = AstUnknownType.WithNoName;
         }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
@@ -24,7 +24,7 @@ namespace Light.Ast.References.Methods {
         #region IAstReference Members
 
         object IAstReference.Target {
-            get { return null; }
+            get { return this.Methods; }
         }
 
         #endregion

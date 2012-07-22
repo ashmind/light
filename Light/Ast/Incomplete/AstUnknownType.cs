@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AshMind.Extensions;
 using Light.Ast.References;
 
 namespace Light.Ast.Incomplete {
@@ -30,6 +31,10 @@ namespace Light.Ast.Incomplete {
             throw new NotImplementedException("Unknown type can not resolve constructors.");
         }
 
+        IAstMemberReference IAstTypeReference.ResolveMember(string name) {
+            throw new NotImplementedException("Unknown type can not resolve members.");
+        }
+
         #endregion
 
         #region IAstReference Members
@@ -41,7 +46,7 @@ namespace Light.Ast.Incomplete {
         #endregion
 
         public override string ToString() {
-            return this.Name;
+            return "{UnknownType: " + (this.Name.IsNotNullOrEmpty() ? this.Name : "?") + "}";
         }
     }
 }

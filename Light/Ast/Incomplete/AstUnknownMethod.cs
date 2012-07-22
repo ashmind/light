@@ -21,10 +21,6 @@ namespace Light.Ast.Incomplete {
             get { return AstUnknownType.WithNoName; }
         }
 
-        IAstTypeReference IAstMethodReference.DeclaringType {
-            get { return AstUnknownType.WithNoName; }
-        }
-
         #endregion
 
         #region IAstReference Members

@@ -40,7 +40,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
         };
 
         private static readonly IAstMethodReference StringConcat = new AstReflectedMethod(
-            typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) }), KnownTypes.String
+            typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) })
         );
 
         #endregion
@@ -67,7 +67,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
 
         private AstBuiltInOperator ResolveBuiltInOperator(BinaryExpression binary) {
             return BuiltInOperators.FirstOrDefault(o => o.Name == binary.Operator.Name
-                                                     && o.DeclaringType.Equals(binary.Left.ExpressionType));
+                                                     && o.OperandType.Equals(binary.Left.ExpressionType));
         }
 
         private static IAstMethodReference ResolveOperatorAsMethod(BinaryExpression binary) {
@@ -78,7 +78,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
             var resolved = names.Select(n => declaringType.ResolveMethod(n, new[] {binary.Left, binary.Right}))
                                 .FirstOrDefault(r => !(r is AstMissingMethod));
 
-            resolved = resolved ?? new AstMissingMethod(operatorName, declaringType);
+            resolved = resolved ?? new AstMissingMethod(operatorName);
             return resolved;
         }
     }

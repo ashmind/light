@@ -4,11 +4,9 @@ using Light.Ast.Definitions;
 
 namespace Light.Ast.References.Methods {
     public class AstDefinedMethod : AstElementBase, IAstMethodReference {
-        private readonly IAstTypeReference declaringType;
         public AstFunctionDefinition Definition { get; private set; }
 
-        public AstDefinedMethod(AstFunctionDefinition definition, IAstTypeReference declaringType) {
-            this.declaringType = declaringType;
+        public AstDefinedMethod(AstFunctionDefinition definition) {
             this.Definition = definition;
         }
 
@@ -28,10 +26,6 @@ namespace Light.Ast.References.Methods {
 
         IAstTypeReference IAstMethodReference.ReturnType {
             get { return this.Definition.ReturnType; }
-        }
-
-        IAstTypeReference IAstMethodReference.DeclaringType {
-            get { return this.declaringType; }
         }
 
         string IAstMethodReference.Name {

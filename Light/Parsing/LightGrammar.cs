@@ -150,15 +150,15 @@ namespace Light.Parsing {
                 var path = (IEnumerable<IAstElement>)node.ChildAst(1);
                 var result = (IAstExpression)node.ChildAst(0);
                 foreach (var item in path) {
-                    var call = item as CallExpression;
-                    if (call != null) {
-                        result = new CallExpression(result, call.Method, call.Arguments);
-                        continue;
-                    }
-
                     var identifier = item as IdentifierExpression;
                     if (identifier != null) {
                         result = new MemberExpression(result, identifier.Name);
+                        continue;
+                    }
+
+                    var call = item as CallExpression;
+                    if (call != null) {
+                        result = new CallExpression(new MemberExpression(result, ((IdentifierExpression)call.Callee).Name), call.Arguments);
                         continue;
                     }
 
@@ -176,7 +176,7 @@ namespace Light.Parsing {
             MemberPathRoot = Transient<IAstElement>("MemberPathRoot");
             MemberPathElement = Transient<IAstElement>("MemberPathElement");
             MemberPathElementListPlus = NonTerminal("MemberPathElementListPlus", node => node.ChildAsts<IAstElement>());
-            SimpleCallExpression = NonTerminal("Call (Simple)", node => (IAstExpression)new CallExpression(null, new AstUnknownMethod(node.Child(0).Token.Text), AstElementsInStarChild(node, 1).Cast<IAstExpression>().ToList()));
+            SimpleCallExpression = NonTerminal("Call (Simple)", node => (IAstExpression)new CallExpression(new IdentifierExpression(node.Child(0).Token.Text), AstElementsInStarChild(node, 1).Cast<IAstExpression>()));
             SimpleIdentifierExpression = NonTerminal("Identifier", node => new IdentifierExpression(node.Child(0).Token.Text));
             SimpleIndexerExpression = NonTerminal("Indexer (Simple)", node => new IndexerExpression(node.ChildAst(SimpleIdentifierExpression), AstElementsInStarChild(node, 1)));
 

@@ -28,6 +28,10 @@ namespace Light.Ast.Incomplete {
             throw new NotImplementedException("Implicit type can not resolve constructors.");
         }
 
+        IAstMemberReference IAstTypeReference.ResolveMember(string name) {
+            throw new NotImplementedException("Implicit type can not resolve members.");
+        }
+
         #endregion
 
         #region IAstTypeReference Members
