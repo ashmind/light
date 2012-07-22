@@ -157,17 +157,13 @@
     <Compile Include="Processing\Steps\ScopeDefinition\AddTypeToScope.cs" />
     <Compile Include="Ast\References\Types\AstDefinedType.cs" />
     <Compile Include="Processing\Steps\TypeInference\InferVariableTypes.cs" />
-    <Compile Include="Processing\Steps\GenerateBaseConstructorCalls.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveConstructorReferences.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\DefineTypeScope.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveTypeReferences.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\DefineFunctionScope.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveMethodReferences.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveIdentifiers.cs" />
-    <Compile Include="Processing\Steps\GenerateMainMethod.cs" />
     <Compile Include="Processing\Steps\TypeInference\InferFunctionReturnTypes.cs" />
-    <Compile Include="Processing\Steps\GenerateReturns.cs" />
-    <Compile Include="Processing\Steps\GenerateDefaultConstructors.cs" />
     <Compile Include="Processing\IProcessingStep.cs" />
     <Compile Include="Parsing\LightGrammar.cs" />
     <Compile Include="LightParser.cs" />

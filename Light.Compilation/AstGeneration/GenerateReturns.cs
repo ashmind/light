@@ -5,10 +5,11 @@ using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.Statements;
 using Light.Ast.Types;
+using Light.Processing;
 
-namespace Light.Processing.Steps {
+namespace Light.Compilation.AstGeneration {
     public class GenerateReturns : ProcessingStepBase<AstMethodDefinitionBase> {
-        public GenerateReturns() : base(ProcessingStage.PreCompilation) {
+        public GenerateReturns() : base(ProcessingStage.Compilation) {
         }
 
         public override IAstElement ProcessAfterChildren(AstMethodDefinitionBase method, ProcessingContext context) {

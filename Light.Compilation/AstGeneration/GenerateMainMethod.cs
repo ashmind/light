@@ -6,10 +6,11 @@ using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.References.Types;
 using Light.Ast.Statements;
+using Light.Processing;
 
-namespace Light.Processing.Steps {
+namespace Light.Compilation.AstGeneration {
     public class GenerateMainMethod : ProcessingStepBase<AstRoot> {
-        public GenerateMainMethod() : base(ProcessingStage.PreCompilation) {
+        public GenerateMainMethod() : base(ProcessingStage.Compilation) {
         }
 
         public override IAstElement ProcessAfterChildren(AstRoot root, ProcessingContext context) {

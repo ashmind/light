@@ -8,6 +8,6 @@ namespace Light.Processing {
         ScopeDefinition,
         ReferenceResolution,
         TypeInference,
-        PreCompilation
+        Compilation
     }
 }
