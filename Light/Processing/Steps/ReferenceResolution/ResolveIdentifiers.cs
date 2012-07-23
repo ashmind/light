@@ -19,7 +19,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
 
             var property = result as IAstPropertyReference;
             if (property != null)
-                result = new AstPropertyExpression(null, property);
+                result = new AstPropertyExpression(new AstThisExpression(), property);
 
             result.SourceSpan = identifier.SourceSpan;
             return result;

@@ -37,10 +37,10 @@ namespace Light.Compilation {
 
             var module = assembly.MainModule;
             var context = new DefinitionBuildingContext(module, this.referenceProviders);
-            
             foreach (var typeAst in root.Descendants<AstTypeDefinition>()) {
                 DefineType(module, typeAst, context);
             }
+            context.ClearDebt();
 
             foreach (var type in module.Types) {
                 foreach (var method in type.Methods) {
@@ -81,13 +81,15 @@ namespace Light.Compilation {
             MethodDefinition method;
             if (methodAst is Ast.Definitions.AstFunctionDefinition) {
                 var functionAst = methodAst as AstFunctionDefinition;
-                var returnType = context.ConvertReference(functionAst.ReturnType);
-
                 var attributes = MethodAttributes.Public;
                 if (methodAst.Compilation.Static)
                     attributes |= MethodAttributes.Static;
 
-                method = new MethodDefinition(functionAst.Name, attributes, returnType);
+                var returnType = context.ConvertReference(functionAst.ReturnType, returnNullIfFailed: true);
+                method = new MethodDefinition(functionAst.Name, attributes, returnType ?? CecilHelper.GetVoidType(type.Module));
+                if (returnType == null)
+                    context.AddDebt(() => method.ReturnType = context.ConvertReference(functionAst.ReturnType));
+
                 if (methodAst.Compilation.EntryPoint)
                     type.Module.EntryPoint = method;
             }

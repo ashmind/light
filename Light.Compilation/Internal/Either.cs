@@ -47,10 +47,16 @@ namespace Light.Compilation.Internal {
         }
 
         public static explicit operator T1(Either<T1, T2> either) {
+            if (either == null)
+                return (T1)(object)null;
+
             return either.kind == 1 ? either.value1 : (T1)(object)either.value2;
         }
 
         public static explicit operator T2(Either<T1, T2> either) {
+            if (either == null)
+                return (T2)(object)null;
+
             return either.kind == 2 ? either.value2 : (T2)(object)either.value1;
         }
 

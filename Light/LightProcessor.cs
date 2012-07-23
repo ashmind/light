@@ -36,7 +36,11 @@ namespace Light {
             foreach (var step in steps) {
                 element = step.ProcessBeforeChildren(element, context);
             }
+
+            context.ElementStack.Push(element);
             element.TransformChildren(c => Process(c, context, steps));
+            context.ElementStack.Pop();
+
             foreach (var step in steps) {
                 element = step.ProcessAfterChildren(element, context);
             }

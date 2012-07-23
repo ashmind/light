@@ -84,6 +84,7 @@
     <Compile Include="Ast\Errors\AstMissingMethod.cs" />
     <Compile Include="Ast\Expressions\AstFunctionReferenceExpression.cs" />
     <Compile Include="Ast\Expressions\AstPropertyExpression.cs" />
+    <Compile Include="Ast\Expressions\AstThisExpression.cs" />
     <Compile Include="Ast\Expressions\BinaryExpression.cs" />
     <Compile Include="Ast\Expressions\CallExpression.cs" />
     <Compile Include="Ast\IAstCallable.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Processing\Scoping\ExternalNamespaceNameSource.cs" />
     <Compile Include="Processing\Scoping\Scope.cs" />
     <Compile Include="Processing\ProcessingStepBase.cs" />
+    <Compile Include="Processing\Steps\TypeResolution\ResolveTypeOfThis.cs" />
     <Compile Include="Processing\Steps\TypeResolution\InferListLiteralTypes.cs" />
     <Compile Include="Processing\Steps\TypeResolution\ResolveFunctionReferenceExpressionTypes.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveMethodGroupsInCalls.cs" />

@@ -8,8 +8,8 @@ using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
 using Light.Ast.Literals;
 using Light.Ast.References;
-using Light.Ast.References.Methods;
 using Light.Ast.References.Properties;
+using Light.Ast.References.Methods;
 using Light.Ast.Statements;
 using Light.Ast.References.Types;
 
@@ -46,6 +46,12 @@ namespace Light.Description {
                 return;
             }
 			
+            var definedProperty = element as AstDefinedProperty;
+            if (definedProperty != null) {
+                AppendDefinedProperty(builder, definedProperty);
+                return;
+            }
+			
             var definedType = element as AstDefinedType;
             if (definedType != null) {
                 AppendDefinedType(builder, definedType);
@@ -67,6 +73,18 @@ namespace Light.Description {
             var lambdaExpression = element as AstLambdaExpression;
             if (lambdaExpression != null) {
                 AppendLambdaExpression(builder, lambdaExpression);
+                return;
+            }
+			
+            var listInitializer = element as AstListInitializer;
+            if (listInitializer != null) {
+                AppendListInitializer(builder, listInitializer);
+                return;
+            }
+			
+            var methodGroup = element as AstMethodGroup;
+            if (methodGroup != null) {
+                AppendMethodGroup(builder, methodGroup);
                 return;
             }
 			
@@ -100,9 +118,9 @@ namespace Light.Description {
                 return;
             }
 			
-            var propertyReference = element as AstDefinedProperty;
-            if (propertyReference != null) {
-                AppendPropertyReference(builder, propertyReference);
+            var propertyExpression = element as AstPropertyExpression;
+            if (propertyExpression != null) {
+                AppendPropertyExpression(builder, propertyExpression);
                 return;
             }
 			
@@ -115,6 +133,12 @@ namespace Light.Description {
             var reflectedMethod = element as AstReflectedMethod;
             if (reflectedMethod != null) {
                 AppendReflectedMethod(builder, reflectedMethod);
+                return;
+            }
+			
+            var reflectedProperty = element as AstReflectedProperty;
+            if (reflectedProperty != null) {
+                AppendReflectedProperty(builder, reflectedProperty);
                 return;
             }
 			
@@ -133,6 +157,12 @@ namespace Light.Description {
             var root = element as AstRoot;
             if (root != null) {
                 AppendRoot(builder, root);
+                return;
+            }
+			
+            var thisExpression = element as AstThisExpression;
+            if (thisExpression != null) {
+                AppendThisExpression(builder, thisExpression);
                 return;
             }
 			
@@ -220,12 +250,6 @@ namespace Light.Description {
                 return;
             }
 			
-            var listInitializer = element as AstListInitializer;
-            if (listInitializer != null) {
-                AppendListInitializer(builder, listInitializer);
-                return;
-            }
-			
             var memberExpression = element as MemberExpression;
             if (memberExpression != null) {
                 AppendMemberExpression(builder, memberExpression);
@@ -279,6 +303,10 @@ namespace Light.Description {
             builder.Append(definedMethod);
         }
 
+        protected virtual void AppendDefinedProperty(StringBuilder builder, AstDefinedProperty definedProperty) {
+            builder.Append(definedProperty);
+        }
+
         protected virtual void AppendDefinedType(StringBuilder builder, AstDefinedType definedType) {
             builder.Append(definedType);
         }
@@ -293,6 +321,14 @@ namespace Light.Description {
 
         protected virtual void AppendLambdaExpression(StringBuilder builder, AstLambdaExpression lambdaExpression) {
             builder.Append(lambdaExpression);
+        }
+
+        protected virtual void AppendListInitializer(StringBuilder builder, AstListInitializer listInitializer) {
+            builder.Append(listInitializer);
+        }
+
+        protected virtual void AppendMethodGroup(StringBuilder builder, AstMethodGroup methodGroup) {
+            builder.Append(methodGroup);
         }
 
         protected virtual void AppendMissingMethod(StringBuilder builder, AstMissingMethod missingMethod) {
@@ -315,8 +351,8 @@ namespace Light.Description {
             builder.Append(propertyDefinition);
         }
 
-        protected virtual void AppendPropertyReference(StringBuilder builder, AstDefinedProperty propertyReference) {
-            builder.Append(propertyReference);
+        protected virtual void AppendPropertyExpression(StringBuilder builder, AstPropertyExpression propertyExpression) {
+            builder.Append(propertyExpression);
         }
 
         protected virtual void AppendReflectedConstructor(StringBuilder builder, AstReflectedConstructor reflectedConstructor) {
@@ -325,6 +361,10 @@ namespace Light.Description {
 
         protected virtual void AppendReflectedMethod(StringBuilder builder, AstReflectedMethod reflectedMethod) {
             builder.Append(reflectedMethod);
+        }
+
+        protected virtual void AppendReflectedProperty(StringBuilder builder, AstReflectedProperty reflectedProperty) {
+            builder.Append(reflectedProperty);
         }
 
         protected virtual void AppendReflectedType(StringBuilder builder, AstReflectedType reflectedType) {
@@ -337,6 +377,10 @@ namespace Light.Description {
 
         protected virtual void AppendRoot(StringBuilder builder, AstRoot root) {
             builder.Append(root);
+        }
+
+        protected virtual void AppendThisExpression(StringBuilder builder, AstThisExpression thisExpression) {
+            builder.Append(thisExpression);
         }
 
         protected virtual void AppendTypeDefinition(StringBuilder builder, AstTypeDefinition typeDefinition) {
@@ -393,10 +437,6 @@ namespace Light.Description {
 
         protected virtual void AppendIndexerExpression(StringBuilder builder, IndexerExpression indexerExpression) {
             builder.Append(indexerExpression);
-        }
-
-        protected virtual void AppendListInitializer(StringBuilder builder, AstListInitializer listInitializer) {
-            builder.Append(listInitializer);
         }
 
         protected virtual void AppendMemberExpression(StringBuilder builder, MemberExpression memberExpression) {

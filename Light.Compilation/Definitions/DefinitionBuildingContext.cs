@@ -11,9 +11,19 @@ using Mono.Cecil;
 namespace Light.Compilation.Definitions {
     public class DefinitionBuildingContext : ReferenceContext {
         private readonly IDictionary<IAstDefinition, MemberReference> references = new Dictionary<IAstDefinition, MemberReference>();
+        private readonly IList<Action> debt = new List<Action>(); 
 
         public DefinitionBuildingContext(ModuleDefinition module, params IReferenceProvider[] referenceProviders)
             : base(module, referenceProviders) {
+        }
+
+        public void AddDebt(Action action) {
+            this.debt.Add(action);
+        }
+
+        public void ClearDebt() {
+            this.debt.ForEach(a => a());
+            this.debt.Clear();
         }
 
         public AstMethodDefinitionBase GetAst(MethodDefinition method) {
@@ -32,7 +42,7 @@ namespace Light.Compilation.Definitions {
             references.Add(propertyAst, field);
         }
 
-        protected override Either<MemberReference, PropertyReferenceContainer> ConvertReference(IAstReference reference) {
+        protected override Either<MemberReference, PropertyReferenceContainer> ConvertReference(IAstReference reference, bool returnNullIfFailed = false) {
             var definition = reference.Target as IAstDefinition;
             if (definition != null) {
                 var result = this.references.GetValueOrDefault(definition);
@@ -40,7 +50,7 @@ namespace Light.Compilation.Definitions {
                     return result;
             }
 
-            return base.ConvertReference(reference);
+            return base.ConvertReference(reference, returnNullIfFailed);
         }
     }
 }

@@ -44,24 +44,28 @@ namespace Light.Compilation.Cil {
             locals.Add(variableAst, variable);
         }
 
-        public TypeReference ConvertReference(IAstTypeReference type) {
-            return this.referenceContext.ConvertReference(type);
+        public TypeReference ConvertReference(IAstTypeReference type, bool returnNullIfFailed = false) {
+            return this.referenceContext.ConvertReference(type, returnNullIfFailed);
         }
 
-        public MethodReference ConvertReference(IAstConstructorReference constructor) {
-            return this.referenceContext.ConvertReference(constructor);
+        public MethodReference ConvertReference(IAstConstructorReference constructor, bool returnNullIfFailed = false) {
+            return this.referenceContext.ConvertReference(constructor, returnNullIfFailed);
         }
 
-        public MethodReference ConvertReference(IAstMethodReference method) {
-            return this.referenceContext.ConvertReference(method);
+        public MethodReference ConvertReference(IAstMethodReference method, bool returnNullIfFailed = false) {
+            return this.referenceContext.ConvertReference(method, returnNullIfFailed);
         }
 
-        public Either<FieldReference, PropertyReferenceContainer> ConvertReference(IAstPropertyReference property) {
-            return this.referenceContext.ConvertReference(property);
+        public Either<FieldReference, PropertyReferenceContainer> ConvertReference(IAstPropertyReference property, bool returnNullIfFailed = false) {
+            return this.referenceContext.ConvertReference(property, returnNullIfFailed);
         }
 
-        public VariableDefinition ConvertReference(AstVariableReference variable) {
-            return locals.GetValueOrDefault(variable.Variable);
+        public VariableDefinition ConvertReference(AstVariableReference variable, bool returnNullIfFailed = false) {
+            var result = locals.GetValueOrDefault(variable.Variable);
+            if (result == null && !returnNullIfFailed)
+                throw new NotImplementedException("CilCompilationContext: can not resolve " + variable + ".");
+
+            return result;
         }
     }
 }

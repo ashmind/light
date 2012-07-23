@@ -15,6 +15,10 @@ namespace Light.Description {
             AppendAll(builder, Environment.NewLine, root.Elements);
         }
 
+        protected override void AppendThisExpression(StringBuilder builder, AstThisExpression thisExpression) {
+            builder.Append("this");
+        }
+
         protected override void AppendMemberExpression(StringBuilder builder, MemberExpression member) {
             Append(builder, member.Target);
             builder.Append(".").Append(member.Name);

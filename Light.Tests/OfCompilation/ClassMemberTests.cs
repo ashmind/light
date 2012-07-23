@@ -11,7 +11,7 @@ namespace Light.Tests.OfCompilation {
         [Row(typeof(string), "string", "x")]
         [Row(typeof(int),    "integer", 3)]
         [Row(typeof(bool),   "boolean", true)]
-        public void WriteAndReadPropertyThroughMethods<T>(string propetyType, T value) {
+        public void WriteAndReadPropertyThroughMethods<T>(string propertyType, T value) {
             var code = string.Format(@"
                 public class Test
                     private {0} x
@@ -24,12 +24,47 @@ namespace Light.Tests.OfCompilation {
                         return x
                     end
                 end
-            ", propetyType).Trim();
+            ", propertyType).Trim();
 
             var instance = CompilationHelper.CompileAndGetInstance(code, "Test");
             instance.SetValue(value);
 
-            Assert.AreEqual(instance.GetValue(), value);
+            Assert.AreEqual(value, instance.GetValue());
+        }
+
+        [Test]
+        public void ReturnThis() {
+            var code = string.Format(@"
+                public class Test
+                    public function GetThis()
+                        return this
+                    end
+                end
+            ").Trim();
+
+            var instance = CompilationHelper.CompileAndGetInstance(code, "Test");
+            var value = instance.GetThis();
+
+            Assert.AreEqual(instance, value);
+        }
+
+        [Test]
+        [Ignore("Waiting for field initialization.")]
+        public void ReturnPropertyThroughThis() {
+            var code = string.Format(@"
+                public class Test
+                    private integer value = 5
+
+                    public function GetValue()
+                        return this.value
+                    end
+                end
+            ").Trim();
+
+            var instance = CompilationHelper.CompileAndGetInstance(code, "Test");
+            var value = instance.GetValue();
+
+            Assert.AreEqual(5, value);
         }
     }
 }

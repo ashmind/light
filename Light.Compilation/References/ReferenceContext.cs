@@ -15,30 +15,34 @@ namespace Light.Compilation.References {
             this.providers = providers;
         }
 
-        public virtual TypeReference ConvertReference(IAstTypeReference type) {
+        public virtual TypeReference ConvertReference(IAstTypeReference type, bool returnNullIfFailed = false) {
             Argument.RequireNotNull("type", type);
-            return (TypeReference)ConvertReference((IAstReference)type);
+            return (TypeReference)ConvertReference((IAstReference)type, returnNullIfFailed);
         }
 
-        public virtual MethodReference ConvertReference(IAstConstructorReference constructor) {
+        public virtual MethodReference ConvertReference(IAstConstructorReference constructor, bool returnNullIfFailed = false) {
             Argument.RequireNotNull("constructor", constructor);
-            return (MethodReference)ConvertReference((IAstReference)constructor);
+            return (MethodReference)ConvertReference((IAstReference)constructor, returnNullIfFailed);
         }
 
-        public virtual MethodReference ConvertReference(IAstMethodReference method) {
+        public virtual MethodReference ConvertReference(IAstMethodReference method, bool returnNullIfFailed = false) {
             Argument.RequireNotNull("method", method);
-            return (MethodReference)ConvertReference((IAstReference)method);
+            return (MethodReference)ConvertReference((IAstReference)method, returnNullIfFailed);
         }
 
-        public virtual Either<FieldReference, PropertyReferenceContainer> ConvertReference(IAstPropertyReference property) {
+        public virtual Either<FieldReference, PropertyReferenceContainer> ConvertReference(IAstPropertyReference property, bool returnNullIfFailed = false) {
             Argument.RequireNotNull("property", property);
-            return ConvertReference((IAstReference)property).Cast<FieldReference, PropertyReferenceContainer>();
+            return ConvertReference((IAstReference)property, returnNullIfFailed).Cast<FieldReference, PropertyReferenceContainer>();
         }
 
-        protected virtual Either<MemberReference, PropertyReferenceContainer> ConvertReference(IAstReference reference) {
+        protected virtual Either<MemberReference, PropertyReferenceContainer> ConvertReference(IAstReference reference, bool returnNullIfFailed = false) {
             var converted = this.providers.Select(r => r.Convert(reference, module)).FirstOrDefault(r => r != null);
-            if (converted == null)
-                throw new NotImplementedException("ResolutionFacade: Cannot convert AST reference " + reference + ".");
+            if (converted == null) {
+                if (returnNullIfFailed)
+                    return null;
+
+                throw new NotImplementedException("ReferenceContext: Cannot convert AST reference " + reference + ".");
+            }
 
             return converted;
         }

@@ -65,6 +65,7 @@
     <Compile Include="Cil\Compilers\AssignmentCompiler.cs" />
     <Compile Include="Cil\Compilers\BaseConstructorCallCompiler.cs" />
     <Compile Include="Cil\Compilers\BinaryExpressionCompiler.cs" />
+    <Compile Include="Cil\Compilers\ThisCompiler.cs" />
     <Compile Include="Cil\Compilers\ListInitializerCompiler.cs" />
     <Compile Include="Cil\Compilers\FunctionReferenceExpressionCompiler.cs" />
     <Compile Include="Cil\Compilers\VariableReferenceCompiler.cs" />

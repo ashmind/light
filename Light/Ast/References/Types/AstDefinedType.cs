@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.Definitions;
 using Light.Ast.References.Methods;
+using Light.Ast.References.Properties;
 
 namespace Light.Ast.References.Types {
     public class AstDefinedType : AstElementBase, IAstTypeReference {
@@ -34,6 +35,10 @@ namespace Light.Ast.References.Types {
             var function = member as AstFunctionDefinition;
             if (function != null)
                 return new AstDefinedMethod(function);
+
+            var property = member as AstPropertyDefinition;
+            if (property != null)
+                return new AstDefinedProperty(property);
 
             throw new NotImplementedException("AstDefinedType: " + member.GetType() + " is not yet supported.");
         }

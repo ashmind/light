@@ -94,6 +94,7 @@ namespace Light.Parsing {
 
         public NonTerminal<IAstExpression> Expression { get; private set; }
         public NonTerminal<IAstExpression> Literal { get; private set; }
+        public NonTerminal<IAstExpression> ThisExpression { get; private set; }
         public NonTerminal<IAstExpression> BinaryExpression { get; private set; }
         public NonTerminal<IAstMethodReference> BinaryOperator { get; private set; }
         public NonTerminal<IEnumerable<IAstExpression>> CommaSeparatedExpressionListStar { get; private set; }
@@ -131,6 +132,8 @@ namespace Light.Parsing {
             
             Literal = Transient<IAstExpression>("Literal");
             Expression = Transient<IAstExpression>("Expression");
+            ThisExpression = NonTerminal("This", n => new AstThisExpression());
+
             BinaryExpression = NonTerminal("BinaryExpression", node => new BinaryExpression(
                 (IAstExpression)node.ChildNodes[0].AstNode,
                 (IAstMethodReference)node.ChildNodes[1].AstNode,
@@ -206,9 +209,11 @@ namespace Light.Parsing {
             Literal.Rule = SingleQuotedString | DoubleQuotedString | Number | Boolean | ListInitializer | ObjectInitializer;
             Boolean.Rule = ToTerm("true") | "false";
 
-            Expression.Rule = Literal | BinaryExpression
+            Expression.Rule = Literal | ThisExpression | BinaryExpression
                             | SimpleCallExpression | SimpleIdentifierExpression | SimpleIndexerExpression | MemberAccessOrCallExpression
                             | NewExpression | LambdaExpression;
+
+            ThisExpression.Rule = ToTerm("this");
 
             BinaryExpression.Rule = Expression + BinaryOperator + NewLineStar + Expression;
             BinaryOperator.Rule = new[] {"+", "-", "*", "/", "==", "===", "<", ">", "|", "&"}.Select(k => {
@@ -225,7 +230,7 @@ namespace Light.Parsing {
             ObjectInitializerElement.Rule = Name + ":" + Expression;
 
             MemberAccessOrCallExpression.Rule = MemberPathRoot + "." + MemberPathElementListPlus;
-            MemberPathRoot.Rule = Literal | MemberPathElement;
+            MemberPathRoot.Rule = Literal | MemberPathElement | ThisExpression;
             MemberPathElement.Rule = SimpleIdentifierExpression | SimpleCallExpression | SimpleIndexerExpression;
             MemberPathElementListPlus.Rule = MakeStarRule(MemberPathElementListPlus, ToTerm("."), MemberPathElement);
             SimpleCallExpression.Rule = Name + ArgumentList;
