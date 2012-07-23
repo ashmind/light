@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OfCompilation\ClassMemberTests.cs" />
+    <Compile Include="OfCompilation\MathTests.cs" />
     <Compile Include="OfCompilation\PrimitiveTests.cs" />
     <Compile Include="OfCompilation\PropertyTests.cs" />
     <Compile Include="OfCompilation\ListInitializerTests.cs" />
