@@ -11,6 +11,8 @@ namespace Light.Tests.OfParsing {
         [Row("10000000", "10000000: integer")]
         [Row("1.1",      "1.1: System.Double")]
         [Row("1e3",      "1000: System.Double")]
+        [Row("1000000000000000000000000000000000000000000000000000000000000000000000000000",
+             "1000000000000000000000000000000000000000000000000000000000000000000000000000: integer")]
         public void Number(string literal, string expectedResult) {
             ParseAssert.IsParsedTo(literal, expectedResult, includeExpressionType: true);
         }

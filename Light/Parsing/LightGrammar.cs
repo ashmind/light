@@ -115,7 +115,9 @@ namespace Light.Parsing {
         public NonTerminal<IAstExpression> LambdaExpression { get; private set; }
 
         private void ConstructExpressions() {
-            Number = new NumberLiteral("Number", NumberOptions.Default, (c, node) => node.AstNode = new PrimitiveValue(node.Token.Value));
+            Number = new NumberLiteral("Number", NumberOptions.Default, (c, node) => node.AstNode = new PrimitiveValue(ConvertNumber(node.Token.Value))) {
+                DefaultIntTypes = new[] { TypeCode.Int32, TypeCode.Int64, NumberLiteral.TypeCodeBigInt }
+            };
             SingleQuotedString = new StringLiteral(
                 "SingleQuotedString", "'", StringOptions.NoEscapes,
                 ToActualNodeCreator(n => new PrimitiveValue(n.Token.Value))
@@ -428,6 +430,14 @@ namespace Light.Parsing {
                 return No.Elements;
 
             return child.ChildNodes.Select(n => (IAstElement)n.AstNode);
+        }
+
+        private object ConvertNumber(object value) {
+            var bigInteger = value as Microsoft.Scripting.Math.BigInteger;
+            if (!ReferenceEquals(bigInteger, null))
+                return new System.Numerics.BigInteger(bigInteger.ToByteArray());
+
+            return value;
         }
     }
 }

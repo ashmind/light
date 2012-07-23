@@ -66,6 +66,7 @@
     <Reference Include="Microsoft.Pex.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -79,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OfCompilation\ClassMemberTests.cs" />
+    <Compile Include="OfCompilation\PrimitiveTests.cs" />
     <Compile Include="OfCompilation\PropertyTests.cs" />
     <Compile Include="OfCompilation\ListInitializerTests.cs" />
     <Compile Include="OfCompilation\DelegateTests.cs" />

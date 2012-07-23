@@ -8,22 +8,6 @@ namespace Light.Tests.OfCompilation {
     [TestFixture]
     public class FunctionTests {
         [Test]
-        [Row("1", 1)]
-        [Row("1.1", 1.1)]
-        [Row("'x'", "x")]
-        [Row("true", true)]
-        public void ReturnConstant(string valueString, object expectedValue) {
-            var compiled = CompileAndGetClassWith(@"
-                public function GetValue()
-                    return " + valueString + @"
-                end
-            ");
-            var value = compiled.GetValue();
-
-            Assert.AreEqual(expectedValue, value);
-        }
-
-        [Test]
         [Row(typeof(string), "string", "x")]
         public void ReturnArgument<T>(string argumentType, T value) {
             var compiled = CompileAndGetClassWith(@"

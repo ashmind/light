@@ -52,6 +52,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,6 +79,7 @@
     <Compile Include="Definitions\DefinitionBuildingContext.cs" />
     <Compile Include="Definitions\IDefinitionBuilder.cs" />
     <Compile Include="Definitions\PropertyOrFieldDefinitionBuilder.cs" />
+    <Compile Include="Cil\CilEmitter.cs" />
     <Compile Include="Internal\ILProcessorExtensions.cs" />
     <Compile Include="Internal\Either.cs" />
     <Compile Include="References\PropertyReferenceContainer.cs" />
