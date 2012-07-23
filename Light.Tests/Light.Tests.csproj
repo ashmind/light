@@ -84,6 +84,7 @@
     <Compile Include="OfCompilation\DelegateTests.cs" />
     <Compile Include="OfCompilation\OperatorTests.cs" />
     <Compile Include="OfCompilation\FunctionTests.cs" />
+    <Compile Include="OfDescription\ObjectFormatterTests.cs" />
     <Compile Include="OfParsing\LambdaTests.cs" />
     <Compile Include="OfParsing\DefinitionTests.cs" />
     <Compile Include="Helpers\PEVerifier.cs" />
