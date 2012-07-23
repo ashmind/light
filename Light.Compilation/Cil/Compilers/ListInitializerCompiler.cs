@@ -9,7 +9,9 @@ using Mono.Cecil.Cil;
 namespace Light.Compilation.Cil.Compilers {
     public class ListInitializerCompiler : CilCompilerBase<AstListInitializer> {
         private static readonly IDictionary<MetadataType, OpCode> StelemCodes = new Dictionary<MetadataType, OpCode> {
-            { MetadataType.Int32, OpCodes.Stelem_I4 }
+            { MetadataType.Boolean, OpCodes.Stelem_I1 },
+            { MetadataType.Int32,   OpCodes.Stelem_I4 },
+            { MetadataType.Double,  OpCodes.Stelem_R8 },
         };
 
         public override void Compile(ILProcessor processor, AstListInitializer initializer, CilCompilationContext context) {

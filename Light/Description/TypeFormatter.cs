@@ -34,7 +34,7 @@ namespace Light.Description {
             if (alias != null)
                 return alias;
 
-            return type.Name;
+            return type.FullName;
         }
 
         private string FormatDelegate(Type type) {

@@ -9,8 +9,8 @@ namespace Light.Tests.OfParsing {
         [Row( "1",       "1: integer")]
         [Row("10",       "10: integer")]
         [Row("10000000", "10000000: integer")]
-        [Row("1.1",      "1.1: Double")]
-        [Row("1e3",      "1000: Double")]
+        [Row("1.1",      "1.1: System.Double")]
+        [Row("1e3",      "1000: System.Double")]
         public void Number(string literal, string expectedResult) {
             ParseAssert.IsParsedTo(literal, expectedResult, includeExpressionType: true);
         }
