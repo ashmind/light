@@ -9,6 +9,8 @@ namespace Light.Tests.OfCompilation {
     public class ClassMemberTests {
         [Test]
         [Row(typeof(string), "string", "x")]
+        [Row(typeof(int),    "integer", 3)]
+        [Row(typeof(bool),   "boolean", true)]
         public void WriteAndReadPropertyThroughMethods<T>(string propetyType, T value) {
             var code = string.Format(@"
                 public class Test
