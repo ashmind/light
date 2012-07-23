@@ -46,6 +46,9 @@ namespace Light.Description {
             builder.Append(unknownType.Name.IsNullOrEmpty() ? "?" : unknownType.Name);
         }
 
+        protected override void AppendImplicitType(StringBuilder builder, AstImplicitType implicitType) {
+        }
+
         protected override void AppendLambdaExpression(StringBuilder builder, AstLambdaExpression lambda) {
             var needsBrackets = lambda.Parameters.Count > 1 || !(lambda.Parameters[0].Type is AstImplicitType);
             if (needsBrackets)

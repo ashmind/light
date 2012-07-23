@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast.Incomplete;
 using Light.Ast.References;
-using Light.Ast.References.Types;
 
 namespace Light.Ast.Literals {
     public class AstListInitializer : AstElementBase, IAstExpression {
@@ -12,15 +12,12 @@ namespace Light.Ast.Literals {
             Argument.RequireNotNull("elements", elements);
             var elementList = elements.ToList();
             Argument.RequireNotContainsNull("elements", elementList);
+
             Elements = elementList;
+            ExpressionType = AstImplicitType.Instance;
         }
 
-        public IAstTypeReference ExpressionType {
-            get {
-                var elementType = this.Elements[0].ExpressionType; // temporary cheating
-                return new AstReflectedType(((AstReflectedType)elementType).ActualType.MakeArrayType());
-            }
-        }
+        public IAstTypeReference ExpressionType { get; set; }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return this.Elements.Transform(transform);
