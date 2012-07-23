@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AstGeneration\MovePropertyInitializationToConstructors.cs" />
     <Compile Include="Cil\Compilers\CallCompiler.cs" />
     <Compile Include="Cil\CilCompilationContext.cs" />
     <Compile Include="Cil\Compilers\AssignmentCompiler.cs" />

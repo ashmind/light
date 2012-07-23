@@ -26,7 +26,7 @@ namespace Light.Parsing {
             ConstructAll();
             SetAllRules();
 
-            MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>", ".");
+            MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>", ".", "=");
 
             this.Root = TopLevelRoot;
             this.LanguageFlags = LanguageFlags.CreateAst;
@@ -262,6 +262,7 @@ namespace Light.Parsing {
         public NonTerminal<IAstStatement> ContinueStatement { get; private set; }
         public NonTerminal<IAstStatement> IfOrUnlessStatement { get; private set; }
         public NonTerminal<IAstStatement> VariableDefinition { get; private set; }
+        public NonTerminal<IAstExpression> OptionalAssignedValue { get; private set; }
         public NonTerminal<IAstStatement> Assignment { get; private set; }
         public NonTerminal<IAstElement> AssignmentLeftHandSide { get; private set; }
         public NonTerminal<IAstStatement> ReturnStatement { get; private set; }
@@ -286,9 +287,10 @@ namespace Light.Parsing {
             VariableDefinition = NonTerminal("VariableDefinition", node => new AstVariableDefinition(
                 node.Child(1).Token.Text,
                 AstImplicitType.Instance,
-                (IAstExpression)node.Child(2).ChildAst(1)
+                node.ChildAst(OptionalAssignedValue)
             ));
-            Assignment = NonTerminal("Assignment", node => new AssignmentStatement((IAstAssignable)node.ChildAst(0), (IAstExpression)node.ChildAst(2)));
+            OptionalAssignedValue = NonTerminal("OptionalAssignedValue", node => (IAstExpression)node.ChildAst(0));
+            Assignment = NonTerminal("Assignment", node => new AssignmentStatement((IAstAssignable)node.ChildAst(0), (IAstExpression)node.ChildAst(1)));
             AssignmentLeftHandSide = Transient<IAstElement>("AssignmentLeftHandSide");
             ReturnStatement = NonTerminal("Return", node => new AstReturnStatement((IAstExpression)node.ChildAst(1)));
         }
@@ -302,7 +304,8 @@ namespace Light.Parsing {
             ForStatement.Rule = "for" + Name + "in" + Expression + "do" + NewLinePlus + OptionalBodyOfStatements + "end";
             ContinueStatement.Rule = "continue";
             IfOrUnlessStatement.Rule = (ToTerm("if") | "unless") + Expression + NewLineStar + Statement;
-            VariableDefinition.Rule = "let" + Name + (Empty | "=" + Expression);
+            VariableDefinition.Rule = "let" + Name + OptionalAssignedValue;
+            OptionalAssignedValue.Rule = Empty | "=" + Expression;
             Assignment.Rule = AssignmentLeftHandSide + "=" + Expression;
             AssignmentLeftHandSide.Rule = SimpleIdentifierExpression | MemberAccessOrCallExpression;
             ReturnStatement.Rule = "return" + Expression;
@@ -338,7 +341,11 @@ namespace Light.Parsing {
             TypeMember = Transient<IAstDefinition>("TypeMember");
             TypeMemberList = NonTerminal("TypeMemberList", node => node.ChildAsts<IAstDefinition>());
             OptionalTypeContent = NonTerminal("OptionalTypeContent", node => node.ChildAst(TypeMemberList) ?? Enumerable.Empty<IAstDefinition>());
-            Property = NonTerminal("Property", node => new AstPropertyDefinition(node.Child(2).Token.Text, node.ChildAst(TypeReference)));
+            Property = NonTerminal("Property", node => new AstPropertyDefinition(
+                node.Child(2).Token.Text,
+                node.ChildAst(TypeReference),
+                node.ChildAst(OptionalAssignedValue)
+            ));
             Constructor = NonTerminal("Constructor", node => new AstConstructorDefinition(node.ChildAst(ParameterList), node.ChildAst(OptionalBodyOfStatements)));
             Function = NonTerminal(
                 "Function",
@@ -364,7 +371,7 @@ namespace Light.Parsing {
             TypeMember.Rule = Function | Constructor | Property;
             TypeMemberList.Rule = MakePlusRule(TypeMemberList, NewLinePlus, TypeMember);
             OptionalTypeContent.Rule = (TypeMemberList + NewLinePlus | Empty);
-            Property.Rule = OptionalAccessLevel + TypeReference + Name + (Empty | "=" + Expression);
+            Property.Rule = OptionalAccessLevel + TypeReference + Name + OptionalAssignedValue;
             Function.Rule = OptionalAccessLevel + "function" + Name + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
             Constructor.Rule = OptionalAccessLevel + "new" + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
             ParameterList.Rule = MakeStarRule(ParameterList, ToTerm(","), Parameter);
@@ -400,7 +407,7 @@ namespace Light.Parsing {
         }
 
         private static NonTerminal<TAstElement> NonTerminalWithSpecificType<TAstElement>(string name, Func<ParseTreeNode, TAstElement> nodeCreator)
-            where TAstElement : IAstElement
+            where TAstElement : class, IAstElement
         {
             return new NonTerminal<TAstElement>(name) {
                 AstNodeCreator = ToActualNodeCreator(nodeCreator)
@@ -414,10 +421,13 @@ namespace Light.Parsing {
         }
 
         private static AstNodeCreator ToActualNodeCreator<TAstElement>(Func<ParseTreeNode, TAstElement> nodeCreator) 
-            where TAstElement : IAstElement
+            where TAstElement : class, IAstElement
         {
             return (c, n) => {
                 var element = nodeCreator(n);
+                if (element == null)
+                    return;
+
                 element.SourceSpan = ParsingConverter.FromIrony(n.Span, c.Source.Text);
                 n.AstNode = element;
             };

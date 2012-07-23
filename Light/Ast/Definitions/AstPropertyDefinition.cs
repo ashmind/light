@@ -16,15 +16,20 @@ namespace Light.Ast.Definitions {
             }
         }
 
-        public AstPropertyDefinition(string name, IAstTypeReference type) {
+        public IAstExpression AssignedValue { get; set; }
+
+        public AstPropertyDefinition(string name, IAstTypeReference type, IAstExpression assignedValue) {
             Argument.RequireNotNullAndNotEmpty("name", name);
 
             this.Name = name;
             this.Type = type;
+            this.AssignedValue = assignedValue;
         }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.Type = (IAstTypeReference)transform(this.Type);
+            if (this.AssignedValue != null)
+                yield return this.AssignedValue = (IAstExpression)transform(this.AssignedValue);
         }
     }
 }

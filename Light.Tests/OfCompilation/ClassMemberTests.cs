@@ -49,7 +49,6 @@ namespace Light.Tests.OfCompilation {
         }
 
         [Test]
-        [Ignore("Waiting for field initialization.")]
         public void ReturnPropertyThroughThis() {
             var code = string.Format(@"
                 public class Test
