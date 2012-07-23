@@ -6,6 +6,7 @@ using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.References;
 using Light.Ast.Statements;
+using Light.Compilation.Internal;
 using Light.Compilation.References;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -55,7 +56,7 @@ namespace Light.Compilation.Cil {
             return this.referenceContext.ConvertReference(method);
         }
 
-        public FieldReference ConvertReference(AstPropertyReference property) {
+        public Either<FieldReference, PropertyReferenceContainer> ConvertReference(IAstPropertyReference property) {
             return this.referenceContext.ConvertReference(property);
         }
 

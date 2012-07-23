@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.References;
+using Light.Compilation.Internal;
 using Mono.Cecil;
 
 namespace Light.Compilation.References {
@@ -29,12 +30,12 @@ namespace Light.Compilation.References {
             return (MethodReference)ConvertReference((IAstReference)method);
         }
 
-        public virtual FieldReference ConvertReference(AstPropertyReference property) {
+        public virtual Either<FieldReference, PropertyReferenceContainer> ConvertReference(IAstPropertyReference property) {
             Argument.RequireNotNull("property", property);
-            return (FieldReference)ConvertReference((IAstReference)property);
+            return ConvertReference((IAstReference)property).Cast<FieldReference, PropertyReferenceContainer>();
         }
 
-        protected virtual MemberReference ConvertReference(IAstReference reference) {
+        protected virtual Either<MemberReference, PropertyReferenceContainer> ConvertReference(IAstReference reference) {
             var converted = this.providers.Select(r => r.Convert(reference, module)).FirstOrDefault(r => r != null);
             if (converted == null)
                 throw new NotImplementedException("ResolutionFacade: Cannot convert AST reference " + reference + ".");

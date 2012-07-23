@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Light.Ast.Errors;
 using Light.Ast.References.Methods;
+using Light.Ast.References.Properties;
 
 namespace Light.Ast.References.Types {
     public class AstReflectedType : AstElementBase, IAstTypeReference {
@@ -36,6 +37,12 @@ namespace Light.Ast.References.Types {
             var members = this.ActualType.GetMember(name);
             if (members.Length == 0)
                 return null;
+
+            if (members.Length == 1) {
+                var property = members[0] as PropertyInfo;
+                if (property != null)
+                    return new AstReflectedProperty(property);
+            }
 
             if (!members.All(m => m is MethodInfo))
                 throw new NotImplementedException("AstReflectedType.ResolveMember: " + members.First(m => !(m is MethodInfo)).GetType() + " is not yet supported.");

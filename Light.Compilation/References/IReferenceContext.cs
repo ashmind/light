@@ -1,4 +1,5 @@
 using Light.Ast.References;
+using Light.Compilation.Internal;
 using Mono.Cecil;
 
 namespace Light.Compilation.References {
@@ -6,6 +7,6 @@ namespace Light.Compilation.References {
         TypeReference ConvertReference(IAstTypeReference astType);
         MethodReference ConvertReference(IAstConstructorReference astConstructor);
         MethodReference ConvertReference(IAstMethodReference astMethod);
-        FieldReference ConvertReference(AstPropertyReference astProperty);
+        Either<FieldReference, PropertyReferenceContainer> ConvertReference(IAstPropertyReference astProperty);
     }
 }

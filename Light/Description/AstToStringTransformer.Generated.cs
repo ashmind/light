@@ -9,6 +9,7 @@ using Light.Ast.Incomplete;
 using Light.Ast.Literals;
 using Light.Ast.References;
 using Light.Ast.References.Methods;
+using Light.Ast.References.Properties;
 using Light.Ast.Statements;
 using Light.Ast.References.Types;
 
@@ -99,7 +100,7 @@ namespace Light.Description {
                 return;
             }
 			
-            var propertyReference = element as AstPropertyReference;
+            var propertyReference = element as AstDefinedProperty;
             if (propertyReference != null) {
                 AppendPropertyReference(builder, propertyReference);
                 return;
@@ -314,7 +315,7 @@ namespace Light.Description {
             builder.Append(propertyDefinition);
         }
 
-        protected virtual void AppendPropertyReference(StringBuilder builder, AstPropertyReference propertyReference) {
+        protected virtual void AppendPropertyReference(StringBuilder builder, AstDefinedProperty propertyReference) {
             builder.Append(propertyReference);
         }
 

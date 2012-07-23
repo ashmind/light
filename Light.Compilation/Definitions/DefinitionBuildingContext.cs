@@ -4,6 +4,7 @@ using System.Linq;
 using AshMind.Extensions;
 using Light.Ast.Definitions;
 using Light.Ast.References;
+using Light.Compilation.Internal;
 using Light.Compilation.References;
 using Mono.Cecil;
 
@@ -31,7 +32,7 @@ namespace Light.Compilation.Definitions {
             references.Add(propertyAst, field);
         }
 
-        protected override MemberReference ConvertReference(IAstReference reference) {
+        protected override Either<MemberReference, PropertyReferenceContainer> ConvertReference(IAstReference reference) {
             var definition = reference.Target as IAstDefinition;
             if (definition != null) {
                 var result = this.references.GetValueOrDefault(definition);

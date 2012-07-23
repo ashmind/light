@@ -26,6 +26,13 @@ namespace Light.Processing.Steps.ReferenceResolution {
                     SourceSpan = member.SourceSpan
                 };
             }
+
+            var property = resolved as IAstPropertyReference;
+            if (property != null) {
+                return new AstPropertyExpression(member.Target, property) {
+                    SourceSpan = member.SourceSpan
+                };
+            }
             
             throw new NotImplementedException("ResolveMemberReferences: " + resolved.GetType().Name + " is not yet supported.");
         }

@@ -82,6 +82,7 @@
     <Compile Include="Ast\Definitions\TypeDefintionTypes.cs" />
     <Compile Include="Ast\Errors\AstMissingMethod.cs" />
     <Compile Include="Ast\Expressions\AstFunctionReferenceExpression.cs" />
+    <Compile Include="Ast\Expressions\AstPropertyExpression.cs" />
     <Compile Include="Ast\Expressions\BinaryExpression.cs" />
     <Compile Include="Ast\Expressions\CallExpression.cs" />
     <Compile Include="Ast\IAstCallable.cs" />
@@ -101,7 +102,7 @@
     <Compile Include="Ast\Definitions\AstParameterDefinition.cs" />
     <Compile Include="Ast\No.cs" />
     <Compile Include="Ast\References\AstParameterReference.cs" />
-    <Compile Include="Ast\References\AstPropertyReference.cs" />
+    <Compile Include="Ast\References\Properties\AstDefinedProperty.cs" />
     <Compile Include="Ast\References\AstVariableReference.cs" />
     <Compile Include="Ast\References\IAstConstructorReference.cs" />
     <Compile Include="Ast\References\IAstMemberReference.cs" />
@@ -112,6 +113,8 @@
     <Compile Include="Ast\References\Methods\AstBuiltInOperator.cs" />
     <Compile Include="Ast\References\Methods\AstDefinedMethod.cs" />
     <Compile Include="Ast\References\Methods\AstMethodGroup.cs" />
+    <Compile Include="Ast\References\IAstPropertyReference.cs" />
+    <Compile Include="Ast\References\Properties\AstReflectedProperty.cs" />
     <Compile Include="Ast\References\Types\AstBuiltInType.cs" />
     <Compile Include="Ast\References\Methods\AstDefinedConstructor.cs" />
     <Compile Include="Ast\Statements\AssignmentStatement.cs" />

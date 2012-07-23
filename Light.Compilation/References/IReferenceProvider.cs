@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.References;
+using Light.Compilation.Internal;
 using Mono.Cecil;
 
 namespace Light.Compilation.References {
     public interface IReferenceProvider {
-        MemberReference Convert(IAstReference astReference, ModuleDefinition module);
+        Either<MemberReference, PropertyReferenceContainer> Convert(IAstReference astReference, ModuleDefinition module);
     }
 }

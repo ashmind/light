@@ -15,8 +15,14 @@ namespace Light.Processing.Steps.ReferenceResolution {
             var resolved = context.Resolve(identifier.Name);
             RequireExactlyOne(resolved, identifier.Name);
 
-            resolved[0].SourceSpan = identifier.SourceSpan;
-            return resolved[0];
+            var result = (IAstElement)resolved[0];
+
+            var property = result as IAstPropertyReference;
+            if (property != null)
+                result = new AstPropertyExpression(null, property);
+
+            result.SourceSpan = identifier.SourceSpan;
+            return result;
         }
 
         private static void RequireExactlyOne(IList<IAstReference> resolved, string name) {
