@@ -17,6 +17,9 @@ namespace Light.Description {
         }
 
         private static string FormatSimple(object value) {
+            if (value is bool)
+                return ((bool)value) ? "true" : "false";
+
             var function = value as Delegate;
             if (function != null)
                 return "<function:" + function.Method.ReflectedType.Name + "." + function.Method.Name + ">";

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Light.Ast;
+using Light.BuiltIn;
 using Light.Description;
 using MbUnit.Framework;
 
@@ -16,7 +17,7 @@ namespace Light.Tests.OfParsing {
             var resultString = new AstToCodeTransformer().Transform(result.Root);
             var resultExpression = result.Root as IAstExpression;
             if (resultExpression != null && includeExpressionType)
-                resultString = resultString + ": " + new TypeFormatter().Format(resultExpression.ExpressionType);
+                resultString = resultString + ": " + new TypeFormatter(new BuiltInTypeMap()).Format(resultExpression.ExpressionType);
             
             Assert.AreEqual(expectedResult, resultString);
         }

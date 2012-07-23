@@ -1,28 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AshMind.Extensions;
 using Light.Ast;
 using Light.Ast.References;
 using Light.Ast.References.Types;
+using Light.BuiltIn;
 
 namespace Light.Processing.Scoping {
     public class BuiltInTypesNameSource : INameSource {
-        public IDictionary<string, AstReflectedType> Types { get; private set; }
+        private readonly BuiltInTypeMap map;
 
-        public BuiltInTypesNameSource() {
-            Types = new Dictionary<string, AstReflectedType> {
-                {"string", new AstReflectedType(typeof(string)) },
-                {"integer", new AstReflectedType(typeof(int)) }
-            };
+        public BuiltInTypesNameSource(BuiltInTypeMap map) {
+            this.map = map;
         }
 
         public IList<IAstReference> Resolve(string name) {
-            var type = this.Types.GetValueOrDefault(name);
+            var type = this.map.GetTypeByAlias(name);
             if (type == null)
                 return No.References;
 
-            return new[] { type };
+            return new[] { new AstReflectedType(type) };
         }
     }
 }

@@ -18,6 +18,7 @@ namespace Light.Interpreter {
         private static LightParser parser;
         private static LightProcessor processor;
         private static LightCompiler compiler;
+        private static TypeFormatter typeFormatter;
 
         public static void Main() {
             SetupCompiler();
@@ -33,6 +34,8 @@ namespace Light.Interpreter {
             parser = container.Resolve<LightParser>();
             processor = container.Resolve<LightProcessor>();
             compiler = container.Resolve<LightCompiler>();
+
+            typeFormatter = container.Resolve<TypeFormatter>();
         }
 
         private static bool InteractiveLoop() {
@@ -96,7 +99,7 @@ namespace Light.Interpreter {
             if (result == null)
                 return "null: Null";
 
-            var typeString = new TypeFormatter().Format(result.GetType());
+            var typeString = typeFormatter.Format(result.GetType());
             var valueString = new ObjectFormatter().Format(result);
 
             return valueString + ": " + typeString;

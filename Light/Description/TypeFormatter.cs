@@ -4,10 +4,17 @@ using System.Linq;
 using System.Text;
 using Light.Ast.References;
 using Light.Ast.References.Types;
+using Light.BuiltIn;
 using Light.Internal;
 
 namespace Light.Description {
     public class TypeFormatter {
+        private readonly BuiltInTypeMap builtIn;
+
+        public TypeFormatter(BuiltInTypeMap builtIn) {
+            this.builtIn = builtIn;
+        }
+
         public string Format(IAstTypeReference type) {
             var reflected = type as AstReflectedType;
             if (reflected != null)
@@ -22,6 +29,10 @@ namespace Light.Description {
 
             if (type.IsArray)
                 return "[" + Format(type.GetElementType()) + "]";
+
+            var alias = this.builtIn.GetAliasByType(type);
+            if (alias != null)
+                return alias;
 
             return type.Name;
         }

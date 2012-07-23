@@ -31,6 +31,9 @@ namespace Light.Compilation.Cil.Compilers {
 
         private void EmitStelem(ILProcessor processor, TypeReference elementType) {
             if (elementType.IsPrimitive) {
+                if (!StelemCodes.ContainsKey(elementType.MetadataType))
+                    throw new NotImplementedException("ListInitializerCompiler.EmitStelem: Element metadata type " + elementType.MetadataType + " is not yet supported.");
+
                 processor.Emit(StelemCodes[elementType.MetadataType]);
                 return;
             }

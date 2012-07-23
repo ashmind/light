@@ -6,9 +6,9 @@ namespace Light.Tests.OfParsing {
     [TestFixture]
     public class LiteralTests {
         [Test]
-        [Row( "1",       "1: Int32")]
-        [Row("10",       "10: Int32")]
-        [Row("10000000", "10000000: Int32")]
+        [Row( "1",       "1: integer")]
+        [Row("10",       "10: integer")]
+        [Row("10000000", "10000000: integer")]
         [Row("1.1",      "1.1: Double")]
         [Row("1e3",      "1000: Double")]
         public void Number(string literal, string expectedResult) {
@@ -16,14 +16,14 @@ namespace Light.Tests.OfParsing {
         }
 
         [Test]
-        [Row("'a'", "'a': String")]
+        [Row("'a'", "'a': string")]
         public void String(string literal, string expectedResult) {
             ParseAssert.IsParsedTo(literal, expectedResult, includeExpressionType: true);
         }
 
         [Test]
-        [Row("true",  "true: Boolean")]
-        [Row("false", "false: Boolean")]
+        [Row("true",  "true: boolean")]
+        [Row("false", "false: boolean")]
         public void Boolean(string literal, string expectedResult) {
             ParseAssert.IsParsedTo(literal, expectedResult, includeExpressionType: true);
         }
