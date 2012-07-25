@@ -65,6 +65,7 @@ namespace Light.Parsing {
         public IdentifierTerminal Name { get; private set; }
         public NonTerminal<CompositeName> DotSeparatedName { get; private set; }
         public NonTerminal<IAstTypeReference> TypeReference { get; private set; }
+        public NonTerminal<IAstTypeReference> OptionalTypeReference { get; private set; }
         public NonTerminal TypeReferenceListPlus { get; private set; }
 
         public void ConstructNameAndTypeRules() {
@@ -72,6 +73,7 @@ namespace Light.Parsing {
             DotSeparatedName = NonTerminalThatIsNotAstElement("DotSeparatedName", n => new CompositeName(n.ChildNodes.Select(c => c.Token.Text).ToArray()));
 
             TypeReference = NonTerminalWithSpecificType("TypeReference", n => (IAstTypeReference)new AstUnknownType(n.Child(Name).Token.Text)); // WIP
+            OptionalTypeReference = NonTerminalWithSpecificType("OptionalTypeReference", n => (IAstTypeReference)n.ChildAst(0) ?? AstImplicitType.Instance);
             TypeReferenceListPlus = new NonTerminal("TypeReferenceListPlus");
         }
 
@@ -79,8 +81,8 @@ namespace Light.Parsing {
             DotSeparatedName.Rule = MakePlusRule(DotSeparatedName, ToTerm("."), Name);
 
             TypeReference.Rule = Name + ("<" + TypeReferenceListPlus + ">" | Empty);
+            OptionalTypeReference.Rule = TypeReference | Empty;
             TypeReferenceListPlus.Rule = MakePlusRule(TypeReferenceListPlus, ToTerm(","), TypeReference);
-
         }
 
         #endregion
@@ -343,7 +345,7 @@ namespace Light.Parsing {
             OptionalTypeContent = NonTerminal("OptionalTypeContent", node => node.ChildAst(TypeMemberList) ?? Enumerable.Empty<IAstDefinition>());
             Property = NonTerminal("Property", node => new AstPropertyDefinition(
                 node.Child(2).Token.Text,
-                node.ChildAst(TypeReference),
+                node.ChildAst(OptionalTypeReference),
                 node.ChildAst(OptionalAssignedValue)
             ));
             Constructor = NonTerminal("Constructor", node => new AstConstructorDefinition(node.ChildAst(ParameterList), node.ChildAst(OptionalBodyOfStatements)));
@@ -371,7 +373,7 @@ namespace Light.Parsing {
             TypeMember.Rule = Function | Constructor | Property;
             TypeMemberList.Rule = MakePlusRule(TypeMemberList, NewLinePlus, TypeMember);
             OptionalTypeContent.Rule = (TypeMemberList + NewLinePlus | Empty);
-            Property.Rule = OptionalAccessLevel + TypeReference + Name + OptionalAssignedValue;
+            Property.Rule = OptionalAccessLevel + OptionalTypeReference + Name + OptionalAssignedValue;
             Function.Rule = OptionalAccessLevel + "function" + Name + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
             Constructor.Rule = OptionalAccessLevel + "new" + "(" + ParameterList + ")" + NewLinePlus + OptionalBodyOfStatements + "end";
             ParameterList.Rule = MakeStarRule(ParameterList, ToTerm(","), Parameter);

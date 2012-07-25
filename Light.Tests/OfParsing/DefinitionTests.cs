@@ -4,6 +4,7 @@ using System.Linq;
 using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.Incomplete;
+using Light.Ast.Literals;
 using MbUnit.Framework;
 
 namespace Light.Tests.OfParsing {
@@ -30,6 +31,39 @@ namespace Light.Tests.OfParsing {
             ParseAssert.IsParsedTo(
                 code, r => r.Descendant<AstPropertyDefinition>(),
                 f => f.Name == "x" && f.Type.Name == "string"
+            );
+        }
+
+        [Test]
+        public void TypedAutoPropertyWithAssignment() {
+            var code = string.Format(@"
+                class X
+                    string x = 'x'
+                end
+            ").Trim();
+
+            ParseAssert.IsParsedTo(
+                code, r => r.Descendant<AstPropertyDefinition>(),
+                f => f.Name == "x" && f.Type.Name == "string"
+                  && Equals(((PrimitiveValue)f.AssignedValue).Value, "x")
+            );
+        }
+
+        [Test]
+        [Row("")]
+        [Row("private")]
+        [Row("public")]
+        public void UntypedAutoPropertyWithAssignment(string accessModifier) {
+            var code = string.Format(@"
+                class X
+                    {0} x = 'x'
+                end
+            ", accessModifier).Trim();
+
+            ParseAssert.IsParsedTo(
+                code, r => r.Descendant<AstPropertyDefinition>(),
+                f => f.Name == "x" && f.Type == AstImplicitType.Instance
+                  && Equals(((PrimitiveValue)f.AssignedValue).Value, "x")
             );
         }
 
