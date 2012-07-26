@@ -14,7 +14,8 @@ namespace Light.Tests.Helpers {
     public static class CompilationHelper {
         public static dynamic CompileAndEvaluate(string expression) {
             return CompileAndGetInstance(string.Format(@"
-                import System
+                import System   
+                import System.Linq
                 public class Test
                     public function Evaluate()
                         return {0}

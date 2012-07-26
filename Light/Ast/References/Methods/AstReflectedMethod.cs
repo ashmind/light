@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using AshMind.Extensions;
 using Light.Ast.References.Types;
 
@@ -11,6 +12,7 @@ namespace Light.Ast.References.Methods {
         public MethodInfo Method { get; private set; }
         public IAstTypeReference ReturnType { get; private set; }
         public ReadOnlyCollection<IAstTypeReference> ParameterTypes { get; private set; }
+        public MethodLocation Location { get; private set; }
 
         public AstReflectedMethod(MethodInfo method) {
             Argument.RequireNotNull("method", method);
@@ -23,6 +25,8 @@ namespace Light.Ast.References.Methods {
                                         .Select(p => (IAstTypeReference)new AstReflectedType(p.ParameterType))
                                         .ToArray()
                                         .AsReadOnly();
+
+            this.Location = method.IsDefined<ExtensionAttribute>(false) ? MethodLocation.Extension : MethodLocation.Target;
         }
 
         public string Name {
@@ -40,5 +44,9 @@ namespace Light.Ast.References.Methods {
         }
 
         #endregion
+
+        public override string ToString() {
+            return "{Reflected: " + Method + "}";
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace Light.Ast {
         private static readonly ReadOnlyCollection<IAstElement> elements = new IAstElement[0].AsReadOnly();
         private static readonly ReadOnlyCollection<IAstExpression> expressions = new IAstExpression[0].AsReadOnly();
         private static readonly ReadOnlyCollection<IAstReference> references = new IAstReference[0].AsReadOnly();
+        private static readonly ReadOnlyCollection<IAstMemberReference> memberReferences = new IAstMemberReference[0].AsReadOnly();
         private static readonly ReadOnlyCollection<AstParameterDefinition> parameters = new AstParameterDefinition[0].AsReadOnly();
 
         public static ReadOnlyCollection<IAstElement> Elements {
@@ -24,6 +25,10 @@ namespace Light.Ast {
 
         public static ReadOnlyCollection<IAstReference> References {
             get { return references; }
+        }
+
+        public static ReadOnlyCollection<IAstMemberReference> MemberReferences {
+            get { return memberReferences; }
         }
 
         public static ReadOnlyCollection<AstParameterDefinition> Parameters {

@@ -17,7 +17,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
         }
 
         private static IAstReference ResolveSingleType(ProcessingContext context, string name) {
-            var resolved = context.Resolve(name);
+            var resolved = context.ResolveIdentifier(name);
             if (resolved.Count == 0)
                 throw new NotImplementedException("ResolveTypeReferences: cannot resolve '" + name + "'.");
 

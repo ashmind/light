@@ -12,7 +12,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
         }
 
         public override IAstElement ProcessBeforeChildren(IdentifierExpression identifier, ProcessingContext context) {
-            var resolved = context.Resolve(identifier.Name);
+            var resolved = context.ResolveIdentifier(identifier.Name);
             RequireExactlyOne(resolved, identifier.Name);
 
             var result = (IAstElement)resolved[0];

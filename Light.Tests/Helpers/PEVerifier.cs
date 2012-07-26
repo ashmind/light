@@ -48,7 +48,7 @@ namespace Light.Tests.Helpers {
                     var member = assembly.GetModules()[0].ResolveMember(token);
                     return member.Name;
                 }
-                catch (Exception ex) {
+                catch (Exception) {
                     return match.Value;
                 }
             });

@@ -14,12 +14,16 @@ namespace Light.Processing.Scoping {
             this.map = map;
         }
 
-        public IList<IAstReference> Resolve(string name) {
+        public IList<IAstReference> ResolveIdentifier(string name) {
             var type = this.map.GetTypeByAlias(name);
             if (type == null)
                 return No.References;
 
             return new[] { new AstReflectedType(type) };
+        }
+
+        public IList<IAstMemberReference> ResolveMember(string name) {
+            return No.MemberReferences;
         }
     }
 }

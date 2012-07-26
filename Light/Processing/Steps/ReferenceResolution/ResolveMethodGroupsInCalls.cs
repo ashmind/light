@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Light.Ast;
 using Light.Ast.Expressions;
-using Light.Ast.Incomplete;
-using Light.Ast.References;
 using Light.Ast.References.Methods;
-using Light.Ast.References.Types;
+using Light.Processing.Complex;
 
 namespace Light.Processing.Steps.ReferenceResolution {
     public class ResolveMethodGroupsInCalls : ProcessingStepBase<CallExpression> {
-        public ResolveMethodGroupsInCalls() : base(ProcessingStage.ReferenceResolution) {
+        private readonly OverloadResolver overloadResolver;
+
+        public ResolveMethodGroupsInCalls(OverloadResolver overloadResolver) : base(ProcessingStage.ReferenceResolution) {
+            this.overloadResolver = overloadResolver;
         }
 
         public override IAstElement ProcessAfterChildren(CallExpression call, ProcessingContext context) {
@@ -23,10 +23,8 @@ namespace Light.Processing.Steps.ReferenceResolution {
             if (group == null)
                 return call;
 
-            // little bit of cheating for now
-            var type = ((AstReflectedMethod)group.Methods[0]).Method.DeclaringType;
-            var method = type.GetMethod(group.Name, call.Arguments.Select(a => ((AstReflectedType)a.ExpressionType).ActualType).ToArray());
-            function.Reference = new AstReflectedMethod(method) { SourceSpan = group.SourceSpan };
+            function.Reference = this.overloadResolver.ResolveMethodGroup(group, function.Target, call.Arguments);
+            function.Reference.SourceSpan = group.SourceSpan;
 
             return call;
         }

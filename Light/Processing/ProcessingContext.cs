@@ -21,9 +21,14 @@ namespace Light.Processing {
             get { return this.ScopeStack.Peek(); }
         }
 
-        public IList<IAstReference> Resolve(string name) {
-            return this.ScopeStack.Select(s => s.Resolve(name)).FirstOrDefault(r => r.Count > 0)
-                ?? new IAstReference[0];
+        public IList<IAstReference> ResolveIdentifier(string name) {
+            return this.ScopeStack.Select(s => s.ResolveIdentifier(name)).FirstOrDefault(r => r.Count > 0)
+                ?? No.References;
+        }
+
+        public IList<IAstMemberReference> ResolveMember(string name) {
+            return this.ScopeStack.Select(s => s.ResolveMember(name)).FirstOrDefault(r => r.Count > 0)
+                ?? No.MemberReferences;
         }
     }
 }

@@ -41,6 +41,10 @@ namespace Light.Ast.References.Methods {
             get { return this.parameterTypes; }
         }
 
+        MethodLocation IAstMethodReference.Location {
+            get { return MethodLocation.Special; }
+        }
+
         #endregion
     }
 }

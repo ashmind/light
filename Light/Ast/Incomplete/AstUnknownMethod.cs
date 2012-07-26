@@ -26,6 +26,10 @@ namespace Light.Ast.Incomplete {
             get { throw new NotImplementedException("AstUnknownMethod.ParameterTypes"); }
         }
 
+        MethodLocation IAstMethodReference.Location {
+            get { return MethodLocation.Unknown; }
+        }
+
         #endregion
 
         #region IAstReference Members

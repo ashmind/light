@@ -74,6 +74,7 @@ namespace Light.Interpreter {
         private static object CompileAndEvaluate(IAstExpression expression) {
             var ast = new AstRoot(
                 new ImportDefinition(new CompositeName("System")),
+                new ImportDefinition(new CompositeName("System", "Linq")),
                 new AstTypeDefinition(
                     TypeDefintionTypes.Class, "Interactive",
                     new AstFunctionDefinition("Evaluate", No.Parameters, new[] { new AstReturnStatement(expression) }, AstImplicitType.Instance) {

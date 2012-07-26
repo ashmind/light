@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac">
@@ -80,8 +82,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OfCompilation\ClassMemberTests.cs" />
+    <Compile Include="OfCompilation\ExtensionMethodTests.cs" />
     <Compile Include="OfCompilation\MathTests.cs" />
     <Compile Include="OfCompilation\PrimitiveTests.cs" />
+    <Compile Include="OfCompilation\ProjectEulerTests.cs" />
     <Compile Include="OfCompilation\PropertyTests.cs" />
     <Compile Include="OfCompilation\ListInitializerTests.cs" />
     <Compile Include="OfCompilation\DelegateTests.cs" />
@@ -91,6 +95,7 @@
     <Compile Include="OfParsing\LambdaTests.cs" />
     <Compile Include="OfParsing\DefinitionTests.cs" />
     <Compile Include="Helpers\PEVerifier.cs" />
+    <Compile Include="OfProcessing\OverloadResolverTests.cs" />
     <Compile Include="TestEnvironment.cs" />
     <Compile Include="Helpers\CompilationHelper.cs" />
     <Compile Include="OfCompilation\ProgramTests.cs" />

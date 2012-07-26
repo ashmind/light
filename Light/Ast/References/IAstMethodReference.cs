@@ -8,5 +8,7 @@ namespace Light.Ast.References {
         ReadOnlyCollection<IAstTypeReference> ParameterTypes { get; }
         IAstTypeReference ReturnType { get; }
         string Name { get; }
+
+        MethodLocation Location { get; }
     }
 }

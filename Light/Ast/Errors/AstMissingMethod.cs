@@ -35,5 +35,13 @@ namespace Light.Ast.Errors {
         }
 
         #endregion
+
+        #region IAstMethodReference Members
+
+        MethodLocation IAstMethodReference.Location {
+            get { return MethodLocation.Unknown; }
+        }
+
+        #endregion
     }
 }

@@ -38,6 +38,10 @@ namespace Light.Ast.References.Methods {
             get { return this.Definition.Name; }
         }
 
+        MethodLocation IAstMethodReference.Location {
+            get { throw new NotImplementedException("AstDefinedMethod.IsExtension"); }
+        }
+
         ReadOnlyCollection<IAstTypeReference> IAstMethodReference.ParameterTypes {
             get { return this.parameterTypes; }
         }

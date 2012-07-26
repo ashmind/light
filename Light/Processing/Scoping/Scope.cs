@@ -22,12 +22,22 @@ namespace Light.Processing.Scoping {
             this.sources.Add(source);
         }
 
-        public IList<IAstReference> Resolve(string name) {
+        public IList<IAstReference> ResolveIdentifier(string name) {
+            return Resolve(name, s => s.ResolveIdentifier(name));
+        }
+
+        public IList<IAstMemberReference> ResolveMember(string name) {
+            return Resolve(name, s => s.ResolveMember(name));
+        }
+
+        private IList<T> Resolve<T>(string name, Func<INameSource, IEnumerable<T>> resolve) 
+            where T : IAstReference
+        {
             var inScope = this.items.GetValueOrDefault(name);
             if (inScope != null)
-                return new[] { inScope };
+                return new[] { (T)inScope };
 
-            return this.sources.SelectMany(s => s.Resolve(name)).ToArray();
+            return this.sources.SelectMany(resolve).ToArray();
         }
     }
 }
