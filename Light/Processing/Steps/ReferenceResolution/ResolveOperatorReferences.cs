@@ -30,13 +30,17 @@ namespace Light.Processing.Steps.ReferenceResolution {
         };
 
         private readonly AstBuiltInOperator[] BuiltInOperators = {
-            new AstBuiltInOperator("+",  KnownTypes.Integer, KnownTypes.Integer),
-            new AstBuiltInOperator("-",  KnownTypes.Integer, KnownTypes.Integer),
-            new AstBuiltInOperator("*",  KnownTypes.Integer, KnownTypes.Integer),
-            new AstBuiltInOperator("/",  KnownTypes.Integer, KnownTypes.Integer),
-            new AstBuiltInOperator("==", KnownTypes.Integer, KnownTypes.Boolean),
-            new AstBuiltInOperator(">",  KnownTypes.Integer, KnownTypes.Boolean),
-            new AstBuiltInOperator("<",  KnownTypes.Integer, KnownTypes.Boolean)
+            new AstBuiltInOperator("+",   KnownTypes.Integer, KnownTypes.Integer),
+            new AstBuiltInOperator("-",   KnownTypes.Integer, KnownTypes.Integer),
+            new AstBuiltInOperator("*",   KnownTypes.Integer, KnownTypes.Integer),
+            new AstBuiltInOperator("/",   KnownTypes.Integer, KnownTypes.Integer),
+            new AstBuiltInOperator("mod", KnownTypes.Integer, KnownTypes.Integer),
+
+            new AstBuiltInOperator("==",  KnownTypes.Integer, KnownTypes.Boolean),
+            new AstBuiltInOperator(">",   KnownTypes.Integer, KnownTypes.Boolean),
+            new AstBuiltInOperator("<",   KnownTypes.Integer, KnownTypes.Boolean),
+
+            new AstBuiltInOperator("or",  KnownTypes.Boolean, KnownTypes.Boolean)
         };
 
         private static readonly IAstMethodReference StringConcat = new AstReflectedMethod(

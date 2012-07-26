@@ -9,12 +9,12 @@ using MbUnit.Framework;
 
 namespace Light.Tests.OfParsing {
     public static class ParseAssert {
-        public static void IsParsedTo(string code, string expectedResult, bool includeExpressionType = false) {
+        public static void IsParsedTo(string code, string expectedResult, bool includeExpressionType = false, bool parenthiseAll = false) {
             var parser = new LightParser();
             var result = parser.Parse(code);
             AssertEx.That(() => !result.HasErrors);
 
-            var resultString = new AstToCodeTransformer().Transform(result.Root);
+            var resultString = new AstToCodeTransformer { UseParenthesesInAllExpressions = parenthiseAll }.Transform(result.Root);
             var resultExpression = result.Root as IAstExpression;
             if (resultExpression != null && includeExpressionType)
                 resultString = resultString + ": " + new TypeFormatter(new BuiltInTypeMap()).Format(resultExpression.ExpressionType);

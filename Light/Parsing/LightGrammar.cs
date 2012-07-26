@@ -28,6 +28,9 @@ namespace Light.Parsing {
 
             MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>", ".", "=");
 
+            RegisterOperators(1, "==");
+            RegisterOperators(2, "mod");
+
             this.Root = TopLevelRoot;
             this.LanguageFlags = LanguageFlags.CreateAst;
         }
@@ -93,6 +96,7 @@ namespace Light.Parsing {
         public NonTerminal<IAstExpression> Boolean { get; private set; }
 
         public NonTerminal<IAstExpression> Expression { get; private set; }
+        public NonTerminal<IAstExpression> ExpressionInBrackets { get; private set; }
         public NonTerminal<IAstExpression> Literal { get; private set; }
         public NonTerminal<IAstExpression> ThisExpression { get; private set; }
         public NonTerminal<IAstExpression> BinaryExpression { get; private set; }
@@ -132,6 +136,7 @@ namespace Light.Parsing {
             
             Literal = Transient<IAstExpression>("Literal");
             Expression = Transient<IAstExpression>("Expression");
+            ExpressionInBrackets = Transient<IAstExpression>("ExpressionInParenthesis");
             ThisExpression = NonTerminal("This", n => new AstThisExpression());
 
             BinaryExpression = NonTerminal("BinaryExpression", node => new BinaryExpression(
@@ -209,14 +214,16 @@ namespace Light.Parsing {
             Literal.Rule = SingleQuotedString | DoubleQuotedString | Number | Boolean | ListInitializer | ObjectInitializer;
             Boolean.Rule = ToTerm("true") | "false";
 
-            Expression.Rule = Literal | ThisExpression | BinaryExpression
+            Expression.Rule = ExpressionInBrackets | Literal | ThisExpression | BinaryExpression
                             | SimpleCallExpression | SimpleIdentifierExpression | SimpleIndexerExpression | MemberAccessOrCallExpression
                             | NewExpression | LambdaExpression;
+
+            ExpressionInBrackets.Rule = "(" + Expression + ")";
 
             ThisExpression.Rule = ToTerm("this");
 
             BinaryExpression.Rule = Expression + BinaryOperator + NewLineStar + Expression;
-            BinaryOperator.Rule = new[] {"+", "-", "*", "/", "==", "===", "<", ">", "|", "&"}.Select(k => {
+            BinaryOperator.Rule = new[] {"+", "-", "*", "/", "mod", "==", "===", "<", ">", "|", "&", "or", "and"}.Select(k => {
                 var @operator = (BnfExpression)ToTerm(k);
                 @operator.SetFlag(TermFlags.IsOperator);
                 return @operator;

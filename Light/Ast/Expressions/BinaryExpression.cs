@@ -50,7 +50,7 @@ namespace Light.Ast.Expressions {
         }
 
         public override string ToString() {
-            return string.Format("{0} {1} {2}", this.Left, this.Operator, this.Right);
+            return string.Format("{{Binary: {0} {1} {2}}}", this.Left, this.Operator, this.Right);
         }
     }
 }

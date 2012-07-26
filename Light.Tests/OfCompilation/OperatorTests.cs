@@ -12,6 +12,7 @@ namespace Light.Tests.OfCompilation {
         [Row("1*1", 1)]
         [Row("1/1", 1)]
         [Row("1-1", 0)]
+        [Row("10 mod 3", 1)]
         [Row("1>1", false)]
         [Row("1<1", false)]
         [Row("1==1", true)]

@@ -10,13 +10,15 @@ using Mono.Cecil.Cil;
 namespace Light.Compilation.Cil.Compilers {
     public class BinaryExpressionCompiler : CilCompilerBase<BinaryExpression> {
         private readonly IDictionary<Tuple<Type, string>, OpCode> BuiltInOpCodes = new Dictionary<Tuple<Type, string>, OpCode> {
-            { Tuple.Create(typeof(int), "+"),  OpCodes.Add },
-            { Tuple.Create(typeof(int), "-"),  OpCodes.Sub },
-            { Tuple.Create(typeof(int), "*"),  OpCodes.Mul },
-            { Tuple.Create(typeof(int), "/"),  OpCodes.Div },
-            { Tuple.Create(typeof(int), "<"),  OpCodes.Clt },
-            { Tuple.Create(typeof(int), ">"),  OpCodes.Cgt },
-            { Tuple.Create(typeof(int), "=="), OpCodes.Ceq }
+            { Tuple.Create(typeof(int), "+"),   OpCodes.Add },
+            { Tuple.Create(typeof(int), "-"),   OpCodes.Sub },
+            { Tuple.Create(typeof(int), "*"),   OpCodes.Mul },
+            { Tuple.Create(typeof(int), "/"),   OpCodes.Div },
+            { Tuple.Create(typeof(int), "<"),   OpCodes.Clt },
+            { Tuple.Create(typeof(int), ">"),   OpCodes.Cgt },
+            { Tuple.Create(typeof(int), "=="),  OpCodes.Ceq },
+            { Tuple.Create(typeof(int), "mod"), OpCodes.Rem },
+            { Tuple.Create(typeof(bool), "or"), OpCodes.Or  }
         };
 
         public override void Compile(ILProcessor processor, BinaryExpression binary, CilCompilationContext context) {

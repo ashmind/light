@@ -15,6 +15,20 @@ namespace Light.Description {
             AppendAll(builder, Environment.NewLine, root.Elements);
         }
 
+        protected override void AppendBinaryExpression(StringBuilder builder, BinaryExpression binaryExpression) {
+            if (this.UseParenthesesInAllExpressions)
+                builder.Append("(");
+
+            Append(builder, binaryExpression.Left);
+            builder.Append(" ");
+            Append(builder, binaryExpression.Operator);
+            builder.Append(" ");
+            Append(builder, binaryExpression.Right);
+
+            if (this.UseParenthesesInAllExpressions)
+                builder.Append(")");
+        }
+
         protected override void AppendThisExpression(StringBuilder builder, AstThisExpression thisExpression) {
             builder.Append("this");
         }
@@ -92,5 +106,7 @@ namespace Light.Description {
             builder.Append(entry.Name).Append(": ");
             Append(builder, entry.Value);
         }
+
+        public bool UseParenthesesInAllExpressions { get; set; }
     }
 }
