@@ -31,9 +31,10 @@ namespace Light.Ast.Expressions {
         public IAstTypeReference ExpressionType { get; set; }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
-            return this.Parameters.Transform(transform).Concat(
-                this.Body = transform(this.Body)
-            );
+            foreach (var parameter in this.Parameters.Transform(transform)) {
+                yield return parameter;
+            }
+            yield return this.Body = transform(this.Body);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Light.Processing.Helpers {
         }
 
         private Tuple<IAstMethodReference, int> GetOrMakeMatch(AstReflectedMethod reflected, IEnumerable<Type> parameterTypes, IEnumerable<Type> argumentTypes) {
-            var genericTheories = new Dictionary<Type, IList<Type>>();
+            var genericTheories = new Dictionary<Type, ISet<Type>>();
             var distance = GetDistanceForAll(reflected, parameterTypes, argumentTypes, genericTheories);
             if (distance == -1)
                 return null;
@@ -72,7 +72,7 @@ namespace Light.Processing.Helpers {
             return Tuple.Create((IAstMethodReference)reflected, distance);
         }
 
-        private int GetDistanceForAll(AstReflectedMethod reflected, IEnumerable<Type> parameterTypes, IEnumerable<Type> argumentTypes, Dictionary<Type, IList<Type>> genericTheories) {
+        private int GetDistanceForAll(AstReflectedMethod reflected, IEnumerable<Type> parameterTypes, IEnumerable<Type> argumentTypes, IDictionary<Type, ISet<Type>> genericTheories) {
             var totalDistance = 0;
 
             using (var parameterTypeEnumerator = parameterTypes.GetEnumerator())
@@ -95,7 +95,7 @@ namespace Light.Processing.Helpers {
             return totalDistance;
         }
 
-        private int GetDistance(Type parameterType, Type argumentType, AstReflectedMethod reflected, IDictionary<Type, IList<Type>> genericTheories) {
+        private int GetDistance(Type parameterType, Type argumentType, AstReflectedMethod reflected, IDictionary<Type, ISet<Type>> genericTheories) {
             var argumentCompatibleTypes = GetCompatibleTypes(argumentType);
             var distance = argumentCompatibleTypes.GetValueOrDefault(parameterType, -1);
             if (distance != -1)
@@ -113,13 +113,18 @@ namespace Light.Processing.Helpers {
         private IDictionary<Type, int> GetCompatibleTypes(Type type) {
             var dictionary = new Dictionary<Type, int> {{type, 0}};
 
-            var baseDistance = 1;
-            var @base = type.BaseType;
-            dictionary.Add(@base, baseDistance);
-            while (@base != typeof(object)) {
-                @base = @base.BaseType;
-                baseDistance += 1;
+            if (!type.IsInterface) {
+                var baseDistance = 1;
+                var @base = type.BaseType;
                 dictionary.Add(@base, baseDistance);
+                while (@base != typeof(object)) {
+                    @base = @base.BaseType;
+                    baseDistance += 1;
+                    dictionary.Add(@base, baseDistance);
+                }
+            }
+            else {
+                dictionary.Add(typeof(object), 1);
             }
 
             foreach (var @interface in type.GetInterfaces()) {
@@ -129,7 +134,7 @@ namespace Light.Processing.Helpers {
             return dictionary;
         }
 
-        private bool CanMatchPotentialGeneric(Type parameterType, Type argumentType, IDictionary<Type, int> argumentCompatibleTypes, IDictionary<Type, IList<Type>> genericTheories) {
+        private bool CanMatchPotentialGeneric(Type parameterType, Type argumentType, IDictionary<Type, int> argumentCompatibleTypes, IDictionary<Type, ISet<Type>> genericTheories) {
             if (parameterType.IsGenericParameter) {
                 AddGenericTheory(genericTheories, parameterType, argumentType);
                 return true;
@@ -141,6 +146,7 @@ namespace Light.Processing.Helpers {
             var parameterTypeDefinition = parameterType.GetGenericTypeDefinition();
             var parameterTypeArguments = parameterType.GetGenericArguments();
 
+            var anyMatchesFound = false;
             foreach (var type in argumentCompatibleTypes.Keys) {
                 if (!type.IsGenericType)
                     continue;
@@ -156,27 +162,29 @@ namespace Light.Processing.Helpers {
 
                     if (!CanMatchPotentialGeneric(parameterTypeArguments[i], typeArguments[i], GetCompatibleTypes(typeArguments[i]), genericTheories))
                         return false;
+
+                    anyMatchesFound = true;
                 }
             }
 
-            return true;
+            return anyMatchesFound;
         }
 
-        private void AddGenericTheory(IDictionary<Type, IList<Type>> genericTheories, Type genericType, Type actualType) {
-            var list = genericTheories.GetValueOrDefault(genericType);
-            if (list == null) {
-                genericTheories.Add(genericType, new List<Type> {actualType});
+        private void AddGenericTheory(IDictionary<Type, ISet<Type>> genericTheories, Type genericType, Type actualType) {
+            var set = genericTheories.GetValueOrDefault(genericType);
+            if (set == null) {
+                genericTheories.Add(genericType, new HashSet<Type> {actualType});
                 return;
             }
 
-            list.Add(actualType);
+            set.Add(actualType);
         }
 
-        private Type ReconcileGenericTheories(IList<Type> theories) {
+        private Type ReconcileGenericTheories(ISet<Type> theories) {
             if (theories.Count > 1)
                 throw new NotImplementedException("OverloadResolver: Generic theory aggregation is not yet supported (theories:" + string.Join(", ", theories) + ")");
 
-            return theories[0];
+            return theories.First();
         }
     }
 }
