@@ -88,7 +88,7 @@
     <Compile Include="OfCompilation\ProjectEulerTests.cs" />
     <Compile Include="OfCompilation\PropertyTests.cs" />
     <Compile Include="OfCompilation\ListInitializerTests.cs" />
-    <Compile Include="OfCompilation\DelegateTests.cs" />
+    <Compile Include="OfCompilation\DelegateAndLambdaTests.cs" />
     <Compile Include="OfCompilation\OperatorTests.cs" />
     <Compile Include="OfCompilation\FunctionTests.cs" />
     <Compile Include="OfDescription\ObjectFormatterTests.cs" />

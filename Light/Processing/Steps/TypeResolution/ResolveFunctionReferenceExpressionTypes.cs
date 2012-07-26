@@ -5,32 +5,20 @@ using Light.Ast;
 using Light.Ast.Expressions;
 using Light.Ast.References;
 using Light.Ast.References.Types;
+using Light.Processing.Helpers;
 
 namespace Light.Processing.Steps.TypeResolution {
     public class ResolveFunctionReferenceExpressionTypes : ProcessingStepBase<AstFunctionReferenceExpression> {
-        public ResolveFunctionReferenceExpressionTypes()
+        private readonly DelegateTypeBuilder typeBuilder;   
+
+        public ResolveFunctionReferenceExpressionTypes(DelegateTypeBuilder typeBuilder)
             : base(ProcessingStage.TypeResolution) {
+            this.typeBuilder = typeBuilder;
         }
 
         public override IAstElement ProcessAfterChildren(AstFunctionReferenceExpression expression, ProcessingContext context) {
-            expression.SetExpressionType(() => MakeExpressionType(expression));
+            expression.SetExpressionType(() => typeBuilder.BuildType(expression.Reference.ParameterTypes, expression.Reference.ReturnType));
             return expression;
-        }
-
-        private static AstReflectedType MakeExpressionType(AstFunctionReferenceExpression expression) {
-            var types = new List<IAstTypeReference>(expression.Reference.ParameterTypes);
-            var delegateTypeName = "Action";
-            if (!(expression.Reference.ReturnType is AstVoidType)) {
-                delegateTypeName = "Func";
-                types.Add(expression.Reference.ReturnType);
-            }
-            delegateTypeName += "`" + types.Count;
-
-            var delegateType = Type.GetType("System." + delegateTypeName, true).MakeGenericType(
-                types.Cast<AstReflectedType>().Select(t => t.ActualType).ToArray()
-            );
-
-            return new AstReflectedType(delegateType);
         }
     }
 }

@@ -34,11 +34,15 @@ namespace Light.Ast.Definitions {
 
         public IEnumerable<AstConstructorDefinition> GetConstructors() {
             return this.Members.OfType<AstConstructorDefinition>();
-        } 
+        }
+
+        public IEnumerable<AstFunctionDefinition> GetFunctions() {
+            return this.Members.OfType<AstFunctionDefinition>();
+        }
 
         public IEnumerable<AstPropertyDefinition> GetProperties() {
             return this.Members.OfType<AstPropertyDefinition>();
-        } 
+        }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return this.Members.Transform(transform);

@@ -6,7 +6,7 @@ using Light.BuiltIn;
 using Light.Description;
 using Light.Parsing;
 using Light.Processing;
-using Light.Processing.Complex;
+using Light.Processing.Helpers;
 using Light.Processing.Scoping;
 
 namespace Light {
@@ -17,12 +17,17 @@ namespace Light {
 
             builder.RegisterType<BuiltInTypeMap>().AsSelf();
 
-            builder.RegisterAssemblyTypes(ThisAssembly).As<IProcessingStep>();
-            builder.RegisterType<OverloadResolver>().AsSelf();
-            builder.RegisterType<BuiltInTypesNameSource>().As<INameSource>();
-            builder.RegisterType<LightProcessor>().AsSelf();
+            RegisterProcessing(builder);
 
             builder.RegisterType<TypeFormatter>().AsSelf();
+        }
+
+        private void RegisterProcessing(ContainerBuilder builder) {
+            builder.RegisterAssemblyTypes(ThisAssembly).As<IProcessingStep>();
+            builder.RegisterType<OverloadResolver>().AsSelf();
+            builder.RegisterType<DelegateTypeBuilder>().AsSelf();
+            builder.RegisterType<BuiltInTypesNameSource>().As<INameSource>();
+            builder.RegisterType<LightProcessor>().AsSelf();
         }
     }
 }

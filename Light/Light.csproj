@@ -156,7 +156,8 @@
     <Compile Include="Internal\StringBuilderExtensions.cs" />
     <Compile Include="LightMainModule.cs" />
     <Compile Include="Parsing\SourceSpan.cs" />
-    <Compile Include="Processing\Complex\OverloadResolver.cs" />
+    <Compile Include="Processing\Helpers\DelegateTypeBuilder.cs" />
+    <Compile Include="Processing\Helpers\OverloadResolver.cs" />
     <Compile Include="Processing\ProcessingContext.cs" />
     <Compile Include="Processing\ProcessingStage.cs" />
     <Compile Include="Processing\Scoping\BuiltInTypesNameSource.cs" />
@@ -164,6 +165,8 @@
     <Compile Include="Processing\Scoping\ExternalNamespaceNameSource.cs" />
     <Compile Include="Processing\Scoping\Scope.cs" />
     <Compile Include="Processing\ProcessingStepBase.cs" />
+    <Compile Include="Processing\Steps\ScopeDefinition\DefineLambdaScope.cs" />
+    <Compile Include="Processing\Steps\TypeResolution\InferLambdaTypes.cs" />
     <Compile Include="Processing\Steps\TypeResolution\ResolveTypeOfThis.cs" />
     <Compile Include="Processing\Steps\TypeResolution\InferListLiteralTypes.cs" />
     <Compile Include="Processing\Steps\TypeResolution\ResolveFunctionReferenceExpressionTypes.cs" />

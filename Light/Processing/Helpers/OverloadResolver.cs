@@ -7,7 +7,7 @@ using Light.Ast.References;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
 
-namespace Light.Processing.Complex {
+namespace Light.Processing.Helpers {
     public class OverloadResolver {
         public IAstMethodReference ResolveMethodGroup(AstMethodGroup group, IAstElement target, IList<IAstExpression> arguments) {
             var candidates = GetCandidates(group, target, arguments)

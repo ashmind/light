@@ -4,7 +4,7 @@ using System.Linq;
 using Light.Ast;
 using Light.Ast.Expressions;
 using Light.Ast.References.Methods;
-using Light.Processing.Complex;
+using Light.Processing.Helpers;
 
 namespace Light.Processing.Steps.ReferenceResolution {
     public class ResolveMethodGroupsInCalls : ProcessingStepBase<CallExpression> {

@@ -8,11 +8,15 @@ using Light.Processing.Scoping;
 namespace Light.Processing {
     public class ProcessingContext : INameSource {
         public ProcessingContext() {
+            this.FreeData = new Dictionary<object, object>();
+
             this.ElementStack = new Stack<IAstElement>();
 
             this.ScopeStack = new Stack<Scope>();
             this.ScopeStack.Push(new Scope());
         }
+
+        public IDictionary<object, object> FreeData { get; private set; }
 
         public Stack<IAstElement> ElementStack { get; private set; }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AshMind.Extensions;
 using Light.Ast.Definitions;
+using Light.Ast.Incomplete;
 using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
@@ -16,6 +17,7 @@ namespace Light.Ast.Expressions {
 
             Parameters = parametersList;
             Body = body;
+            ExpressionType = AstUnknownType.WithNoName;
         }
 
         public IAstElement Body {
@@ -26,9 +28,7 @@ namespace Light.Ast.Expressions {
             }
         }
 
-        public IAstTypeReference ExpressionType {
-            get { throw new NotImplementedException("LambdaExpression.ExpressionType"); }
-        }
+        public IAstTypeReference ExpressionType { get; set; }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return this.Parameters.Transform(transform).Concat(

@@ -6,7 +6,7 @@ using Light.Ast;
 using Light.Ast.Literals;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
-using Light.Processing.Complex;
+using Light.Processing.Helpers;
 using MbUnit.Framework;
 
 namespace Light.Tests.OfProcessing {
