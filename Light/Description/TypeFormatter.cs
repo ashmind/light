@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AshMind.Extensions;
 using Light.Ast.References;
 using Light.Ast.References.Types;
 using Light.BuiltIn;
@@ -33,6 +35,13 @@ namespace Light.Description {
             var alias = this.builtIn.GetAliasByType(type);
             if (alias != null)
                 return alias;
+
+            if (type.IsPublic)
+                return type.FullName;
+
+            var enumerable = type.GetInterfaces().FirstOrDefault(i => i.IsGenericTypeDefinedAs(typeof(IEnumerable<>)));
+            if (enumerable != null)
+                return Format(enumerable.GetGenericArguments()[0]) + "*";
 
             return type.FullName;
         }

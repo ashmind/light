@@ -24,6 +24,13 @@ namespace Light.Tests.OfDescription {
         }
 
         [Test]
+        public void Enumerable() {
+            var enumerable = new[] { 6, 5, 4, 3, 2, 1 }.OrderBy(x => x);
+            var result = new ObjectFormatter { AllowPotentialSideEffects = true }.Format(enumerable);
+            Assert.AreEqual("(1, 2, 3, 4, 5, …)", result);
+        }
+
+        [Test]
         public void StaticDelegate() {
             var result = new ObjectFormatter().Format((Func<double, TimeSpan>)(TimeSpan.FromMinutes));
             Assert.AreEqual("<function:TimeSpan.FromMinutes>", result);

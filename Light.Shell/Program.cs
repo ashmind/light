@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Autofac;
 using Light.Ast;
 using Light.Ast.Definitions;
@@ -21,6 +22,8 @@ namespace Light.Interpreter {
         private static TypeFormatter typeFormatter;
 
         public static void Main() {
+            Console.OutputEncoding = Encoding.UTF8;
+
             SetupCompiler();
             while (InteractiveLoop()) { /* think about world */ }
         }
@@ -101,7 +104,7 @@ namespace Light.Interpreter {
                 return "null: Null";
 
             var typeString = typeFormatter.Format(result.GetType());
-            var valueString = new ObjectFormatter().Format(result);
+            var valueString = new ObjectFormatter { AllowPotentialSideEffects = true }.Format(result);
 
             return valueString + ": " + typeString;
         }

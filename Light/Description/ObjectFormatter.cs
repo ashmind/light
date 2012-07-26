@@ -6,8 +6,10 @@ using System.Text;
 
 namespace Light.Description {
     public class ObjectFormatter {
+        public bool AllowPotentialSideEffects { get; set; }
+
         public string Format(object value) {
-            if (value is IList) {
+            if (value is IEnumerable && value.GetType() != typeof(string)) {
                 var builder = new StringBuilder();
                 Append(builder, value);
                 return builder.ToString();
@@ -37,6 +39,14 @@ namespace Light.Description {
                 builder.Append("[");
                 AppendAll(builder, ", ", list.Cast<object>());
                 builder.Append("]");
+                return;
+            }
+
+            var enumerable = value as IEnumerable;
+            if (enumerable != null && this.AllowPotentialSideEffects) {
+                builder.Append("(");
+                AppendAll(builder, ", ", enumerable.Cast<object>().Take(5));
+                builder.Append(", …)");
                 return;
             }
 
