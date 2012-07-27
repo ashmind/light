@@ -7,6 +7,7 @@ using AshMind.Extensions;
 using Light.Ast.References;
 using Light.Ast.References.Types;
 using Light.BuiltIn;
+using Light.Framework;
 using Light.Internal;
 
 namespace Light.Description {
@@ -35,6 +36,9 @@ namespace Light.Description {
             var alias = this.builtIn.GetAliasByType(type);
             if (alias != null)
                 return alias;
+
+            if (type.IsGenericTypeDefinedAs(typeof(Range<>)))
+                return "range<" + Format(type.GetGenericArguments()[0]) + ">";
 
             if (type.IsPublic)
                 return type.FullName;

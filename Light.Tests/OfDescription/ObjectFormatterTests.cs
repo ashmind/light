@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.Description;
+using Light.Framework;
 using MbUnit.Framework;
 
 namespace Light.Tests.OfDescription {
@@ -28,6 +29,13 @@ namespace Light.Tests.OfDescription {
             var enumerable = new[] { 6, 5, 4, 3, 2, 1 }.OrderBy(x => x);
             var result = new ObjectFormatter { AllowPotentialSideEffects = true }.Format(enumerable);
             Assert.AreEqual("(1, 2, 3, 4, 5, …)", result);
+        }
+
+        [Test]
+        public void Range() {
+            var range = new Range<int>(0, 10, System.Linq.Enumerable.Range(0, 11));
+            var result = new ObjectFormatter().Format(range);
+            Assert.AreEqual("0..10", result);
         }
 
         [Test]

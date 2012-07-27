@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Light.Framework;
 
 namespace Light.Description {
     public class ObjectFormatter {
@@ -34,6 +35,14 @@ namespace Light.Description {
         }
 
         private void Append(StringBuilder builder, object value) {
+            var range = value as IRange;
+            if (range != null) {
+                Append(builder, range.From);
+                builder.Append("..");
+                Append(builder, range.To);
+                return;
+            }
+
             var list = value as IList;
             if (list != null) {
                 builder.Append("[");

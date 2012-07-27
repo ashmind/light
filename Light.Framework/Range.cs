@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Light.Framework {
-    public class Range<T> : IEnumerable<T> {
+    public class Range<T> : IEnumerable<T>, IRange {
         private readonly IEnumerable<T> enumerable;
 
         public T From { get; private set; }
@@ -28,6 +28,18 @@ namespace Light.Framework {
 
         IEnumerator IEnumerable.GetEnumerator() {
             return this.enumerable.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IRange Members
+
+        object IRange.From {
+            get { return this.From; }
+        }
+
+        object IRange.To {
+            get { return this.To; }
         }
 
         #endregion
