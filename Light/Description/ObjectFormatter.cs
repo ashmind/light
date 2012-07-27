@@ -8,6 +8,11 @@ using Light.Framework;
 namespace Light.Description {
     public class ObjectFormatter {
         public bool AllowPotentialSideEffects { get; set; }
+        public int ListCountLimit { get; set; }
+
+        public ObjectFormatter() {
+            ListCountLimit = 100;
+        }
 
         public string Format(object value) {
             if (value is IEnumerable && value.GetType() != typeof(string)) {
@@ -53,13 +58,31 @@ namespace Light.Description {
 
             var enumerable = value as IEnumerable;
             if (enumerable != null && this.AllowPotentialSideEffects) {
-                builder.Append("(");
-                AppendAll(builder, ", ", enumerable.Cast<object>().Take(5));
-                builder.Append(", …)");
+                AppendEnumerable(builder, enumerable);
                 return;
             }
 
             builder.Append(FormatSimple(value));
+        }
+
+        private void AppendEnumerable(StringBuilder builder, IEnumerable enumerable) {
+            var limit = this.ListCountLimit;
+
+            var subset = enumerable.Cast<object>().Take(limit + 1);
+            var index = -1;
+            foreach (var element in subset) {
+                index += 1;
+                if (index >= limit)
+                    break;
+
+                if (index > 0)
+                    builder.Append(", ");
+
+                Append(builder, element);
+            }
+
+            if (index >= limit)
+                builder.Append(", …");
         }
 
         // duplicates AppendAll in AstToStringTransformer. TODO: abstract

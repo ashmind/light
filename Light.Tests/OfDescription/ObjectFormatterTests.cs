@@ -25,10 +25,18 @@ namespace Light.Tests.OfDescription {
         }
 
         [Test]
-        public void Enumerable() {
+        public void Enumerable_UnderLimit() {
             var enumerable = new[] { 6, 5, 4, 3, 2, 1 }.OrderBy(x => x);
             var result = new ObjectFormatter { AllowPotentialSideEffects = true }.Format(enumerable);
-            Assert.AreEqual("(1, 2, 3, 4, 5, …)", result);
+            Assert.AreEqual("1, 2, 3, 4, 5, 6", result);
+        }
+
+        [Test]
+        public void Enumerable_OverLimit() {
+            var limit = 10;
+            var enumerable = Enumerable.Range(1, limit + 1);
+            var result = new ObjectFormatter { AllowPotentialSideEffects = true, ListCountLimit = limit }.Format(enumerable);
+            Assert.AreEqual(string.Join(", ", enumerable.Take(limit)) + ", …", result);
         }
 
         [Test]
