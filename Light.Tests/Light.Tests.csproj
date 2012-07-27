@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OfCompilation\ClassMemberTests.cs" />
+    <Compile Include="OfCompilation\RangeTests.cs" />
     <Compile Include="OfCompilation\ExtensionMethodTests.cs" />
     <Compile Include="OfCompilation\MathTests.cs" />
     <Compile Include="OfCompilation\PrimitiveTests.cs" />
@@ -112,6 +113,10 @@
     <ProjectReference Include="..\Light.Compilation\Light.Compilation.csproj">
       <Project>{863DF2CD-6B8F-499A-AFEE-6F94711D27E8}</Project>
       <Name>Light.Compilation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Light.Framework\Light.Framework.csproj">
+      <Project>{41B33159-C144-4100-8173-6DF320285B23}</Project>
+      <Name>Light.Framework</Name>
     </ProjectReference>
     <ProjectReference Include="..\Light\Light.csproj">
       <Project>{8EC1D8EC-8843-4487-BA38-EF0ED9705A8E}</Project>

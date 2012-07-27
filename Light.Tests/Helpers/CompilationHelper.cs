@@ -5,13 +5,19 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Autofac;
+using Gallio.Common.Reflection;
 using Gallio.Framework;
 using Light.Ast;
 using Light.Compilation;
+using Light.Framework;
 using MbUnit.Framework;
 
 namespace Light.Tests.Helpers {
     public static class CompilationHelper {
+        private static readonly Assembly[] ReferencedAssemblies = {
+            typeof(Range<>).Assembly
+        };
+
         public static dynamic CompileAndEvaluate(string expression) {
             return CompileAndGetInstance(string.Format(@"
                 import System   
@@ -68,13 +74,25 @@ namespace Light.Tests.Helpers {
 
         // you should be able to find assemblies in c:\Users\<user>\AppData\Local\Temp\Light.Tests\
         private static void WriteAssemblyOnDiskAndPEVerify(Assembly assembly, byte[] bytes, CompilationTarget target) {
-            var outputDirectory = Path.Combine(Path.GetTempPath(), "Light.Tests", TestContext.CurrentContext.Parent.Test.Name);
+            var parent = TestContext.CurrentContext.Parent;
+            while (parent.Test.CodeElement.Kind != CodeElementKind.Type) {
+                parent = parent.Parent;
+            }
+
+            var outputDirectory = Path.Combine(Path.GetTempPath(), "Light.Tests", parent.Test.Name);
             Directory.CreateDirectory(outputDirectory);
 
             var extension = target == CompilationTarget.Console ? ".exe" : ".dll";
 
             var path = Path.Combine(outputDirectory, assembly.GetName().Name + extension);
             File.WriteAllBytes(path, bytes);
+
+            foreach (var referenced in ReferencedAssemblies) {
+                var referencePath = Path.Combine(outputDirectory, Path.GetFileName(referenced.Location));
+                if (!File.Exists(referencePath))
+                    File.Copy(referenced.Location, referencePath);
+            }
+
             PEVerifier.Verify(path, assembly);
         }
     }

@@ -8,6 +8,11 @@ namespace Light.Ast.Expressions {
         public IAstCallable callee;
         public IList<IAstExpression> Arguments { get; private set; }
 
+        public CallExpression(IAstCallable callee, params IAstExpression[] arguments) 
+            : this(callee, (IEnumerable<IAstExpression>)arguments)
+        {
+        }
+
         public CallExpression(IAstCallable callee, IEnumerable<IAstExpression> arguments) {
             Argument.RequireNotNull("arguments", arguments);
             var argumentList = arguments.ToList();

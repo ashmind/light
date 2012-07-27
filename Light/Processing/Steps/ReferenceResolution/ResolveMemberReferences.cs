@@ -5,11 +5,14 @@ using Light.Ast;
 using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
 using Light.Ast.References;
-using Light.Ast.References.Methods;
+using Light.Processing.Helpers;
 
 namespace Light.Processing.Steps.ReferenceResolution {
     public class ResolveMemberReferences : ProcessingStepBase<MemberExpression> {
-        public ResolveMemberReferences() : base(ProcessingStage.ReferenceResolution) {
+        private readonly MemberResolver resolver;
+
+        public ResolveMemberReferences(MemberResolver resolver) : base(ProcessingStage.ReferenceResolution) {
+            this.resolver = resolver;
         }
 
         public override IAstElement ProcessAfterChildren(MemberExpression member, ProcessingContext context) {
@@ -17,12 +20,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
             if (declaringType == null)
                 declaringType = ((IAstExpression)member.Target).ExpressionType;
 
-            var resolved = declaringType.ResolveMember(member.Name);
-            if (resolved == null)
-                resolved = ResolveMemberFromScope(member, context);
-
-            if (resolved == null)
-                throw new NotImplementedException("ResolveMemberReferences: Failed to resolve " + member.Name);
+            var resolved = this.resolver.Resolve(declaringType, member.Name, context);
 
             var method = resolved as IAstMethodReference;
             if (method != null) {
@@ -39,20 +37,6 @@ namespace Light.Processing.Steps.ReferenceResolution {
             }
             
             throw new NotImplementedException("ResolveMemberReferences: " + resolved.GetType().Name + " is not yet supported.");
-        }
-
-        private static IAstMemberReference ResolveMemberFromScope(MemberExpression member, ProcessingContext context) {
-            var extensions = context.ResolveMember(member.Name);
-            if (extensions.Count == 0)
-                return null;
-
-            if (extensions.Count == 1)
-                return extensions[0];
-
-            if (extensions.All(a => a is IAstMethodReference))
-                return new AstMethodGroup(member.Name, extensions.Cast<IAstMethodReference>().ToArray());
-
-            throw new NotImplementedException("ResolveMemberReferences: Ambiguous result for " + member.Name);
         }
     }
 }

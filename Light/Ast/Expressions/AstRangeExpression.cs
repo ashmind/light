@@ -7,19 +7,22 @@ using Light.Ast.References;
 
 namespace Light.Ast.Expressions {
     public class AstRangeExpression : AstElementBase, IAstExpression {
-        private IAstExpression @from;
-        public IAstExpression to;
+        private IAstExpression from;
+        private IAstExpression to;
+        private IAstMethodReference method;
 
         public AstRangeExpression(IAstExpression left, IAstExpression right) {
             this.From = left;
             this.To = right;
+
+            this.Method = new AstUnknownMethod("RangeTo");
         }
 
         public IAstExpression From {
-            get { return this.@from; }
+            get { return this.from; }
             set {
                 Argument.RequireNotNull("value", value);
-                this.@from = value;
+                this.from = value;
             }
         }
 
@@ -31,13 +34,21 @@ namespace Light.Ast.Expressions {
             }
         }
 
+        public IAstMethodReference Method {
+            get { return this.method; }
+            set {
+                Argument.RequireNotNull("value", value);
+                this.method = value;
+            }
+        }
+
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             yield return this.From = (IAstExpression)transform(this.From);
             yield return this.To = (IAstExpression)transform(this.To);
         }
 
         public IAstTypeReference ExpressionType {
-            get { return AstUnknownType.WithNoName; }
+            get { return this.Method.ReturnType; }
         }
     }
 }

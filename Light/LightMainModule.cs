@@ -24,9 +24,14 @@ namespace Light {
 
         private void RegisterProcessing(ContainerBuilder builder) {
             builder.RegisterAssemblyTypes(ThisAssembly).As<IProcessingStep>();
+
+            builder.RegisterType<MemberResolver>().AsSelf();
             builder.RegisterType<OverloadResolver>().AsSelf();
             builder.RegisterType<DelegateTypeBuilder>().AsSelf();
+
             builder.RegisterType<BuiltInTypesNameSource>().As<INameSource>();
+            builder.RegisterType<BuiltInNamespacesNameSource>().As<INameSource>();
+
             builder.RegisterType<LightProcessor>().AsSelf();
         }
     }

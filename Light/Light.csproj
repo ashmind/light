@@ -157,15 +157,18 @@
     <Compile Include="Internal\StringBuilderExtensions.cs" />
     <Compile Include="LightMainModule.cs" />
     <Compile Include="Parsing\SourceSpan.cs" />
+    <Compile Include="Processing\Helpers\MemberResolver.cs" />
     <Compile Include="Processing\Helpers\DelegateTypeBuilder.cs" />
     <Compile Include="Processing\Helpers\OverloadResolver.cs" />
     <Compile Include="Processing\ProcessingContext.cs" />
     <Compile Include="Processing\ProcessingStage.cs" />
     <Compile Include="Processing\Scoping\BuiltInTypesNameSource.cs" />
+    <Compile Include="Processing\Scoping\BuiltInNamespacesNameSource.cs" />
     <Compile Include="Processing\Scoping\INameSource.cs" />
     <Compile Include="Processing\Scoping\ExternalNamespaceNameSource.cs" />
     <Compile Include="Processing\Scoping\Scope.cs" />
     <Compile Include="Processing\ProcessingStepBase.cs" />
+    <Compile Include="Processing\Steps\ReferenceResolution\ResolveRangeMethodReferences.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\DefineLambdaScope.cs" />
     <Compile Include="Processing\Steps\TypeResolution\InferLambdaTypes.cs" />
     <Compile Include="Processing\Steps\TypeResolution\ResolveTypeOfThis.cs" />
@@ -206,7 +209,12 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Light.Framework\Light.Framework.csproj">
+      <Project>{41B33159-C144-4100-8173-6DF320285B23}</Project>
+      <Name>Light.Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
