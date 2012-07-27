@@ -84,6 +84,7 @@
     <Compile Include="Ast\Errors\AstMissingMethod.cs" />
     <Compile Include="Ast\Expressions\AstFunctionReferenceExpression.cs" />
     <Compile Include="Ast\Expressions\AstPropertyExpression.cs" />
+    <Compile Include="Ast\Expressions\AstRangeExpression.cs" />
     <Compile Include="Ast\Expressions\AstThisExpression.cs" />
     <Compile Include="Ast\Expressions\BinaryExpression.cs" />
     <Compile Include="Ast\Expressions\CallExpression.cs" />

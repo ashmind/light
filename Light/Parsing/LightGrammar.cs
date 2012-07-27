@@ -26,7 +26,7 @@ namespace Light.Parsing {
             ConstructAll();
             SetAllRules();
 
-            MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>", ".", "=");
+            MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>", ".", "=", "..");
 
             RegisterOperators(1, "==");
             RegisterOperators(2, "mod");
@@ -94,6 +94,7 @@ namespace Light.Parsing {
         public StringLiteral SingleQuotedString { get; private set; }
         public StringLiteral DoubleQuotedString { get; private set; }
         public NonTerminal<IAstExpression> Boolean { get; private set; }
+        public NonTerminal<IAstExpression> Range { get; private set; }
 
         public NonTerminal<IAstExpression> Expression { get; private set; }
         public NonTerminal<IAstExpression> ExpressionInBrackets { get; private set; }
@@ -133,6 +134,7 @@ namespace Light.Parsing {
             );
 
             Boolean = NonTerminal("Boolean", n => new PrimitiveValue(n.FindTokenAndGetText() == "true"));
+            Range = NonTerminal("Range", n => new AstRangeExpression((IAstExpression)n.ChildAst(0), (IAstExpression)n.ChildAst(1)));
             
             Literal = Transient<IAstExpression>("Literal");
             Expression = Transient<IAstExpression>("Expression");
@@ -214,9 +216,11 @@ namespace Light.Parsing {
             Literal.Rule = SingleQuotedString | DoubleQuotedString | Number | Boolean | ListInitializer | ObjectInitializer;
             Boolean.Rule = ToTerm("true") | "false";
 
-            Expression.Rule = ExpressionInBrackets | Literal | ThisExpression | BinaryExpression
+            Expression.Rule = ExpressionInBrackets | Literal | Range | ThisExpression | BinaryExpression
                             | SimpleCallExpression | SimpleIdentifierExpression | SimpleIndexerExpression | MemberAccessOrCallExpression
                             | NewExpression | LambdaExpression;
+
+            Range.Rule = Expression + ".." + Expression;
 
             ExpressionInBrackets.Rule = "(" + Expression + ")";
 

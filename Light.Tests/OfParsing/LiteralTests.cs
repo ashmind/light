@@ -31,6 +31,12 @@ namespace Light.Tests.OfParsing {
         }
 
         [Test]
+        [Row("1..10", "1..10")]
+        public void Range(string literal, string expectedResult) {
+            ParseAssert.IsParsedTo(literal, expectedResult);
+        }
+
+        [Test]
         [Row("[]",              "[]")]
         [Row("[1]",             "[1]")]
         [Row("[1, 'a']",        "[1, 'a']")]

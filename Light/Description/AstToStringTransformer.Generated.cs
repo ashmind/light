@@ -124,6 +124,12 @@ namespace Light.Description {
                 return;
             }
 			
+            var rangeExpression = element as AstRangeExpression;
+            if (rangeExpression != null) {
+                AppendRangeExpression(builder, rangeExpression);
+                return;
+            }
+			
             var reflectedConstructor = element as AstReflectedConstructor;
             if (reflectedConstructor != null) {
                 AppendReflectedConstructor(builder, reflectedConstructor);
@@ -353,6 +359,10 @@ namespace Light.Description {
 
         protected virtual void AppendPropertyExpression(StringBuilder builder, AstPropertyExpression propertyExpression) {
             builder.Append(propertyExpression);
+        }
+
+        protected virtual void AppendRangeExpression(StringBuilder builder, AstRangeExpression rangeExpression) {
+            builder.Append(rangeExpression);
         }
 
         protected virtual void AppendReflectedConstructor(StringBuilder builder, AstReflectedConstructor reflectedConstructor) {

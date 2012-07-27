@@ -8,7 +8,7 @@ namespace Light.Tests.OfCompilation {
     [TestFixture]
     public class ProjectEulerTests {
         // Please note that I am not aiming for a best solution from math perspective
-        // I will always select a simple solution that is easy to understand, because I want readable tests
+        // I will always select a simpler solution that is easy to understand, to make tests more readable
 
         [Test]
         // improve: ranges, implicit typing in lambdas
