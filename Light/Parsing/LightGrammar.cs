@@ -97,6 +97,7 @@ namespace Light.Parsing {
         public NonTerminal<IAstExpression> Range { get; private set; }
 
         public NonTerminal<IAstExpression> Expression { get; private set; }
+        public NonTerminal<IAstExpression> ExpressionSafeForAnyPosition { get; private set; }
         public NonTerminal<IAstExpression> ExpressionInBrackets { get; private set; }
         public NonTerminal<IAstExpression> Literal { get; private set; }
         public NonTerminal<IAstExpression> ThisExpression { get; private set; }
@@ -138,7 +139,8 @@ namespace Light.Parsing {
             
             Literal = Transient<IAstExpression>("Literal");
             Expression = Transient<IAstExpression>("Expression");
-            ExpressionInBrackets = Transient<IAstExpression>("ExpressionInParenthesis");
+            ExpressionSafeForAnyPosition = Transient<IAstExpression>("ExpressionSafeForAnyPosition");
+            ExpressionInBrackets = Transient<IAstExpression>("ExpressionInBrackets");
             ThisExpression = NonTerminal("This", n => new AstThisExpression());
 
             BinaryExpression = NonTerminal("BinaryExpression", node => new BinaryExpression(
@@ -216,13 +218,12 @@ namespace Light.Parsing {
             Literal.Rule = SingleQuotedString | DoubleQuotedString | Number | Boolean | ListInitializer | ObjectInitializer;
             Boolean.Rule = ToTerm("true") | "false";
 
-            Expression.Rule = ExpressionInBrackets | Literal | Range | ThisExpression | BinaryExpression
-                            | SimpleCallExpression | SimpleIdentifierExpression | SimpleIndexerExpression | MemberAccessOrCallExpression
-                            | NewExpression | LambdaExpression;
-
-            Range.Rule = Expression + ".." + Expression;
-
+            Expression.Rule = ExpressionSafeForAnyPosition | Range | BinaryExpression | MemberAccessOrCallExpression | NewExpression | LambdaExpression;
+            ExpressionSafeForAnyPosition.Rule = ExpressionInBrackets | Literal | ThisExpression
+                                              | SimpleIdentifierExpression | SimpleIndexerExpression | SimpleCallExpression;
             ExpressionInBrackets.Rule = "(" + Expression + ")";
+
+            Range.Rule = ExpressionSafeForAnyPosition + ".." + ExpressionSafeForAnyPosition;
 
             ThisExpression.Rule = ToTerm("this");
 
@@ -241,7 +242,7 @@ namespace Light.Parsing {
             ObjectInitializerElement.Rule = Name + ":" + Expression;
 
             MemberAccessOrCallExpression.Rule = MemberPathRoot + "." + MemberPathElementListPlus;
-            MemberPathRoot.Rule = Literal | MemberPathElement | ThisExpression;
+            MemberPathRoot.Rule = Literal | MemberPathElement | ThisExpression | ExpressionInBrackets;
             MemberPathElement.Rule = SimpleIdentifierExpression | SimpleCallExpression | SimpleIndexerExpression;
             MemberPathElementListPlus.Rule = MakeStarRule(MemberPathElementListPlus, ToTerm("."), MemberPathElement);
             SimpleCallExpression.Rule = Name + ArgumentList;

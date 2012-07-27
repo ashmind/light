@@ -24,6 +24,7 @@ namespace Light.Tests.OfParsing {
         [Row("x.y(a).z(b)", "x.y(a).z(b)")]
         [Row("x.x(x.x(x.x()))", "x.x(x.x(x.x()))")]
         [Row("this.x()", "this.x()")]
+        [Row("(1..2).x()", "1..2.x()")] // expectation is slightly broken, but can add () later on
         public void Call(string code, string expectedResult) {
             ParseAssert.IsParsedTo(code, expectedResult);
         }
