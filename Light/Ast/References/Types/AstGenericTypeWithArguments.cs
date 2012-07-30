@@ -33,13 +33,16 @@ namespace Light.Ast.References.Types {
                 arguments[i] = this.TypeArguments[parameters[placeholder.Name]];
             }
 
-            return new AstGenericTypeWithArguments(type, arguments);
+            return new AstGenericTypeWithArguments(typeAsGeneric.PrimaryType, arguments);
         }
 
         public IAstTypeReference PrimaryType {
             get { return this.primaryType; }
             set {
                 Argument.RequireNotNull("value", value);
+                if (value is AstGenericTypeWithArguments)
+                    throw new ArgumentException("Value can not be AstGenericTypeWithArguments.", "value");
+
                 this.primaryType = value;
             }
         }
@@ -59,6 +62,10 @@ namespace Light.Ast.References.Types {
             }
         }
 
+        public IAstMemberReference ResolveMember(string name) {
+            return this.PrimaryType.ResolveMember(name);
+        }
+
         #region IAstTypeReference Members
 
         IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
@@ -67,10 +74,6 @@ namespace Light.Ast.References.Types {
 
         IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
             throw new NotImplementedException("AstGenericType: ResolveConstructor");
-        }
-
-        IAstMemberReference IAstTypeReference.ResolveMember(string name) {
-            throw new NotImplementedException("AstGenericType: ResolveMember");
         }
 
         string IAstTypeReference.Name {
@@ -96,13 +99,18 @@ namespace Light.Ast.References.Types {
         }
 
         public bool Equals(AstGenericTypeWithArguments type) {
-            return Equals(type.PrimaryType, this.PrimaryType)
+            return type != null
+                && Equals(type.PrimaryType, this.PrimaryType)
                 && Enumerable.SequenceEqual(type.TypeArguments, this.TypeArguments);
         }
 
         public override int GetHashCode() {
             return this.PrimaryType.GetHashCode()
                  ^ this.TypeArguments.Aggregate(0, (r1, r2) => r1.GetHashCode() ^ r2.GetHashCode());
+        }
+
+        public override string ToString() {
+            return "{Generic: " + this.PrimaryType + "<" + string.Join(", ", this.TypeArguments) + ">}";
         }
     }
 }

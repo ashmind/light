@@ -28,7 +28,7 @@ namespace Light.Compilation.Cil.Compilers {
         };
 
         public override void Compile(ILProcessor processor, PrimitiveValue value, CilCompilationContext context) {
-            var compile = typeBasedCompilers.GetValueOrDefault(value.ExpressionType.ActualType);
+            var compile = typeBasedCompilers.GetValueOrDefault(((AstReflectedType)value.ExpressionType).ActualType);
             if (compile == null)
                 throw new NotImplementedException("PrimitiveValueCompiler: cannot compile " + value.ExpressionType + ".");
 

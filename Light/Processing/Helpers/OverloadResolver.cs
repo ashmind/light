@@ -9,6 +9,24 @@ using Light.Ast.References.Types;
 
 namespace Light.Processing.Helpers {
     public class OverloadResolver {
+        #region DeconstructingAdapter Class
+
+        private class DeconstructingAdapter {
+            private readonly Func<IAstTypeReference, bool> matches;
+            public IList<IAstTypeReference> TypeArguments { get; private set; }
+
+            public DeconstructingAdapter(Func<IAstTypeReference, bool> matches, IList<IAstTypeReference> arguments) {
+                this.TypeArguments = arguments;
+                this.matches = matches;
+            }
+
+            public bool Matches(IAstTypeReference other) {
+                return this.matches(other);
+            }
+        }
+
+        #endregion
+
         public IAstMethodReference ResolveMethodGroup(AstMethodGroup group, IAstElement target, IList<IAstExpression> arguments) {
             var candidates = GetCandidates(group, target, arguments)
                                     .GroupBy(c => c.Item2)
@@ -126,23 +144,17 @@ namespace Light.Processing.Helpers {
                 return true;
             }
 
-            var parameterTypeAsGeneric = parameterType as AstGenericTypeWithArguments;
-            if (parameterTypeAsGeneric == null)
+            var parameterTypeDeconstructed = DeconstructIfHasTypeArguments(parameterType);
+            if (parameterTypeDeconstructed == null)
                 return false;
 
-            var parameterTypeDefinition = parameterTypeAsGeneric.PrimaryType;
-            var parameterTypeArguments = parameterTypeAsGeneric.TypeArguments;
-
+            var parameterTypeArguments = parameterTypeDeconstructed.TypeArguments;
             var anyMatchesFound = false;
             foreach (var type in argumentCompatibleTypes.Keys) {
-                var argumentTypeAsGeneric = type as AstGenericTypeWithArguments;
-                if (argumentTypeAsGeneric == null)
+                if (!parameterTypeDeconstructed.Matches(type))
                     continue;
 
-                if (!Equals(argumentTypeAsGeneric.PrimaryType, parameterTypeDefinition))
-                    continue;
-
-                var typeArguments = argumentTypeAsGeneric.TypeArguments;
+                var typeArguments = DeconstructIfHasTypeArguments(type).TypeArguments;
                 for (var i = 0; i < typeArguments.Count; i++) {
                     if (Equals(typeArguments[i], parameterTypeArguments[i]))
                         continue;
@@ -155,6 +167,26 @@ namespace Light.Processing.Helpers {
             }
 
             return anyMatchesFound;
+        }
+
+        private DeconstructingAdapter DeconstructIfHasTypeArguments(IAstTypeReference type) {
+            var generic = type as AstGenericTypeWithArguments;
+            if (generic != null) {
+                return new DeconstructingAdapter(other => {
+                    var otherAsGeneric = other as AstGenericTypeWithArguments;
+                    return otherAsGeneric != null && Equals(otherAsGeneric.PrimaryType, generic.PrimaryType);
+                }, generic.TypeArguments);
+            }
+
+            var function = type as IAstFunctionTypeReference;
+            if (function != null) {
+                return new DeconstructingAdapter(
+                    other => other is IAstFunctionTypeReference,
+                    function.GetParameterTypes().Concat(new[] { function.ReturnType }).ToArray()
+                );
+            }
+
+            return null;
         }
 
         private void AddGenericTheory(Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories, IAstTypeReference genericType, IAstTypeReference actualType) {

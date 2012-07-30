@@ -5,7 +5,6 @@ using Light.Ast;
 using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
 using Light.Ast.References.Types;
-using Light.Processing.Helpers;
 
 namespace Light.Processing.Steps.TypeResolution {
     public class AssignLambdaExpressionTypes : ProcessingStepBase<AstLambdaExpression> {

@@ -16,13 +16,20 @@ namespace Light.Internal {
             if (type.IsGenericParameter)
                 return new AstGenericPlaceholderType(type.Name);
 
-            if (type.IsGenericTypeDefinedAs(typeof(Func<>)))
+            if (IsFunctionType(type))
                 return ReflectFunctionType(type);
 
             if (type.IsGenericType && !type.IsGenericTypeDefinition)
                 return ReflectGenericType(type);
 
             return new AstReflectedType(type, this);
+        }
+
+        private static bool IsFunctionType(Type type) {
+            return type.IsGenericType
+                && type.Assembly == typeof(Func<>).Assembly
+                && type.Namespace == "System"
+                && type.Name.StartsWith("Func");
         }
 
         private IAstTypeReference ReflectFunctionType(Type type) {

@@ -83,7 +83,7 @@ namespace Light.Ast.References.Types {
         }
 
         public override string ToString() {
-            return this.ActualType.ToString();
+            return "{Reflected: " +  this.ActualType + "}";
         }
 
         #region IAstReference Members

@@ -69,7 +69,6 @@ namespace Light.Tests.OfProcessing {
         }
 
         [Test]
-        [Ignore("WIP")]
         public void TwoOverloadsGenericXYAndDelegate() {
             var result = Resolve("TwoOverloadsGenericXYAndDelegate", null, new TestClass.X<int>(), (Func<int, bool>)(x => x > 5));
 
