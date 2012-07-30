@@ -26,6 +26,14 @@ namespace Light.Tests.OfCompilation {
         }
 
         [Test]
+        [Ignore("NotImplementedYet")]
+        public void LambdaExpression_UntypedParameter_Identity() {
+            var result = CompilationHelper.CompileAndEvaluate("x => x");
+            Assert.IsInstanceOfType<Func<int, bool>>(result);
+        }
+
+        [Test]
+        [Ignore("WIP")]
         public void LambdaExpression_TypedParameter_InMethodCall() {
             var result = CompilationHelper.CompileAndEvaluate("[1, 2, 3, 4, 5].Where((integer x) => x > 3)");
             Assert.AreElementsEqual(new[] { 4, 5 }, result);

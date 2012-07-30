@@ -32,7 +32,7 @@ namespace Light.Processing {
 
         public IList<IAstMemberReference> ResolveMember(string name) {
             return this.ScopeStack.Select(s => s.ResolveMember(name)).FirstOrDefault(r => r.Count > 0)
-                ?? No.MemberReferences;
+                ?? No.Members;
         }
     }
 }

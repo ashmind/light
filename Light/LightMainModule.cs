@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using Light.BuiltIn;
 using Light.Description;
+using Light.Internal;
 using Light.Parsing;
 using Light.Processing;
 using Light.Processing.Helpers;
@@ -17,6 +18,8 @@ namespace Light {
 
             builder.RegisterType<BuiltInTypeMap>().AsSelf();
 
+            builder.RegisterType<Reflector>().AsSelf();
+
             RegisterProcessing(builder);
 
             builder.RegisterType<TypeFormatter>().AsSelf();
@@ -27,7 +30,6 @@ namespace Light {
 
             builder.RegisterType<MemberResolver>().AsSelf();
             builder.RegisterType<OverloadResolver>().AsSelf();
-            builder.RegisterType<DelegateTypeBuilder>().AsSelf();
 
             builder.RegisterType<BuiltInTypesNameSource>().As<INameSource>();
             builder.RegisterType<BuiltInNamespacesNameSource>().As<INameSource>();

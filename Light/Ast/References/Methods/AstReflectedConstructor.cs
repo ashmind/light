@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Reflection;
+using Light.Internal;
 
 namespace Light.Ast.References.Methods {
     public class AstReflectedConstructor : AstElementBase, IAstConstructorReference {
         public ConstructorInfo Constructor { get; private set; }
 
-        public AstReflectedConstructor(ConstructorInfo constructor) {
+        public AstReflectedConstructor(ConstructorInfo constructor, Reflector reflector) {
             this.Constructor = constructor;
         }
 

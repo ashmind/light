@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Light.Ast.Errors;
-using Light.Ast.Expressions;
 
 namespace Light.Ast.References.Types {
-    public class AstVoidType : AstElementBase, IAstTypeReference {
-        public static AstVoidType Instance { get; private set; }
+    public class AstAnyType : AstElementBase, IAstTypeReference {
+        public static AstAnyType Instance { get; private set; }
 
-        static AstVoidType() {
-            Instance = new AstVoidType();
+        static AstAnyType() {
+            Instance = new AstAnyType();
         }
 
-        private AstVoidType() {
+        private AstAnyType() {
         }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
@@ -33,8 +31,16 @@ namespace Light.Ast.References.Types {
             return null;
         }
 
+        #endregion
+
+        #region IAstTypeReference Members
+
+        string IAstTypeReference.Name {
+            get { return "any"; }
+        }
+
         IAstTypeReference IAstTypeReference.BaseType {
-            get { return AstAnyType.Instance; }
+            get { return null; }
         }
 
         IEnumerable<IAstTypeReference> IAstTypeReference.GetInterfaces() {
@@ -43,10 +49,6 @@ namespace Light.Ast.References.Types {
 
         IEnumerable<IAstTypeReference> IAstTypeReference.GetTypeParameters() {
             return No.Types;
-        }
-
-        string IAstTypeReference.Name {
-            get { return "void"; }
         }
 
         #endregion
@@ -58,5 +60,13 @@ namespace Light.Ast.References.Types {
         }
 
         #endregion
+
+        public override bool Equals(object obj) {
+            return obj == Instance;
+        }
+
+        public override int GetHashCode() {
+            return typeof(AstAnyType).GetHashCode();
+        }
     }
 }

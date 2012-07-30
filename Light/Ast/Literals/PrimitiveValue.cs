@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.References;
 using Light.Ast.References.Types;
+using Light.Internal;
 
 namespace Light.Ast.Literals {
     public class PrimitiveValue : AstElementBase, IAstExpression {
         public PrimitiveValue(object value) {
             this.Value = value;
-            this.ExpressionType = new AstReflectedType(value.GetType());
+            this.ExpressionType = new AstReflectedType(value.GetType(), new Reflector()); // new Reflector() is temporary here
         }
 
         public object Value { get; private set; }

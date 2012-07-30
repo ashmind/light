@@ -10,5 +10,10 @@ namespace Light.Ast.References {
         string Name { get; }
 
         MethodLocation Location { get; }
+
+        // these are kind of more CLI-specific than Light-specific, probably I'll need to change them later:
+        bool IsGeneric { get; }
+        ReadOnlyCollection<IAstTypeReference> GenericParameterTypes { get; }
+        IAstMethodReference WithGenericArguments(IEnumerable<IAstTypeReference> genericArguments);
     }
 }

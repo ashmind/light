@@ -10,3 +10,4 @@ _ReSharper.*
 _NCrunch*
 *.crunchsolution.cache
 /TestResults/
+__Excluded_*

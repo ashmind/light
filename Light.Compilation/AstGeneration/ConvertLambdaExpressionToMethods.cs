@@ -33,7 +33,7 @@ namespace Light.Compilation.AstGeneration {
                 new AstDefinedType(type),
                 new AstDefinedMethod(method)
             );
-            rewritten.SetExpressionType(() => lambda.ExpressionType);
+            rewritten.ExpressionType = lambda.ExpressionType;
 
             return rewritten;
         }

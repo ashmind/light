@@ -6,7 +6,7 @@ using Mono.Cecil;
 
 namespace Light.Compilation.References.Providers {
     public class VoidTypeProvider : IReferenceProvider {
-        public Either<MemberReference, PropertyReferenceContainer> Convert(IAstReference astReference, ModuleDefinition module) {
+        public Either<MemberReference, PropertyReferenceContainer> Convert(IAstReference astReference, ModuleDefinition module, IReferenceProvider recursive) {
             if (astReference != AstVoidType.Instance)
                 return null;
 

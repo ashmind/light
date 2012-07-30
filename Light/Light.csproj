@@ -121,6 +121,12 @@
     <Compile Include="Ast\References\Properties\AstReflectedProperty.cs" />
     <Compile Include="Ast\References\Types\AstBuiltInType.cs" />
     <Compile Include="Ast\References\Methods\AstDefinedConstructor.cs" />
+    <Compile Include="Ast\References\IAstFunctionTypeReference.cs" />
+    <Compile Include="Ast\References\Types\AstGenericPlaceholderType.cs" />
+    <Compile Include="Ast\References\Types\AstGenericTypeWithArguments.cs" />
+    <Compile Include="Ast\References\Types\AstInferredFunctionType.cs" />
+    <Compile Include="Ast\References\Types\AstSpecifiedFunctionType.cs" />
+    <Compile Include="Ast\References\Types\AstAnyType.cs" />
     <Compile Include="Ast\Statements\AssignmentStatement.cs" />
     <Compile Include="Ast\Statements\AstBaseConstructorCall.cs" />
     <Compile Include="Ast\Statements\ContinueStatement.cs" />
@@ -158,8 +164,8 @@
     <Compile Include="LightMainModule.cs" />
     <Compile Include="Parsing\SourceSpan.cs" />
     <Compile Include="Processing\Helpers\MemberResolver.cs" />
-    <Compile Include="Processing\Helpers\DelegateTypeBuilder.cs" />
     <Compile Include="Processing\Helpers\OverloadResolver.cs" />
+    <Compile Include="Internal\Reflector.cs" />
     <Compile Include="Processing\ProcessingContext.cs" />
     <Compile Include="Processing\ProcessingStage.cs" />
     <Compile Include="Processing\Scoping\BuiltInTypesNameSource.cs" />
@@ -170,10 +176,10 @@
     <Compile Include="Processing\ProcessingStepBase.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveRangeMethodReferences.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\DefineLambdaScope.cs" />
-    <Compile Include="Processing\Steps\TypeResolution\InferLambdaTypes.cs" />
+    <Compile Include="Processing\Steps\TypeResolution\AssignLambdaExpressionTypes.cs" />
     <Compile Include="Processing\Steps\TypeResolution\ResolveTypeOfThis.cs" />
     <Compile Include="Processing\Steps\TypeResolution\InferListLiteralTypes.cs" />
-    <Compile Include="Processing\Steps\TypeResolution\ResolveFunctionReferenceExpressionTypes.cs" />
+    <Compile Include="Processing\Steps\TypeResolution\AssignFunctionReferenceExpressionTypes.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveMethodGroupsInCalls.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddImportToScope.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddPropertyToScope.cs" />

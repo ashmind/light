@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.References;
 using Light.Ast.References.Types;
+using Light.Internal;
 
 namespace Light.Ast.Literals {
     public class StringWithInterpolation : AstElementBase, IAstExpression {
-        private static readonly IAstTypeReference StringType = new AstReflectedType(typeof(string));
+        private static readonly IAstTypeReference StringType = new AstReflectedType(typeof(string), new Reflector()); // new Reflector() is temporary here
 
         public string Text { get; private set; }
 

@@ -8,13 +8,16 @@ using Light.Ast.References;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
 using Light.Compilation.Internal;
+using Light.Internal;
 using Mono.Cecil.Cil;
 
 namespace Light.Compilation.Cil.Compilers {
     public class PrimitiveValueCompiler : CilCompilerBase<PrimitiveValue> {
-        private static readonly IAstConstructorReference NewBigInteger = new AstReflectedConstructor(typeof(BigInteger).GetConstructor(new[] {typeof(byte[])}));
-        private static readonly IAstTypeReference Byte = new AstReflectedType(typeof(byte));
-        private static readonly IAstTypeReference ByteArray = new AstReflectedType(typeof(byte[]));
+        private static readonly Reflector Reflector = new Reflector();
+
+        private static readonly IAstConstructorReference NewBigInteger = new AstReflectedConstructor(typeof(BigInteger).GetConstructor(new[] { typeof(byte[]) }), Reflector);
+        private static readonly IAstTypeReference Byte = Reflector.Reflect(typeof(byte));
+        private static readonly IAstTypeReference ByteArray = Reflector.Reflect(typeof(byte[]));
 
         private static readonly IDictionary<Type, Action<ILProcessor, PrimitiveValue, CilCompilationContext>> typeBasedCompilers = new Dictionary<Type, Action<ILProcessor, PrimitiveValue, CilCompilationContext>> {
             { typeof(int),        CompileInt32 },

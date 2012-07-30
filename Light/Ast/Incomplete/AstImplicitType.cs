@@ -32,12 +32,20 @@ namespace Light.Ast.Incomplete {
             throw new NotImplementedException("Implicit type can not resolve members.");
         }
 
-        #endregion
-
-        #region IAstTypeReference Members
-
         string IAstTypeReference.Name {
             get { return ""; }
+        }
+
+        IAstTypeReference IAstTypeReference.BaseType {
+            get { throw new NotImplementedException("Implicit type has no BaseType."); }
+        }
+
+        IEnumerable<IAstTypeReference> IAstTypeReference.GetInterfaces() {
+            throw new NotImplementedException("Implicit type can not get interfaces.");
+        }
+
+        IEnumerable<IAstTypeReference> IAstTypeReference.GetTypeParameters() {
+            throw new NotImplementedException("Implicit type can not get type parameters.");
         }
 
         #endregion

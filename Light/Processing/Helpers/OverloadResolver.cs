@@ -11,49 +11,43 @@ namespace Light.Processing.Helpers {
     public class OverloadResolver {
         public IAstMethodReference ResolveMethodGroup(AstMethodGroup group, IAstElement target, IList<IAstExpression> arguments) {
             var candidates = GetCandidates(group, target, arguments)
-                                .GroupBy(c => c.Item2)
-                                .OrderBy(g => g.Key)
-                                .First()
-                                .ToArray();
+                                    .GroupBy(c => c.Item2)
+                                    .OrderBy(g => g.Key)
+                                    .FirstOrDefault();
 
-            if (candidates.Length > 1)
-                throw new NotImplementedException(string.Format("OverloadResolver: Ambiguous best match found for {0}: {1}.", @group.Name, string.Join(", ", candidates.AsEnumerable())));
-
-            if (candidates.Length == 0)
+            if (candidates == null)
                 throw new NotImplementedException("OverloadResolver: No match found for " + @group.Name);
 
-            return candidates[0].Item1;
+            var candidatesAsArray = candidates.ToArray();
+            if (candidatesAsArray.Length > 1)
+                throw new NotImplementedException(string.Format("OverloadResolver: Ambiguous best match found for {0}: {1}.", @group.Name, string.Join(", ", candidates.AsEnumerable())));
+
+            return candidatesAsArray[0].Item1;
         }
 
         private IEnumerable<Tuple<IAstMethodReference, int>> GetCandidates(AstMethodGroup @group, IAstElement target, IList<IAstExpression> arguments) {
-            // little bit of cheating for now
-
             foreach (var method in @group.Methods) {
-                var reflected = method as AstReflectedMethod;
-                if (reflected == null)
-                    throw new NotImplementedException("OverloadResolver: Reference type " + method.GetType() + " is not yet supported.");
-
-                var parameterTypes = reflected.Method.GetParameters().Select(p => p.ParameterType);
-                var argumentTypes = arguments.Select(a => ((AstReflectedType)a.ExpressionType).ActualType);
+                var parameterTypes = method.ParameterTypes;
+                var argumentTypes = arguments.Select(a => a.ExpressionType);
                 if (method.Location == MethodLocation.Extension)
-                    argumentTypes = new[] {((AstReflectedType)((IAstExpression)target).ExpressionType).ActualType}.Concat(argumentTypes);
+                    argumentTypes = new[] { ((IAstExpression)target).ExpressionType }.Concat(argumentTypes);
 
-                var match = GetOrMakeMatch(reflected, parameterTypes, argumentTypes);
+                var match = GetOrMakeMatch(method, parameterTypes, argumentTypes);
                 if (match != null)
                     yield return match;
             }
         }
 
-        private Tuple<IAstMethodReference, int> GetOrMakeMatch(AstReflectedMethod reflected, IEnumerable<Type> parameterTypes, IEnumerable<Type> argumentTypes) {
-            var genericTheories = new Dictionary<Type, ISet<Type>>();
-            var distance = GetDistanceForAll(reflected, parameterTypes, argumentTypes, genericTheories);
+        private Tuple<IAstMethodReference, int> GetOrMakeMatch(IAstMethodReference method, IEnumerable<IAstTypeReference> parameterTypes, IEnumerable<IAstTypeReference> argumentTypes) {
+            var genericTheories = new Dictionary<IAstTypeReference, ISet<IAstTypeReference>>();
+            var distance = GetDistanceForAll(method, parameterTypes, argumentTypes, genericTheories);
             if (distance == -1)
                 return null;
 
-            if (reflected.Method.IsGenericMethodDefinition) {
-                var genericParameters = reflected.Method.GetGenericArguments();
-                var genericArguments = new Type[genericParameters.Length];
-                for (var i = 0; i < genericParameters.Length; i++) {
+            if (method.IsGeneric) {
+                var genericParameters = method.GenericParameterTypes;
+                var genericArguments = new IAstTypeReference[genericParameters.Count];
+                for (var i = 0; i < genericParameters.Count; i++) {
                     var theories = genericTheories.GetValueOrDefault(genericParameters[i]);
                     if (theories == null)
                         return null;
@@ -65,14 +59,14 @@ namespace Light.Processing.Helpers {
                     genericArguments[i] = aggregate;
                 }
 
-                var generic = reflected.Method.MakeGenericMethod(genericArguments);
-                return Tuple.Create((IAstMethodReference)new AstReflectedMethod(generic), distance);
+                var generic = method.WithGenericArguments(genericArguments);
+                return Tuple.Create(generic, distance);
             }
 
-            return Tuple.Create((IAstMethodReference)reflected, distance);
+            return Tuple.Create(method, distance);
         }
 
-        private int GetDistanceForAll(AstReflectedMethod reflected, IEnumerable<Type> parameterTypes, IEnumerable<Type> argumentTypes, IDictionary<Type, ISet<Type>> genericTheories) {
+        private int GetDistanceForAll(IAstMethodReference reflected, IEnumerable<IAstTypeReference> parameterTypes, IEnumerable<IAstTypeReference> argumentTypes, Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories) {
             var totalDistance = 0;
 
             using (var parameterTypeEnumerator = parameterTypes.GetEnumerator())
@@ -95,13 +89,13 @@ namespace Light.Processing.Helpers {
             return totalDistance;
         }
 
-        private int GetDistance(Type parameterType, Type argumentType, AstReflectedMethod reflected, IDictionary<Type, ISet<Type>> genericTheories) {
+        private int GetDistance(IAstTypeReference parameterType, IAstTypeReference argumentType, IAstMethodReference method, Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories) {
             var argumentCompatibleTypes = GetCompatibleTypes(argumentType);
             var distance = argumentCompatibleTypes.GetValueOrDefault(parameterType, -1);
             if (distance != -1)
                 return distance;
 
-            if (!reflected.Method.IsGenericMethodDefinition)
+            if (!method.IsGeneric)
                 return -1;
 
             if (CanMatchPotentialGeneric(parameterType, argumentType, argumentCompatibleTypes, genericTheories))
@@ -110,21 +104,13 @@ namespace Light.Processing.Helpers {
             return -1;
         }
 
-        private IDictionary<Type, int> GetCompatibleTypes(Type type) {
-            var dictionary = new Dictionary<Type, int> {{type, 0}};
-
-            if (!type.IsInterface) {
-                var baseDistance = 1;
-                var @base = type.BaseType;
-                dictionary.Add(@base, baseDistance);
-                while (@base != typeof(object)) {
-                    @base = @base.BaseType;
-                    baseDistance += 1;
-                    dictionary.Add(@base, baseDistance);
-                }
-            }
-            else {
-                dictionary.Add(typeof(object), 1);
+        private IDictionary<IAstTypeReference, int> GetCompatibleTypes(IAstTypeReference type) {
+            var dictionary = new Dictionary<IAstTypeReference, int> { { type, 0 } };
+            var distance = 1;
+            
+            foreach (var ancestor in type.GetAncestors()) {
+                dictionary.Add(ancestor, distance);
+                distance += 1;
             }
 
             foreach (var @interface in type.GetInterfaces()) {
@@ -134,30 +120,31 @@ namespace Light.Processing.Helpers {
             return dictionary;
         }
 
-        private bool CanMatchPotentialGeneric(Type parameterType, Type argumentType, IDictionary<Type, int> argumentCompatibleTypes, IDictionary<Type, ISet<Type>> genericTheories) {
-            if (parameterType.IsGenericParameter) {
+        private bool CanMatchPotentialGeneric(IAstTypeReference parameterType, IAstTypeReference argumentType, IDictionary<IAstTypeReference, int> argumentCompatibleTypes, Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories) {
+            if (parameterType is AstGenericPlaceholderType) {
                 AddGenericTheory(genericTheories, parameterType, argumentType);
                 return true;
             }
 
-            if (!parameterType.IsGenericType)
+            var parameterTypeAsGeneric = parameterType as AstGenericTypeWithArguments;
+            if (parameterTypeAsGeneric == null)
                 return false;
 
-            var parameterTypeDefinition = parameterType.GetGenericTypeDefinition();
-            var parameterTypeArguments = parameterType.GetGenericArguments();
+            var parameterTypeDefinition = parameterTypeAsGeneric.PrimaryType;
+            var parameterTypeArguments = parameterTypeAsGeneric.TypeArguments;
 
             var anyMatchesFound = false;
             foreach (var type in argumentCompatibleTypes.Keys) {
-                if (!type.IsGenericType)
+                var argumentTypeAsGeneric = type as AstGenericTypeWithArguments;
+                if (argumentTypeAsGeneric == null)
                     continue;
 
-                var definition = type.GetGenericTypeDefinition();
-                if (definition != parameterTypeDefinition)
+                if (!Equals(argumentTypeAsGeneric.PrimaryType, parameterTypeDefinition))
                     continue;
 
-                var typeArguments = type.GetGenericArguments();
-                for (var i = 0; i < typeArguments.Length; i++) {
-                    if (typeArguments[i] == parameterTypeArguments[i])
+                var typeArguments = argumentTypeAsGeneric.TypeArguments;
+                for (var i = 0; i < typeArguments.Count; i++) {
+                    if (Equals(typeArguments[i], parameterTypeArguments[i]))
                         continue;
 
                     if (!CanMatchPotentialGeneric(parameterTypeArguments[i], typeArguments[i], GetCompatibleTypes(typeArguments[i]), genericTheories))
@@ -170,17 +157,17 @@ namespace Light.Processing.Helpers {
             return anyMatchesFound;
         }
 
-        private void AddGenericTheory(IDictionary<Type, ISet<Type>> genericTheories, Type genericType, Type actualType) {
+        private void AddGenericTheory(Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories, IAstTypeReference genericType, IAstTypeReference actualType) {
             var set = genericTheories.GetValueOrDefault(genericType);
             if (set == null) {
-                genericTheories.Add(genericType, new HashSet<Type> {actualType});
+                genericTheories.Add(genericType, new HashSet<IAstTypeReference> { actualType });
                 return;
             }
 
             set.Add(actualType);
         }
 
-        private Type ReconcileGenericTheories(ISet<Type> theories) {
+        private IAstTypeReference ReconcileGenericTheories(ISet<IAstTypeReference> theories) {
             if (theories.Count > 1)
                 throw new NotImplementedException("OverloadResolver: Generic theory aggregation is not yet supported (theories:" + string.Join(", ", theories) + ")");
 

@@ -9,5 +9,10 @@ namespace Light.Ast.References {
         IAstMemberReference ResolveMember(string name);
 
         string Name { get; }
+
+        // too CLI-specific, might improve that in the future:
+        IAstTypeReference BaseType { get; }
+        IEnumerable<IAstTypeReference> GetInterfaces();
+        IEnumerable<IAstTypeReference> GetTypeParameters();
     }
 }

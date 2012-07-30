@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Light.Ast;
 using Light.Ast.Definitions;
+using Light.Ast.References;
 using Light.Ast.Statements;
-using Light.Ast.Types;
 using Light.Processing;
 
 namespace Light.Compilation.AstGeneration {

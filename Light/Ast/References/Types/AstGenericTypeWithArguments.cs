@@ -1,0 +1,108 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Light.Ast.References.Types {
+    public class AstGenericTypeWithArguments : AstElementBase, IAstTypeReference {
+        private IAstTypeReference primaryType;
+        private readonly Lazy<IAstTypeReference> baseType;
+        public IList<IAstTypeReference> TypeArguments { get; private set; }
+
+        public AstGenericTypeWithArguments(IAstTypeReference primaryType, IEnumerable<IAstTypeReference> typeArguments) {
+            Argument.RequireNotNull("typeArguments", typeArguments);
+
+            this.PrimaryType = primaryType;
+            this.TypeArguments = typeArguments.ToArray();
+
+            this.baseType = new Lazy<IAstTypeReference>(() => AdaptReferencedType(this.PrimaryType.BaseType));
+        }
+
+        private IAstTypeReference AdaptReferencedType(IAstTypeReference type) {
+            var typeAsGeneric = type as AstGenericTypeWithArguments;
+            if (typeAsGeneric == null)
+                return type;
+
+            var arguments = typeAsGeneric.TypeArguments.ToArray();
+            var parameters = this.PrimaryType.GetTypeParameters().Select((p, index) => new {p.Name, index}).ToDictionary(p => p.Name, p => p.index);
+
+            for (var i = 0; i < arguments.Length; i++) {
+                var placeholder = arguments[i] as AstGenericPlaceholderType;
+                if (placeholder == null)
+                    continue;
+
+                arguments[i] = this.TypeArguments[parameters[placeholder.Name]];
+            }
+
+            return new AstGenericTypeWithArguments(type, arguments);
+        }
+
+        public IAstTypeReference PrimaryType {
+            get { return this.primaryType; }
+            set {
+                Argument.RequireNotNull("value", value);
+                this.primaryType = value;
+            }
+        }
+
+        public IAstTypeReference BaseType {
+            get { return this.baseType.Value; }
+        }
+
+        public IEnumerable<IAstTypeReference> GetInterfaces() {
+            return this.PrimaryType.GetInterfaces().Select(AdaptReferencedType);
+        }
+
+        protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
+            yield return this.PrimaryType = (IAstTypeReference)transform(this.PrimaryType);
+            foreach (var argument in this.TypeArguments.Transform(transform)) {
+                yield return argument;
+            }
+        }
+
+        #region IAstTypeReference Members
+
+        IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
+            throw new NotImplementedException("AstGenericType: ResolveMethod");
+        }
+
+        IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
+            throw new NotImplementedException("AstGenericType: ResolveConstructor");
+        }
+
+        IAstMemberReference IAstTypeReference.ResolveMember(string name) {
+            throw new NotImplementedException("AstGenericType: ResolveMember");
+        }
+
+        string IAstTypeReference.Name {
+            get { return this.PrimaryType.Name; }
+        }
+
+        IEnumerable<IAstTypeReference> IAstTypeReference.GetTypeParameters() {
+            return No.Types;
+        }
+
+        #endregion
+
+        #region IAstReference Members
+
+        object IAstReference.Target {
+            get { return null; }
+        }
+
+        #endregion
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as AstGenericTypeWithArguments);
+        }
+
+        public bool Equals(AstGenericTypeWithArguments type) {
+            return Equals(type.PrimaryType, this.PrimaryType)
+                && Enumerable.SequenceEqual(type.TypeArguments, this.TypeArguments);
+        }
+
+        public override int GetHashCode() {
+            return this.PrimaryType.GetHashCode()
+                 ^ this.TypeArguments.Aggregate(0, (r1, r2) => r1.GetHashCode() ^ r2.GetHashCode());
+        }
+    }
+}

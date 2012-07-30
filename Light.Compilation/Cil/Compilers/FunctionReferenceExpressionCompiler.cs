@@ -17,8 +17,9 @@ namespace Light.Compilation.Cil.Compilers {
                 processor.Emit(OpCodes.Ldnull);
             }
 
-            var delegateType = ((AstReflectedType)reference.ExpressionType).ActualType;
-            var delegateConstructor = context.ConvertReference(new AstReflectedConstructor(delegateType.GetConstructors().Single()));
+            var delegateType = context.ConvertReference(reference.ExpressionType);
+            var delegateConstructor = context.Method.Module.Import(delegateType.Resolve().Methods.Single(m => m.Name == ".ctor"));
+            delegateConstructor.DeclaringType = delegateType; // fixes issue with delegateType.Resolve() eliminating generic arguments
 
             processor.Emit(OpCodes.Ldftn, context.ConvertReference(reference.Reference));
             processor.Emit(OpCodes.Newobj, delegateConstructor);

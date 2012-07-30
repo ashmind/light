@@ -9,15 +9,18 @@ using Light.Ast.Incomplete;
 using Light.Ast.References;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
+using Light.Internal;
 
 namespace Light.Processing.Steps.ReferenceResolution {
     public class ResolveOperatorReferences : ProcessingStepBase<BinaryExpression> {
         #region Maps
 
+        private static readonly Reflector Reflector = new Reflector(); // temporary
+
         private static class KnownTypes {
-            public static readonly IAstTypeReference Integer = new AstReflectedType(typeof(int));
-            public static readonly IAstTypeReference Boolean = new AstReflectedType(typeof(bool));
-            public static readonly IAstTypeReference String = new AstReflectedType(typeof(string));
+            public static readonly IAstTypeReference Integer = new AstReflectedType(typeof(int), Reflector);
+            public static readonly IAstTypeReference Boolean = new AstReflectedType(typeof(bool), Reflector);
+            public static readonly IAstTypeReference String = new AstReflectedType(typeof(string), Reflector);
         }
 
         private static readonly string[] NotMapped = new string[0];
@@ -44,8 +47,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
         };
 
         private static readonly IAstMethodReference StringConcat = new AstReflectedMethod(
-            typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) })
-        );
+            typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) }), Reflector); // new Reflector() is temporary here
 
         #endregion
 

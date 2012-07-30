@@ -6,12 +6,13 @@ using Light.Ast.Definitions;
 using Light.Ast.References;
 using Light.Ast.References.Methods;
 using Light.Ast.Statements;
+using Light.Internal;
 using Light.Processing;
 
 namespace Light.Compilation.AstGeneration {
     public class GenerateBaseConstructorCalls : ProcessingStepBase<AstConstructorDefinition> {
         private static readonly ConstructorInfo ObjectConstructor = typeof(object).GetConstructor(new Type[0]);
-        private static readonly IAstConstructorReference ObjectConstructorAst = new AstReflectedConstructor(ObjectConstructor);
+        private static readonly IAstConstructorReference ObjectConstructorAst = new AstReflectedConstructor(ObjectConstructor, new Reflector());
 
         public GenerateBaseConstructorCalls() : base(ProcessingStage.Compilation) {
         }

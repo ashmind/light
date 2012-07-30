@@ -7,6 +7,6 @@ using Mono.Cecil;
 
 namespace Light.Compilation.References {
     public interface IReferenceProvider {
-        Either<MemberReference, PropertyReferenceContainer> Convert(IAstReference astReference, ModuleDefinition module);
+        Either<MemberReference, PropertyReferenceContainer> Convert(IAstReference astReference, ModuleDefinition module, IReferenceProvider recursive);
     }
 }

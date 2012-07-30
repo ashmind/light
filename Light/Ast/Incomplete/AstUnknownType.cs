@@ -24,15 +24,27 @@ namespace Light.Ast.Incomplete {
         #region IAstTypeReference Members
 
         IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
-            throw new NotImplementedException("Unknown type can not resolve methods.");
+            throw new NotImplementedException("AstUnknownType: can not resolve methods.");
         }
 
         IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
-            throw new NotImplementedException("Unknown type can not resolve constructors.");
+            throw new NotImplementedException("AstUnknownType: can not resolve constructors.");
         }
 
         IAstMemberReference IAstTypeReference.ResolveMember(string name) {
-            throw new NotImplementedException("Unknown type can not resolve members.");
+            throw new NotImplementedException("AstUnknownType: can not resolve members.");
+        }
+
+        IAstTypeReference IAstTypeReference.BaseType {
+            get { throw new NotImplementedException("AstUnknownType: BaseType."); }
+        }
+
+        IEnumerable<IAstTypeReference> IAstTypeReference.GetInterfaces() {
+            throw new NotImplementedException("AstUnknownType: can not get interfaces.");
+        }
+
+        IEnumerable<IAstTypeReference> IAstTypeReference.GetTypeParameters() {
+            throw new NotImplementedException("AstUnknownType: GetTypeParameters.");
         }
 
         #endregion

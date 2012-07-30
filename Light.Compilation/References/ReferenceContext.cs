@@ -6,7 +6,7 @@ using Light.Compilation.Internal;
 using Mono.Cecil;
 
 namespace Light.Compilation.References {
-    public class ReferenceContext : IReferenceContext {
+    public class ReferenceContext : IReferenceContext, IReferenceProvider {
         private readonly ModuleDefinition module;
         private readonly IReferenceProvider[] providers;
 
@@ -36,7 +36,7 @@ namespace Light.Compilation.References {
         }
 
         protected virtual Either<MemberReference, PropertyReferenceContainer> ConvertReference(IAstReference reference, bool returnNullIfFailed = false) {
-            var converted = this.providers.Select(r => r.Convert(reference, module)).FirstOrDefault(r => r != null);
+            var converted = this.providers.Select(r => r.Convert(reference, module, this)).FirstOrDefault(r => r != null);
             if (converted == null) {
                 if (returnNullIfFailed)
                     return null;
@@ -46,5 +46,16 @@ namespace Light.Compilation.References {
 
             return converted;
         }
+
+        #region IReferenceProvider Members
+
+        Either<MemberReference, PropertyReferenceContainer> IReferenceProvider.Convert(IAstReference astReference, ModuleDefinition module, IReferenceProvider recursive) {
+            if (module != this.module)
+                throw new InvalidOperationException("Expected module to be " + this.module + ", received " + module);
+
+            return this.ConvertReference(astReference);
+        }
+
+        #endregion
     }
 }

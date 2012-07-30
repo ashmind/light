@@ -8,21 +8,20 @@ namespace Light.Ast.Expressions {
     public class AstFunctionReferenceExpression : AstElementBase, IAstExpression, IAstCallable {
         private IAstMethodReference reference;
         public IAstElement Target { get; set; }
-        private Lazy<IAstTypeReference> expressionType;
+        private IAstTypeReference expressionType;
 
         public AstFunctionReferenceExpression(IAstElement target, IAstMethodReference reference) {
             this.Target = target;
             this.Reference = reference;
-
-            SetExpressionType(() => AstUnknownType.WithNoName);
-        }
-
-        public void SetExpressionType(Func<IAstTypeReference> value) {
-            this.expressionType = new Lazy<IAstTypeReference>(value);
+            this.ExpressionType = AstUnknownType.WithNoName;
         }
 
         public IAstTypeReference ExpressionType {
-            get { return this.expressionType.Value; }
+            get { return this.expressionType; }
+            set {
+                Argument.RequireNotNull("value", value);
+                this.expressionType = value;
+            }
         }
 
         public IAstMethodReference Reference {

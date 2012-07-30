@@ -49,6 +49,18 @@ namespace Light.Ast.References.Types {
             get { return this.Definition.Name; }
         }
 
+        IAstTypeReference IAstTypeReference.BaseType {
+            get { return AstAnyType.Instance; }
+        }
+
+        IEnumerable<IAstTypeReference> IAstTypeReference.GetInterfaces() {
+            return No.Types;
+        }
+
+        IEnumerable<IAstTypeReference> IAstTypeReference.GetTypeParameters() {
+            return No.Types;
+        }
+
         #endregion
 
         #region IAstReference Members

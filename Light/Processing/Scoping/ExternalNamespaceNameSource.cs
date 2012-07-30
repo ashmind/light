@@ -8,13 +8,16 @@ using Light.Ast;
 using Light.Ast.References;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
+using Light.Internal;
 
 namespace Light.Processing.Scoping {
     public class ExternalNamespaceNameSource : INameSource {
+        private readonly Reflector reflector;
         private readonly IDictionary<string, Type> typeCache;
         private readonly Dictionary<string, MethodInfo[]> memberCache;
 
-        public ExternalNamespaceNameSource(string @namespace, IEnumerable<Assembly> assemblies) {
+        public ExternalNamespaceNameSource(string @namespace, IEnumerable<Assembly> assemblies, Reflector reflector) {
+            this.reflector = reflector;
             Argument.RequireNotNullAndNotEmpty("namespace", @namespace);
             Argument.RequireNotNull("assemblies", assemblies);
 
@@ -37,15 +40,15 @@ namespace Light.Processing.Scoping {
             if (type == null)
                 return No.References;
 
-            return new[] { new AstReflectedType(type) };
+            return new[] { new AstReflectedType(type, this.reflector) };
         }
 
         public IList<IAstMemberReference> ResolveMember(string name) {
             var methods = this.memberCache.GetValueOrDefault(name);
             if (methods == null)
-                return No.MemberReferences;
+                return No.Members;
 
-            return methods.Select(m => new AstReflectedMethod(m)).ToArray();
+            return methods.Select(m => new AstReflectedMethod(m, this.reflector)).ToArray();
         }
     }
 }

@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.References;
 using Light.Framework;
+using Light.Internal;
 
 namespace Light.Processing.Scoping {
     public class BuiltInNamespacesNameSource : INameSource {
         private readonly ExternalNamespaceNameSource[] namespaces;
 
-        public BuiltInNamespacesNameSource() {
+        public BuiltInNamespacesNameSource(Reflector reflector) {
             this.namespaces = new[] {
-                new ExternalNamespaceNameSource("Light.Framework", new[] { typeof(Range<>).Assembly }), 
+                new ExternalNamespaceNameSource("Light.Framework", new[] { typeof(Range<>).Assembly }, reflector), 
             };
         }
 

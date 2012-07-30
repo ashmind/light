@@ -10,7 +10,9 @@ using Light.Processing;
 namespace Light.Compilation {
     public class LightCompilationModule : Module {
         protected override void Load(ContainerBuilder builder) {
-            builder.RegisterAssemblyTypes(ThisAssembly).As<IReferenceProvider>();
+            builder.RegisterAssemblyTypes(ThisAssembly).As<IReferenceProvider>()
+                   .Except<ReferenceContext>()
+                   .Except<DefinitionBuildingContext>();
 
             builder.RegisterAssemblyTypes(ThisAssembly).As<IProcessingStep>();
             builder.RegisterAssemblyTypes(ThisAssembly).As<IDefinitionBuilder>();

@@ -104,6 +104,8 @@
     <Compile Include="References\IReferenceProvider.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="References\Providers\GenericTypeProvider.cs" />
+    <Compile Include="References\Providers\DelegateProvider.cs" />
     <Compile Include="References\Providers\ReflectedProvider.cs">
       <SubType>Code</SubType>
     </Compile>

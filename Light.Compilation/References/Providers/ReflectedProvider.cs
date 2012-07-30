@@ -8,7 +8,7 @@ using Mono.Cecil;
 
 namespace Light.Compilation.References.Providers {
     public class ReflectedReferenceProvider : IReferenceProvider {
-        public Either<MemberReference, PropertyReferenceContainer> Convert(IAstReference astReference, ModuleDefinition module) {
+        public Either<MemberReference, PropertyReferenceContainer> Convert(IAstReference astReference, ModuleDefinition module, IReferenceProvider recursive) {
             var reflectedType = astReference as AstReflectedType;
             if (reflectedType != null)
                 return module.Import(reflectedType.ActualType);

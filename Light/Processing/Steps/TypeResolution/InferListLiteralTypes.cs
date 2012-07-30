@@ -4,10 +4,14 @@ using System.Linq;
 using Light.Ast;
 using Light.Ast.Literals;
 using Light.Ast.References.Types;
+using Light.Internal;
 
 namespace Light.Processing.Steps.TypeResolution {
     public class InferListLiteralTypes : ProcessingStepBase<AstListInitializer> {
-        public InferListLiteralTypes() : base(ProcessingStage.TypeResolution) {
+        private readonly Reflector reflector;
+
+        public InferListLiteralTypes(Reflector reflector) : base(ProcessingStage.TypeResolution) {
+            this.reflector = reflector;
         }
 
         public override IAstElement ProcessAfterChildren(AstListInitializer initializer, ProcessingContext context) {
@@ -18,7 +22,7 @@ namespace Light.Processing.Steps.TypeResolution {
             if (types.Length > 1)
                 throw new NotImplementedException("InferListLiteralTypes: ambiguous list type.");
 
-            initializer.ExpressionType = new AstReflectedType(((AstReflectedType)types[0]).ActualType.MakeArrayType());
+            initializer.ExpressionType = new AstReflectedType(((AstReflectedType)types[0]).ActualType.MakeArrayType(), reflector);
             return initializer;
         }
     }

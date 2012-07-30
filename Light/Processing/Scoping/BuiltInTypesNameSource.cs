@@ -5,13 +5,16 @@ using Light.Ast;
 using Light.Ast.References;
 using Light.Ast.References.Types;
 using Light.BuiltIn;
+using Light.Internal;
 
 namespace Light.Processing.Scoping {
     public class BuiltInTypesNameSource : INameSource {
         private readonly BuiltInTypeMap map;
+        private readonly Reflector reflector;
 
-        public BuiltInTypesNameSource(BuiltInTypeMap map) {
+        public BuiltInTypesNameSource(BuiltInTypeMap map, Reflector reflector) {
             this.map = map;
+            this.reflector = reflector;
         }
 
         public IList<IAstReference> ResolveIdentifier(string name) {
@@ -19,11 +22,11 @@ namespace Light.Processing.Scoping {
             if (type == null)
                 return No.References;
 
-            return new[] { new AstReflectedType(type) };
+            return new[] { new AstReflectedType(type, this.reflector) };
         }
 
         public IList<IAstMemberReference> ResolveMember(string name) {
-            return No.MemberReferences;
+            return No.Members;
         }
     }
 }

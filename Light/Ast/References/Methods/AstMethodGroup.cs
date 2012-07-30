@@ -41,6 +41,18 @@ namespace Light.Ast.References.Methods {
             get { throw new NotImplementedException("AstMethodGroup.ParameterTypes"); }
         }
 
+        bool IAstMethodReference.IsGeneric {
+            get { throw new NotImplementedException("AstMethodGroup.IsGeneric"); }
+        }
+
+        ReadOnlyCollection<IAstTypeReference> IAstMethodReference.GenericParameterTypes {
+            get { throw new NotImplementedException("AstMethodGroup.GenericParameterTypes"); }
+        }
+
+        IAstMethodReference IAstMethodReference.WithGenericArguments(IEnumerable<IAstTypeReference> genericArguments) {
+            throw new NotImplementedException("AstMethodGroup.WithGenericArguments");
+        }
+
         #endregion
     }
 }
