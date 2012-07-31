@@ -33,8 +33,10 @@ namespace Light.Tests.OfCompilation {
         }
 
         [Test]
-        public void LambdaExpression_TypedParameter_InMethodCall() {
-            var result = CompilationHelper.CompileAndEvaluate("[1, 2, 3, 4, 5].Where((integer x) => x > 3)");
+        [Row("(integer x) => x > 3")]
+        //[Row("x => x > 3")]
+        public void LambdaExpression_InMethodCall(string lambda) {
+            var result = CompilationHelper.CompileAndEvaluate("[1, 2, 3, 4, 5].Where(" + lambda + ")");
             Assert.AreElementsEqual(new[] { 4, 5 }, result);
         }
     }
