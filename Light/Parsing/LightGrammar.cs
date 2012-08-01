@@ -27,7 +27,7 @@ namespace Light.Parsing {
             ConstructAll();
             SetAllRules();
 
-            MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>", ".", "=", "..");
+            MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>", ".", "=");
 
             RegisterOperators(1, "==");
             RegisterOperators(2, "mod");
@@ -95,7 +95,6 @@ namespace Light.Parsing {
         public StringLiteral SingleQuotedString { get; private set; }
         public StringLiteral DoubleQuotedString { get; private set; }
         public NonTerminal<IAstExpression> Boolean { get; private set; }
-        public NonTerminal<IAstExpression> Range { get; private set; }
 
         public NonTerminal<IAstExpression> Expression { get; private set; }
         public NonTerminal<IAstExpression> ExpressionSafeForAnyPosition { get; private set; }
@@ -136,7 +135,6 @@ namespace Light.Parsing {
             );
 
             Boolean = NonTerminal("Boolean", n => new PrimitiveValue(n.FindTokenAndGetText() == "true"));
-            Range = NonTerminal("Range", n => new AstRangeExpression((IAstExpression)n.ChildAst(0), (IAstExpression)n.ChildAst(1)));
             
             Literal = Transient<IAstExpression>("Literal");
             Expression = Transient<IAstExpression>("Expression");
@@ -219,17 +217,15 @@ namespace Light.Parsing {
             Literal.Rule = SingleQuotedString | DoubleQuotedString | Number | Boolean | ListInitializer | ObjectInitializer;
             Boolean.Rule = ToTerm("true") | "false";
 
-            Expression.Rule = ExpressionSafeForAnyPosition | Range | BinaryExpression | MemberAccessOrCallExpression | NewExpression | LambdaExpression;
+            Expression.Rule = ExpressionSafeForAnyPosition | BinaryExpression | MemberAccessOrCallExpression | NewExpression | LambdaExpression;
             ExpressionSafeForAnyPosition.Rule = ExpressionInBrackets | Literal | ThisExpression
                                               | SimpleIdentifierExpression | SimpleIndexerExpression | SimpleCallExpression;
             ExpressionInBrackets.Rule = "(" + Expression + ")";
 
-            Range.Rule = ExpressionSafeForAnyPosition + ".." + ExpressionSafeForAnyPosition;
-
             ThisExpression.Rule = ToTerm("this");
 
             BinaryExpression.Rule = Expression + BinaryOperator + NewLineStar + Expression;
-            BinaryOperator.Rule = new[] {"+", "-", "*", "/", "mod", "==", "===", "<", ">", "|", "&", "or", "and"}.Select(k => {
+            BinaryOperator.Rule = new[] {"+", "-", "*", "/", "mod", "==", "===", "..", "<", ">", "|", "&", "or", "and"}.Select(k => {
                 var @operator = (BnfExpression)ToTerm(k);
                 @operator.SetFlag(TermFlags.IsOperator);
                 return @operator;

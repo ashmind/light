@@ -61,7 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AstGeneration\ConvertLambdaExpressionToMethods.cs" />
-    <Compile Include="AstGeneration\ConvertRangeExpressionsToCalls.cs" />
     <Compile Include="AstGeneration\MovePropertyInitializationToConstructors.cs" />
     <Compile Include="Cil\Compilers\CallCompiler.cs" />
     <Compile Include="Cil\CilCompilationContext.cs" />

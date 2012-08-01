@@ -34,6 +34,8 @@ namespace Light.Processing.Steps.ReferenceResolution {
 
             { ">",   new[] { "IsGreaterThan" } },
             { "<",   new[] { "IsLessThan" } },
+
+            { "..",  new[] { "RangeTo" } },
         };
 
         private readonly AstBuiltInOperator[] BuiltInOperators = {

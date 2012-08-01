@@ -15,20 +15,19 @@ namespace Light.Description {
             AppendAll(builder, Environment.NewLine, root.Elements);
         }
 
-        protected override void AppendRangeExpression(StringBuilder builder, AstRangeExpression range) {
-            Append(builder, range.From);
-            builder.Append("..");
-            Append(builder, range.To);
-        }
-
         protected override void AppendBinaryExpression(StringBuilder builder, BinaryExpression binaryExpression) {
+            var useSpacesAroundOperator  = binaryExpression.Operator.Name != "..";
             if (this.UseParenthesesInAllExpressions)
                 builder.Append("(");
 
             Append(builder, binaryExpression.Left);
-            builder.Append(" ");
+            if (useSpacesAroundOperator)
+                builder.Append(" ");
+
             Append(builder, binaryExpression.Operator);
-            builder.Append(" ");
+
+            if (useSpacesAroundOperator)
+                builder.Append(" ");
             Append(builder, binaryExpression.Right);
 
             if (this.UseParenthesesInAllExpressions)
