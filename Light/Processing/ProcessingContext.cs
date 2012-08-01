@@ -7,7 +7,15 @@ using Light.Processing.Scoping;
 
 namespace Light.Processing {
     public class ProcessingContext : INameSource {
-        public ProcessingContext() {
+        public ProcessingOptions Options            { get; private set; }
+        public Stack<IAstElement> ElementStack      { get; private set; }
+        public Stack<Scope> ScopeStack              { get; private set; }
+        public IDictionary<object, object> FreeData { get; private set; }
+
+        public ProcessingContext(ProcessingOptions options) {
+            Argument.RequireNotNull("options", options);
+
+            this.Options = options;
             this.FreeData = new Dictionary<object, object>();
 
             this.ElementStack = new Stack<IAstElement>();
@@ -16,11 +24,6 @@ namespace Light.Processing {
             this.ScopeStack.Push(new Scope());
         }
 
-        public IDictionary<object, object> FreeData { get; private set; }
-
-        public Stack<IAstElement> ElementStack { get; private set; }
-
-        public Stack<Scope> ScopeStack { get; private set; }
         public Scope Scope {
             get { return this.ScopeStack.Peek(); }
         }

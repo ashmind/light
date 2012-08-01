@@ -162,6 +162,7 @@
     <Compile Include="Internal\StringBuilderExtensions.cs" />
     <Compile Include="LightMainModule.cs" />
     <Compile Include="Parsing\SourceSpan.cs" />
+    <Compile Include="Processing\ProcessingOptions.cs" />
     <Compile Include="Processing\Helpers\MemberResolver.cs" />
     <Compile Include="Processing\Helpers\OverloadResolver.cs" />
     <Compile Include="Internal\Reflector.cs" />

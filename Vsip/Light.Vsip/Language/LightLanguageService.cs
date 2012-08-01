@@ -105,7 +105,7 @@ namespace Light.Vsip.Language {
         private ParsingResult ParseAndProcess(string text) {
             var parsed = parser.Parse(text);
             try {
-                processor.Process(parsed.Root, ProcessingStages);
+                processor.Process(parsed.Root, new ProcessingOptions(ProcessingStages));
             }
             catch {
                 // here lies the evil
