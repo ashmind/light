@@ -21,10 +21,10 @@ namespace Light.Compilation.Cil {
         public AstMethodDefinitionBase MethodAst { get; private set; }
 
         public CilCompilationContext(MethodDefinition method, AstMethodDefinitionBase methodAst, Action<IAstElement, CilCompilationContext> compile, IReferenceContext referenceContext) {
-            this.compile = compile;
             this.referenceContext = referenceContext;
             this.Method = method;
             this.MethodAst = methodAst;
+            this.compile = compile;
         }
 
         public void Compile(IAstElement element) {
@@ -32,7 +32,11 @@ namespace Light.Compilation.Cil {
         }
 
         public VariableDefinition DefineVariable(string name, IAstTypeReference type) {
-            var variableDefinition = new VariableDefinition(name, this.ConvertReference(type));
+            return DefineVariable(name, this.ConvertReference(type));
+        }
+
+        public VariableDefinition DefineVariable(string name, TypeReference type) {
+            var variableDefinition = new VariableDefinition(name, type);
 
             this.Method.Body.InitLocals = true;
             this.Method.Body.Variables.Add(variableDefinition);

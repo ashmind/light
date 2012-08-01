@@ -17,11 +17,6 @@ namespace Light.Ast.References.Types {
             return No.Elements;
         }
 
-        public IAstMethodReference ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
-            var method = this.Definition.Children<AstFunctionDefinition>().SingleOrDefault(m => m.Name == name);
-            return new AstDefinedMethod(method);
-        }
-
         public IAstConstructorReference ResolveConstructor(IEnumerable<IAstExpression> arguments) {
             var constructor = this.Definition.Child<AstConstructorDefinition>();
             return new AstDefinedConstructor(constructor);

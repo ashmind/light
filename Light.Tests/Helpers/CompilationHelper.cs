@@ -89,8 +89,10 @@ namespace Light.Tests.Helpers {
 
             foreach (var referenced in ReferencedAssemblies) {
                 var referencePath = Path.Combine(outputDirectory, Path.GetFileName(referenced.Location));
-                if (!File.Exists(referencePath))
-                    File.Copy(referenced.Location, referencePath);
+                lock (parent) {
+                    if (!File.Exists(referencePath) || File.GetLastWriteTimeUtc(referencePath) < File.GetLastWriteTimeUtc(referenced.Location))
+                        File.Copy(referenced.Location, referencePath, true);
+                }
             }
 
             PEVerifier.Verify(path, assembly);

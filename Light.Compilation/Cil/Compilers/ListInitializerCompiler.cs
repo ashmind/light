@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast;
 using Light.Ast.Literals;
 using Light.Compilation.Internal;
 using Mono.Cecil;
@@ -24,25 +25,30 @@ namespace Light.Compilation.Cil.Compilers {
             for (var i = 0; i < initializer.Elements.Count; i++) {
                 processor.Emit(OpCodes.Ldloc, temporaryVariable);
                 processor.EmitLdcI4(i);
-                context.Compile(initializer.Elements[i]);
-                EmitStelem(processor, elementType);
+                EmitStelem(processor, elementType, initializer.Elements[i], context);
             }
 
             processor.Emit(OpCodes.Ldloc, temporaryVariable);
         }
 
-        private void EmitStelem(ILProcessor processor, TypeReference elementType) {
+        private void EmitStelem(ILProcessor processor, TypeReference elementType, IAstExpression element, CilCompilationContext context) {
             if (elementType.IsPrimitive) {
                 if (!StelemCodes.ContainsKey(elementType.MetadataType))
                     throw new NotImplementedException("ListInitializerCompiler.EmitStelem: Element metadata type " + elementType.MetadataType + " is not yet supported.");
 
+                context.Compile(element);
                 processor.Emit(StelemCodes[elementType.MetadataType]);
                 return;
             }
 
-            if (elementType.IsValueType)
-                throw new NotImplementedException("ListInitializerCompiler.EmitStelem: Element type is " + elementType + ".");
+            if (elementType.IsValueType) {
+                processor.Emit(OpCodes.Ldelema, elementType);
+                context.Compile(element);
+                processor.Emit(OpCodes.Stobj, elementType);
+                return;
+            }
 
+            context.Compile(element);
             processor.Emit(OpCodes.Stelem_Ref);
         }
     }

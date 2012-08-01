@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using AshMind.Extensions;
 using Light.Ast;
-using Light.Ast.Errors;
 using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
 using Light.Ast.References;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
 using Light.Internal;
+using Light.Processing.Helpers;
 
 namespace Light.Processing.Steps.ReferenceResolution {
     public class ResolveOperatorReferences : ProcessingStepBase<BinaryExpression> {
@@ -18,31 +18,25 @@ namespace Light.Processing.Steps.ReferenceResolution {
         private static readonly Reflector Reflector = new Reflector(); // temporary
 
         private static class KnownTypes {
-            public static readonly IAstTypeReference Integer = new AstReflectedType(typeof(int), Reflector);
             public static readonly IAstTypeReference Boolean = new AstReflectedType(typeof(bool), Reflector);
             public static readonly IAstTypeReference String = new AstReflectedType(typeof(string), Reflector);
         }
 
         private static readonly string[] NotMapped = new string[0];
         private static readonly IDictionary<string, string[]> NameMap = new Dictionary<string, string[]> {
-            { "+",  new[] { "Plus",       "op_Addition" } },
-            { "-",  new[] { "Minus",      "op_Subtraction" } },
-            { "*",  new[] { "MultiplyBy", "op_Multiply" } },
-            { "/",  new[] { "DivideBy",   "op_Division" } },
-            { "==", new[] { "Equals" } }
+            { "+",   new[] { "Plus",       "op_Addition" } },
+            { "-",   new[] { "Minus",      "op_Subtraction" } },
+            { "*",   new[] { "MultiplyBy", "op_Multiply" } },
+            { "/",   new[] { "DivideBy",   "op_Division" } },
+            { "mod", new[] { "Modulus" } },
+
+            { "==",  new[] { "Equals" } },
+
+            { ">",   new[] { "IsGreaterThan" } },
+            { "<",   new[] { "IsLessThan" } },
         };
 
         private readonly AstBuiltInOperator[] BuiltInOperators = {
-            new AstBuiltInOperator("+",   KnownTypes.Integer, KnownTypes.Integer),
-            new AstBuiltInOperator("-",   KnownTypes.Integer, KnownTypes.Integer),
-            new AstBuiltInOperator("*",   KnownTypes.Integer, KnownTypes.Integer),
-            new AstBuiltInOperator("/",   KnownTypes.Integer, KnownTypes.Integer),
-            new AstBuiltInOperator("mod", KnownTypes.Integer, KnownTypes.Integer),
-
-            new AstBuiltInOperator("==",  KnownTypes.Integer, KnownTypes.Boolean),
-            new AstBuiltInOperator(">",   KnownTypes.Integer, KnownTypes.Boolean),
-            new AstBuiltInOperator("<",   KnownTypes.Integer, KnownTypes.Boolean),
-
             new AstBuiltInOperator("or",  KnownTypes.Boolean, KnownTypes.Boolean)
         };
 
@@ -51,7 +45,10 @@ namespace Light.Processing.Steps.ReferenceResolution {
 
         #endregion
 
-        public ResolveOperatorReferences() : base(ProcessingStage.ReferenceResolution) {
+        private readonly OverloadResolver overloadResolver;
+
+        public ResolveOperatorReferences(OverloadResolver overloadResolver) : base(ProcessingStage.ReferenceResolution) {
+            this.overloadResolver = overloadResolver;
         }
 
         public override IAstElement ProcessAfterChildren(BinaryExpression binary, ProcessingContext context) {
@@ -76,15 +73,23 @@ namespace Light.Processing.Steps.ReferenceResolution {
                                                      && o.OperandType.Equals(binary.Left.ExpressionType));
         }
 
-        private static IAstMethodReference ResolveOperatorAsMethod(BinaryExpression binary) {
+        private IAstMethodReference ResolveOperatorAsMethod(BinaryExpression binary) {
             var operatorName = binary.Operator.Name;
             var names = NameMap.GetValueOrDefault(operatorName, NotMapped).Concat(operatorName);
             var declaringType = binary.Left.ExpressionType;
 
-            var resolved = names.Select(n => declaringType.ResolveMethod(n, new[] {binary.Left, binary.Right}))
-                                .FirstOrDefault(r => !(r is AstMissingMethod));
+            var resolved = names.Select(declaringType.ResolveMember)
+                                .Cast<IAstMethodReference>()
+                                .FirstOrDefault(r => r != null);
 
-            resolved = resolved ?? new AstMissingMethod(operatorName, new[] { binary.Left.ExpressionType, binary.Right.ExpressionType });
+            if (resolved == null)
+                throw new NotImplementedException("ResolveOperatorReferences: Failed to resolve " + binary.Operator.Name);
+
+            var group = resolved as AstMethodGroup;
+            if (group != null)
+                resolved = overloadResolver.ResolveMethodGroup(group, binary.Left, new[] {binary.Right});
+
+            //resolved = resolved ?? new AstMissingMethod(operatorName, new[] { binary.Left.ExpressionType, binary.Right.ExpressionType });
             return resolved;
         }
     }

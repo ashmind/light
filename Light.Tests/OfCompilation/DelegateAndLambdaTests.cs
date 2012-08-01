@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Framework;
 using Light.Tests.Helpers;
 using MbUnit.Framework;
 
@@ -16,20 +17,20 @@ namespace Light.Tests.OfCompilation {
         [Test]
         public void LambdaExpression_TypedParameter_Identity() {
             var result = CompilationHelper.CompileAndEvaluate("(integer x) => x");
-            Assert.IsInstanceOfType<Func<int, int>>(result);
+            Assert.IsInstanceOfType<Func<Integer, Integer>>(result);
         }
 
         [Test]
         public void LambdaExpression_TypedParameter_Condition() {
             var result = CompilationHelper.CompileAndEvaluate("(integer x) => x > 5");
-            Assert.IsInstanceOfType<Func<int, bool>>(result);
+            Assert.IsInstanceOfType<Func<Integer, bool>>(result);
         }
 
         [Test]
         [Ignore("NotImplementedYet")]
         public void LambdaExpression_UntypedParameter_Identity() {
             var result = CompilationHelper.CompileAndEvaluate("x => x");
-            Assert.IsInstanceOfType<Func<int, bool>>(result);
+            Assert.IsInstanceOfType<Func<Integer, bool>>(result);
         }
 
         [Test]
@@ -37,7 +38,7 @@ namespace Light.Tests.OfCompilation {
         //[Row("x => x > 3")]
         public void LambdaExpression_InMethodCall(string lambda) {
             var result = CompilationHelper.CompileAndEvaluate("[1, 2, 3, 4, 5].Where(" + lambda + ")");
-            Assert.AreElementsEqual(new[] { 4, 5 }, result);
+            Assert.AreElementsEqual(new[] { new Integer(4), new Integer(5) }, result);
         }
     }
 }

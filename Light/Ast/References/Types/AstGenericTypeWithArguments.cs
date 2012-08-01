@@ -68,10 +68,6 @@ namespace Light.Ast.References.Types {
 
         #region IAstTypeReference Members
 
-        IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
-            throw new NotImplementedException("AstGenericType: ResolveMethod");
-        }
-
         IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
             throw new NotImplementedException("AstGenericType: ResolveConstructor");
         }

@@ -8,6 +8,7 @@ using Light.Ast.References;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
 using Light.Compilation.Internal;
+using Light.Framework;
 using Light.Internal;
 using Mono.Cecil.Cil;
 
@@ -15,16 +16,16 @@ namespace Light.Compilation.Cil.Compilers {
     public class PrimitiveValueCompiler : CilCompilerBase<PrimitiveValue> {
         private static readonly Reflector Reflector = new Reflector();
 
-        private static readonly IAstConstructorReference NewBigInteger = new AstReflectedConstructor(typeof(BigInteger).GetConstructor(new[] { typeof(byte[]) }), Reflector);
+        private static readonly IAstConstructorReference NewIntegerFromInt32 = new AstReflectedConstructor(typeof(Integer).GetConstructor(new[] { typeof(int) }), Reflector);
+        private static readonly IAstConstructorReference NewIntegerFromBytes = new AstReflectedConstructor(typeof(Integer).GetConstructor(new[] { typeof(byte[]) }), Reflector);
         private static readonly IAstTypeReference Byte = Reflector.Reflect(typeof(byte));
         private static readonly IAstTypeReference ByteArray = Reflector.Reflect(typeof(byte[]));
 
         private static readonly IDictionary<Type, Action<ILProcessor, PrimitiveValue, CilCompilationContext>> typeBasedCompilers = new Dictionary<Type, Action<ILProcessor, PrimitiveValue, CilCompilationContext>> {
-            { typeof(int),        CompileInt32 },
+            { typeof(Integer),    CompileInteger },
             { typeof(double),     CompileDouble },
             { typeof(string),     CompileString },
-            { typeof(bool),       CompileBoolean },
-            { typeof(BigInteger), CompileBigInteger }
+            { typeof(bool),       CompileBoolean }
         };
 
         public override void Compile(ILProcessor processor, PrimitiveValue value, CilCompilationContext context) {
@@ -35,12 +36,20 @@ namespace Light.Compilation.Cil.Compilers {
             compile(processor, value, context);
         }
 
-        private static void CompileInt32(ILProcessor processor, PrimitiveValue value, CilCompilationContext context) {
-            processor.EmitLdcI4((int)value.Value);
+        private static void CompileInteger(ILProcessor processor, PrimitiveValue value, CilCompilationContext context) {
+            var integer = (Integer)value.Value;
+            if (integer.Kind == IntegerKind.Int32) {
+                processor.EmitLdcI4(integer.Int32Value);
+                processor.Emit(OpCodes.Newobj, context.ConvertReference(NewIntegerFromInt32));
+            }
+            else {
+                EmitBigIntegerBytes(processor, integer.BigIntegerValue, context);
+                processor.Emit(OpCodes.Newobj, context.ConvertReference(NewIntegerFromBytes));
+            }
         }
 
-        private static void CompileBigInteger(ILProcessor processor, PrimitiveValue value, CilCompilationContext context) {
-            var bytes = ((BigInteger)value.Value).ToByteArray();
+        private static void EmitBigIntegerBytes(ILProcessor processor, BigInteger value, CilCompilationContext context) {
+            var bytes = value.ToByteArray();
             var bytesVariable = context.DefineVariable("t", ByteArray); // temporary cheating
 
             processor.EmitLdcI4(bytes.Length);
@@ -54,7 +63,6 @@ namespace Light.Compilation.Cil.Compilers {
             }
 
             processor.Emit(OpCodes.Ldloc, bytesVariable);
-            processor.Emit(OpCodes.Newobj, context.ConvertReference(NewBigInteger));
         }
 
         private static void CompileDouble(ILProcessor processor, PrimitiveValue value, CilCompilationContext context) {

@@ -1,6 +1,5 @@
 using System;
 using Light.Ast;
-using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace Light.Compilation.Cil {

@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,8 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="IntegerKind.cs" />
     <Compile Include="IRange.cs" />
-    <Compile Include="NumberExtensions.cs" />
+    <Compile Include="Integer.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

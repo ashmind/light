@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast;
 using Light.Ast.Expressions;
 using Light.Ast.References;
 using Mono.Cecil.Cil;
@@ -13,7 +14,7 @@ namespace Light.Compilation.Cil.Compilers {
                 throw new NotImplementedException("CallCompiler: " + call.Callee.GetType().Name + " is not yet supported as call.Callee.");
 
             if (function.Target != null && !(function.Target is IAstTypeReference))
-                context.Compile(function.Target);
+                CallCompilerHelper.CompileTarget(processor, (IAstExpression)function.Target, context);
 
             foreach (var argument in call.Arguments) {
                 context.Compile(argument);

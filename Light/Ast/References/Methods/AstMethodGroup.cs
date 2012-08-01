@@ -17,7 +17,9 @@ namespace Light.Ast.References.Methods {
 
             this.Name = name;
             this.Methods = methods;
-            this.ReturnType = AstUnknownType.WithNoName;
+
+            var returnTypesCount = methods.Select(m => m.ReturnType).Distinct().Count();
+            this.ReturnType = returnTypesCount == 1 ? methods[0].ReturnType : AstUnknownType.WithNoName;
 
             var locationsCount = methods.Select(m => m.Location).Distinct().Count();
             this.Location = locationsCount == 1 ? methods[0].Location : MethodLocation.Unknown;

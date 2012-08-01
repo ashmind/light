@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.Expressions;
 using Light.Ast.References;
-using Light.Ast.References.Methods;
-using Light.Ast.References.Types;
 using Mono.Cecil.Cil;
 
 namespace Light.Compilation.Cil.Compilers {

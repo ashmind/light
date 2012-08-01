@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AshMind.Extensions;
 using Light.Ast.Expressions;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
@@ -22,14 +21,17 @@ namespace Light.Compilation.Cil.Compilers {
         };
 
         public override void Compile(ILProcessor processor, BinaryExpression binary, CilCompilationContext context) {
-            context.Compile(binary.Left);
-            context.Compile(binary.Right);
-
             var builtIn = binary.Operator as AstBuiltInOperator;
             if (builtIn != null) {
+                context.Compile(binary.Left);
+                context.Compile(binary.Right);
+
                 EmitBuiltInOperator(processor, builtIn);
                 return;
             }
+
+            CallCompilerHelper.CompileTarget(processor, binary.Left, context);
+            context.Compile(binary.Right);
 
             processor.Emit(OpCodes.Call, context.ConvertReference(binary.Operator));
         }

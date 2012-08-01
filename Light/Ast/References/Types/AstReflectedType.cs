@@ -40,16 +40,6 @@ namespace Light.Ast.References.Types {
             return this.ActualType.GetGenericArguments().Select(this.reflector.Reflect);
         }
 
-        public IAstMethodReference ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
-            var astTypes = arguments.Select(a => a.ExpressionType).ToArray();
-            var types = astTypes.Cast<AstReflectedType>().Select(t => t.ActualType).ToArray();
-            var method = this.ActualType.GetMethod(name, types);
-            if (method == null)
-                return new AstMissingMethod(name, astTypes);
-
-            return new AstReflectedMethod(method, reflector);
-        }
-
         public IAstConstructorReference ResolveConstructor(IEnumerable<IAstExpression> arguments) {
             var constructor = this.ActualType.GetConstructor(arguments.Select(a => ((AstReflectedType)a.ExpressionType).ActualType).ToArray());
             if (constructor == null)
@@ -59,7 +49,11 @@ namespace Light.Ast.References.Types {
         }
 
         public IAstMemberReference ResolveMember(string name) {
+            if (name == "*")
+                return null; // seems to return all members on type, probably not an allowed character
+
             var members = this.ActualType.GetMember(name);
+
             if (members.Length == 0)
                 return null;
 
@@ -67,6 +61,10 @@ namespace Light.Ast.References.Types {
                 var property = members[0] as PropertyInfo;
                 if (property != null)
                     return new AstReflectedProperty(property, reflector);
+
+                var constructor = members[0] as ConstructorInfo;
+                if (constructor != null)
+                    return new AstReflectedConstructor(constructor, reflector);
             }
 
             if (!members.All(m => m is MethodInfo))

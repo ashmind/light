@@ -10,6 +10,7 @@ using Light.Ast.Literals;
 using Light.Ast.Names;
 using Light.Ast.References;
 using Light.Ast.Statements;
+using Light.Framework;
 using Light.Internal;
 
 namespace Light.Parsing {
@@ -462,7 +463,10 @@ namespace Light.Parsing {
         private object ConvertNumber(object value) {
             var bigInteger = value as Microsoft.Scripting.Math.BigInteger;
             if (!ReferenceEquals(bigInteger, null))
-                return new System.Numerics.BigInteger(bigInteger.ToByteArray());
+                return new Integer(bigInteger.ToByteArray());
+
+            if (value is int)
+                return new Integer((int)value);
 
             return value;
         }

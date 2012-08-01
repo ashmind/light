@@ -19,10 +19,6 @@ namespace Light.Ast.References.Types {
 
         #region IAstTypeReference Members
 
-        IAstMethodReference IAstTypeReference.ResolveMethod(string name, IEnumerable<IAstExpression> arguments) {
-            return null;
-        }
-
         IAstConstructorReference IAstTypeReference.ResolveConstructor(IEnumerable<IAstExpression> arguments) {
             return null;
         }

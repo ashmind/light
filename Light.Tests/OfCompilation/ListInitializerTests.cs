@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Framework;
 using Light.Tests.Helpers;
 using MbUnit.Framework;
 
@@ -17,7 +18,7 @@ namespace Light.Tests.OfCompilation {
         [Row("[[1], [2]]", new object[] { new[] {1}, new[] {2} })]
         public void Simple(string expressionString, object[] expectedValues) {
             var compiled = ((Array)CompilationHelper.CompileAndEvaluate(expressionString)).Cast<object>().ToArray();
-            Assert.AreElementsEqual(expectedValues, compiled);
+            Assert.AreElementsEqual(ExpectedValueConverter.Convert(expectedValues), compiled);
         }
     }
 }

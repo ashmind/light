@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Framework;
 using Light.Tests.Helpers;
 using MbUnit.Framework;
 
@@ -8,10 +9,11 @@ namespace Light.Tests.OfCompilation {
     [TestFixture]
     public class ClassMemberTests {
         [Test]
-        [Row(typeof(string), "string", "x")]
-        [Row(typeof(int),    "integer", 3)]
-        [Row(typeof(bool),   "boolean", true)]
-        public void WriteAndReadPropertyThroughMethods<T>(string propertyType, T value) {
+        [Row(typeof(string),  "string", "x")]
+        [Row(typeof(Integer), "integer", 3)]
+        [Row(typeof(bool),    "boolean", true)]
+        public void WriteAndReadPropertyThroughMethods<T>(string propertyType, object rawValue) {
+            var value = (T)ExpectedValueConverter.Convert(rawValue);
             var code = string.Format(@"
                 public class Test
                     private {0} x
@@ -63,7 +65,7 @@ namespace Light.Tests.OfCompilation {
             var instance = CompilationHelper.CompileAndGetInstance(code, "Test");
             var value = instance.GetValue();
 
-            Assert.AreEqual(5, value);
+            Assert.AreEqual(new Integer(5), value);
         }
     }
 }
