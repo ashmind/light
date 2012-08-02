@@ -11,5 +11,9 @@ namespace Light.Tests.TestClasses {
         public static Func<T, object> AcceptsGenericTToObject<T>(T value, Func<T, object> function) {
             return function;
         }
+
+        public static Func<T, T> AcceptsGenericTToT<T>(T value, Func<T, T> function) {
+            return function;
+        }
     }
 }

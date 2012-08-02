@@ -33,16 +33,16 @@ namespace Light.Tests.OfCompilation {
         }
 
         [Test]
-        [Ignore("NotImplementedYet")]
-        public void LambdaExpression_UntypedParameter_Identity() {
-            var result = CompilationHelper.CompileAndEvaluate("x => x");
-            Assert.IsInstanceOfType<Func<Integer, bool>>(result);
+        [Row("(integer x) => x")]
+        public void LambdaExpression_Identity_InMethodCall(string lambda) {
+            var result = CompilationHelper.CompileAndEvaluate("TestMethods.AcceptsGenericTToT(7, " + lambda + ")");
+            Assert.IsInstanceOfType<Func<Integer, Integer>>(result);
         }
 
         [Test]
         [Row("(integer x) => x > 3")]
         //[Row("x => x > 3")]
-        public void LambdaExpression_InMethodCall(string lambda) {
+        public void LambdaExpression_Condition_InMethodCall(string lambda) {
             var result = CompilationHelper.CompileAndEvaluate("[1, 2, 3, 4, 5].Where(" + lambda + ")");
             Assert.AreElementsEqual(new[] { new Integer(4), new Integer(5) }, result);
         }
