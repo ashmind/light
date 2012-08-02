@@ -164,7 +164,7 @@
     <Compile Include="Parsing\SourceSpan.cs" />
     <Compile Include="Processing\ProcessingOptions.cs" />
     <Compile Include="Processing\Helpers\MemberResolver.cs" />
-    <Compile Include="Processing\Helpers\OverloadResolver.cs" />
+    <Compile Include="Processing\Helpers\MethodCallResolver.cs" />
     <Compile Include="Internal\Reflector.cs" />
     <Compile Include="Processing\ProcessingContext.cs" />
     <Compile Include="Processing\ProcessingStage.cs" />
@@ -176,10 +176,11 @@
     <Compile Include="Processing\ProcessingStepBase.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\DefineLambdaScope.cs" />
     <Compile Include="Processing\Steps\TypeResolution\AssignLambdaExpressionTypes.cs" />
+    <Compile Include="Processing\Steps\TypeResolution\CoerceDelegateArgumentsToCorrectGenericTypes.cs" />
     <Compile Include="Processing\Steps\TypeResolution\ResolveTypeOfThis.cs" />
     <Compile Include="Processing\Steps\TypeResolution\InferListLiteralTypes.cs" />
     <Compile Include="Processing\Steps\TypeResolution\AssignFunctionReferenceExpressionTypes.cs" />
-    <Compile Include="Processing\Steps\ReferenceResolution\ResolveMethodGroupsInCalls.cs" />
+    <Compile Include="Processing\Steps\ReferenceResolution\ResolveMethodGroupsAndGenericsInCalls.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddImportToScope.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddPropertyToScope.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddVariableToScope.cs" />

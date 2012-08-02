@@ -48,7 +48,7 @@ namespace Light.Description {
                 Append(builder, expression.Target);
                 builder.Append(".");
             }
-            builder.Append(expression.Reference.Name);
+            builder.Append(expression.Function.Name);
         }
 
         protected override void AppendCallExpression(StringBuilder builder, CallExpression call) {

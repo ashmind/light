@@ -29,7 +29,7 @@ namespace Light {
             builder.RegisterAssemblyTypes(ThisAssembly).As<IProcessingStep>();
 
             builder.RegisterType<MemberResolver>().AsSelf();
-            builder.RegisterType<OverloadResolver>().AsSelf();
+            builder.RegisterType<MethodCallResolver>().AsSelf();
 
             builder.RegisterType<BuiltInTypesNameSource>().As<INameSource>();
             builder.RegisterType<BuiltInNamespacesNameSource>().As<INameSource>();

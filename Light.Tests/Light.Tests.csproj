@@ -97,7 +97,8 @@
     <Compile Include="OfParsing\LambdaTests.cs" />
     <Compile Include="OfParsing\DefinitionTests.cs" />
     <Compile Include="Helpers\PEVerifier.cs" />
-    <Compile Include="OfProcessing\OverloadResolverTests.cs" />
+    <Compile Include="OfProcessing\MethodCallResolverTests.cs" />
+    <Compile Include="TestClasses\TestMethods.cs" />
     <Compile Include="TestEnvironment.cs" />
     <Compile Include="Helpers\CompilationHelper.cs" />
     <Compile Include="OfCompilation\ProgramTests.cs" />
@@ -133,6 +134,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

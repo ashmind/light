@@ -12,8 +12,8 @@ namespace Light.Processing.Steps.TypeResolution {
 
         public override IAstElement ProcessAfterChildren(AstFunctionReferenceExpression expression, ProcessingContext context) {
             expression.ExpressionType = new AstInferredFunctionType(
-                () => expression.Reference.ParameterTypes,
-                () => expression.Reference.ReturnType
+                () => expression.Function.ParameterTypes,
+                () => expression.Function.ReturnType
             );
             return expression;
         }

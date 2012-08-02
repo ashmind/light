@@ -10,18 +10,22 @@ using Gallio.Framework;
 using Light.Ast;
 using Light.Compilation;
 using Light.Framework;
+using Light.Processing;
 using MbUnit.Framework;
 
 namespace Light.Tests.Helpers {
     public static class CompilationHelper {
         private static readonly Assembly[] ReferencedAssemblies = {
-            typeof(Range<>).Assembly
+            typeof(Range<>).Assembly,
+            typeof(CompilationHelper).Assembly
         };
 
         public static dynamic CompileAndEvaluate(string expression) {
             return CompileAndGetInstance(string.Format(@"
                 import System   
                 import System.Linq
+                import Light.Tests.TestClasses
+
                 public class Test
                     public function Evaluate()
                         return {0}
@@ -47,7 +51,7 @@ namespace Light.Tests.Helpers {
             AssertEx.That(() => !parsed.HasErrors);
 
             var processor = TestEnvironment.Container.Resolve<LightProcessor>();
-            processor.Process(parsed.Root);
+            processor.Process(parsed.Root, new ProcessingOptions { ReferencedAssemblies = { typeof(CompilationHelper).Assembly } });
             
             var assemblyName = GetAssemblyName();
             var compilationArguments = new CompilationArguments {

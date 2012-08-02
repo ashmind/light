@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="GenericFunction1.cs" />
     <Compile Include="IntegerKind.cs" />
     <Compile Include="IRange.cs" />
     <Compile Include="Integer.cs" />

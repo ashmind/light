@@ -27,6 +27,9 @@ namespace Light.Processing.Scoping {
                                        .Where(t => t.Namespace == @namespace)
                                        .ToDictionary(t => t.Name);
 
+            if (this.typeCache.Count == 0)
+                throw new NotImplementedException("ExternalNamespaceNameSource: No types in " + @namespace);
+
             this.memberCache = this.typeCache.Values
                                              .SelectMany(t => t.GetMethods())
                                              .Where(m => m.IsStatic)

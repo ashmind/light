@@ -14,7 +14,7 @@ using MbUnit.Framework;
 
 namespace Light.Tests.OfProcessing {
     [TestFixture]
-    public class OverloadResolverTests {
+    public class MethodCallResolverTests {
         // ReSharper disable UnusedMember.Local
         // ReSharper disable UnusedParameter.Local
         private class TestClass {
@@ -94,11 +94,11 @@ namespace Light.Tests.OfProcessing {
         }
 
         private MethodInfo Resolve(string name, object target, params object[] arguments) {
-            var resolver = new OverloadResolver();
+            var resolver = new MethodCallResolver();
             var methods = typeof(TestClass).GetMethods().Where(m => m.Name == name);
             var reflector = new Reflector();
-            var result = resolver.ResolveMethodGroup(
-                new AstMethodGroup(name, methods.Select(m => new AstReflectedMethod(m, reflector)).ToArray()),
+            var result = resolver.Resolve(
+                methods.Select(m => new AstReflectedMethod(m, reflector)).ToArray(),
                 target != null ? (IAstElement)new PrimitiveValue(target) : new AstReflectedType(typeof(TestClass), reflector),
                 arguments.Select(a => (a as IAstExpression) ?? new PrimitiveValue(a)).ToArray()
             );

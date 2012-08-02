@@ -15,6 +15,12 @@ namespace Light.Tests.OfCompilation {
         }
 
         [Test]
+        public void MethodGroup_External_GenericMethod_WithoutOverloads_InMethodCall() {
+            var result = CompilationHelper.CompileAndEvaluate("TestMethods.AcceptsGenericTToObject(5, TestMethods.GenericTToObject)");
+            Assert.IsInstanceOfType<Func<Integer, object>>(result);
+        }
+
+        [Test]
         public void LambdaExpression_TypedParameter_Identity() {
             var result = CompilationHelper.CompileAndEvaluate("(integer x) => x");
             Assert.IsInstanceOfType<Func<Integer, Integer>>(result);

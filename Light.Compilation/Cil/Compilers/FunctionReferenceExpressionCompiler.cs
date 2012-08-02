@@ -19,7 +19,7 @@ namespace Light.Compilation.Cil.Compilers {
             var delegateConstructor = context.Method.Module.Import(delegateType.Resolve().Methods.Single(m => m.Name == ".ctor"));
             delegateConstructor.DeclaringType = delegateType; // fixes issue with delegateType.Resolve() eliminating generic arguments
 
-            processor.Emit(OpCodes.Ldftn, context.ConvertReference(reference.Reference));
+            processor.Emit(OpCodes.Ldftn, context.ConvertReference(reference.Function));
             processor.Emit(OpCodes.Newobj, delegateConstructor);
         }
     }

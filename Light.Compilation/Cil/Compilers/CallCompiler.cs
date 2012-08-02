@@ -20,7 +20,7 @@ namespace Light.Compilation.Cil.Compilers {
                 context.Compile(argument);
             }
 
-            processor.Emit(OpCodes.Call, context.ConvertReference(function.Reference));
+            processor.Emit(OpCodes.Call, context.ConvertReference(function.Function));
         }
     }
 }

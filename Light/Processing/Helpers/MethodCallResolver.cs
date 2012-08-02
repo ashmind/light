@@ -4,11 +4,10 @@ using System.Linq;
 using AshMind.Extensions;
 using Light.Ast;
 using Light.Ast.References;
-using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
 
 namespace Light.Processing.Helpers {
-    public class OverloadResolver {
+    public class MethodCallResolver {
         #region DeconstructingAdapter Class
 
         private class DeconstructingAdapter {
@@ -27,24 +26,24 @@ namespace Light.Processing.Helpers {
 
         #endregion
 
-        public IAstMethodReference ResolveMethodGroup(AstMethodGroup group, IAstElement target, IList<IAstExpression> arguments) {
-            var candidates = GetCandidates(group, target, arguments)
+        public IAstMethodReference Resolve(IList<IAstMethodReference> methods, IAstElement target, IList<IAstExpression> arguments) {
+            var candidates = GetCandidates(methods, target, arguments)
                                     .GroupBy(c => c.Item2)
                                     .OrderBy(g => g.Key)
                                     .FirstOrDefault();
 
             if (candidates == null)
-                throw new NotImplementedException("OverloadResolver: No match found for " + @group.Name);
+                throw new NotImplementedException("MethodCallResolver: Could not adapt " + methods[0].Name + " to this call.");
 
             var candidatesAsArray = candidates.ToArray();
             if (candidatesAsArray.Length > 1)
-                throw new NotImplementedException(string.Format("OverloadResolver: Ambiguous best match found for {0}: {1}.", @group.Name, string.Join(", ", candidates.AsEnumerable())));
+                throw new NotImplementedException(string.Format("MethodCallResolver: Ambiguous best match found for {0}: {1}.", methods[0].Name, string.Join(", ", candidates.AsEnumerable())));
 
             return candidatesAsArray[0].Item1;
         }
 
-        private IEnumerable<Tuple<IAstMethodReference, int>> GetCandidates(AstMethodGroup @group, IAstElement target, IList<IAstExpression> arguments) {
-            foreach (var method in @group.Methods) {
+        private IEnumerable<Tuple<IAstMethodReference, int>> GetCandidates(IEnumerable<IAstMethodReference> methods, IAstElement target, IList<IAstExpression> arguments) {
+            foreach (var method in methods) {
                 var parameterTypes = method.ParameterTypes;
                 var argumentTypes = arguments.Select(a => a.ExpressionType);
                 if (method.Location == MethodLocation.Extension)

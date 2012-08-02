@@ -47,10 +47,10 @@ namespace Light.Processing.Steps.ReferenceResolution {
 
         #endregion
 
-        private readonly OverloadResolver overloadResolver;
+        private readonly MethodCallResolver methodCallResolver;
 
-        public ResolveOperatorReferences(OverloadResolver overloadResolver) : base(ProcessingStage.ReferenceResolution) {
-            this.overloadResolver = overloadResolver;
+        public ResolveOperatorReferences(MethodCallResolver methodCallResolver) : base(ProcessingStage.ReferenceResolution) {
+            this.methodCallResolver = methodCallResolver;
         }
 
         public override IAstElement ProcessAfterChildren(BinaryExpression binary, ProcessingContext context) {
@@ -89,7 +89,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
 
             var group = resolved as AstMethodGroup;
             if (group != null)
-                resolved = overloadResolver.ResolveMethodGroup(group, binary.Left, new[] {binary.Right});
+                resolved = methodCallResolver.Resolve(group.Methods, binary.Left, new[] {binary.Right});
 
             //resolved = resolved ?? new AstMissingMethod(operatorName, new[] { binary.Left.ExpressionType, binary.Right.ExpressionType });
             return resolved;
