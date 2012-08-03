@@ -64,52 +64,11 @@ namespace Light.Compilation {
         }
 
         private void DefineMember(TypeDefinition type, IAstDefinition memberAst, DefinitionBuildingContext context) {
-            var functionAst = memberAst as AstMethodDefinitionBase;
-            if (functionAst != null) {
-                DefineFunction(type, functionAst, context);
-                return;
-            }
-
             var builder = this.builders.SingleOrDefault(c => c.CanBuild(memberAst, type));
             if (builder == null)
                 throw new NotImplementedException("LightCompiler: No DefinitionBuilder for " + memberAst + " under " + type + ".");
 
             builder.Build(memberAst, type, context);
-        }
-
-        private void DefineFunction(TypeDefinition type, AstMethodDefinitionBase methodAst, DefinitionBuildingContext context) {
-            MethodDefinition method;
-            if (methodAst is Ast.Definitions.AstFunctionDefinition) {
-                var functionAst = methodAst as AstFunctionDefinition;
-                var attributes = MethodAttributes.Public;
-                if (methodAst.Compilation.Static)
-                    attributes |= MethodAttributes.Static;
-
-                var returnType = context.ConvertReference(functionAst.ReturnType, returnNullIfFailed: true);
-                method = new MethodDefinition(functionAst.Name, attributes, returnType ?? CecilHelper.GetVoidType(type.Module));
-                if (returnType == null)
-                    context.AddDebt(() => method.ReturnType = context.ConvertReference(functionAst.ReturnType));
-
-                if (methodAst.Compilation.EntryPoint)
-                    type.Module.EntryPoint = method;
-            }
-            else if (methodAst is Ast.Definitions.AstConstructorDefinition) {
-                method = CecilHelper.CreateConstructor(type);
-                method.Attributes |= MethodAttributes.Public;
-            }
-            else {
-                throw new NotImplementedException("LightCompiler.CompileFunction: cannot compile " + methodAst + ".");
-            }
-
-            type.Methods.Add(method);
-            context.MapDefinition(methodAst, method);
-            DefineParameters(method, methodAst, context);
-        }
-
-        private void DefineParameters(MethodDefinition method, AstMethodDefinitionBase methodAst, DefinitionBuildingContext context) {
-            foreach (var parameter in methodAst.Parameters) {
-                method.Parameters.Add(new ParameterDefinition(parameter.Name, ParameterAttributes.None, context.ConvertReference(parameter.Type)));
-            }
         }
 
         private void CompileMethod(MethodDefinition method, AstMethodDefinitionBase methodAst, DefinitionBuildingContext parentContext) {

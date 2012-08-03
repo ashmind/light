@@ -60,7 +60,6 @@ namespace Light.Ast.References.Types {
 
         #endregion
 
-
         public override bool Equals(object obj) {
             return this.Equals(obj as IAstFunctionTypeReference);
         }

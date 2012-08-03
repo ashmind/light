@@ -4,6 +4,7 @@ using System.Linq;
 using AshMind.Extensions;
 using Light.Ast.Definitions;
 using Light.Ast.References;
+using Light.Ast.References.Types;
 using Light.Compilation.Internal;
 using Light.Compilation.References;
 using Mono.Cecil;
@@ -34,6 +35,10 @@ namespace Light.Compilation.Definitions {
             references.Add(typeAst, type);
         }
 
+        public void MapDefinition(AstGenericPlaceholderType typeAst, GenericParameter type) {
+            references.Add(typeAst, type);
+        }
+
         public void MapDefinition(AstMethodDefinitionBase methodAst, MethodDefinition method) {
             references.Add(methodAst, method);
         }
@@ -43,7 +48,7 @@ namespace Light.Compilation.Definitions {
         }
 
         protected override Either<MemberReference, PropertyReferenceContainer> ConvertReference(IAstReference reference, bool returnNullIfFailed = false) {
-            var definition = reference.Target as IAstDefinition;
+            var definition = reference as IAstDefinition ?? reference.Target as IAstDefinition;
             if (definition != null) {
                 var result = this.references.GetValueOrDefault(definition);
                 if (result != null)

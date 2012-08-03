@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AshMind.Extensions;
 using Light.Ast.References;
 using Light.Ast.References.Types;
 
@@ -14,7 +13,7 @@ namespace Light.Internal {
                 return AstAnyType.Instance;
 
             if (type.IsGenericParameter)
-                return new AstGenericPlaceholderType(type.Name);
+                return new AstGenericPlaceholderType(type.Name, type);
 
             if (IsFunctionType(type))
                 return ReflectFunctionType(type);

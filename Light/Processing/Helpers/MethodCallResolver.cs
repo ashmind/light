@@ -4,10 +4,13 @@ using System.Linq;
 using AshMind.Extensions;
 using Light.Ast;
 using Light.Ast.References;
+using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
 
 namespace Light.Processing.Helpers {
     public class MethodCallResolver {
+        private readonly GenericTypeHelper genericHelper;
+
         #region DeconstructingAdapter Class
 
         private class DeconstructingAdapter {
@@ -25,6 +28,10 @@ namespace Light.Processing.Helpers {
         }
 
         #endregion
+
+        public MethodCallResolver(GenericTypeHelper genericHelper) {
+            this.genericHelper = genericHelper;
+        }
 
         public IAstMethodReference Resolve(IList<IAstMethodReference> methods, IAstElement target, IList<IAstExpression> arguments) {
             var candidates = GetCandidates(methods, target, arguments)
@@ -62,9 +69,9 @@ namespace Light.Processing.Helpers {
                 return null;
 
             if (method.IsGeneric) {
-                var genericParameters = method.GenericParameterTypes;
-                var genericArguments = new IAstTypeReference[genericParameters.Count];
-                for (var i = 0; i < genericParameters.Count; i++) {
+                var genericParameters = method.GetGenericParameterTypes().ToArray();
+                var genericArguments = new IAstTypeReference[genericParameters.Length];
+                for (var i = 0; i < genericParameters.Length; i++) {
                     var theories = genericTheories.GetValueOrDefault(genericParameters[i]);
                     if (theories == null)
                         return null;
@@ -76,8 +83,8 @@ namespace Light.Processing.Helpers {
                     genericArguments[i] = aggregate;
                 }
 
-                var generic = method.WithGenericArguments(genericArguments);
-                return Tuple.Create(generic, distance);
+                var generic = new AstGenericMethodWithTypeArguments(method, genericArguments, this.genericHelper);
+                return Tuple.Create((IAstMethodReference)generic, distance);
             }
 
             return Tuple.Create(method, distance);
@@ -115,7 +122,7 @@ namespace Light.Processing.Helpers {
             if (!method.IsGeneric)
                 return -1;
 
-            if (CanMatchPotentialGeneric(parameterType, argumentType, argumentCompatibleTypes, genericTheories))
+            if (CanMatchPotentialGeneric(parameterType, argumentType, () => argumentCompatibleTypes, genericTheories))
                 return 0;
 
             return -1;
@@ -137,9 +144,15 @@ namespace Light.Processing.Helpers {
             return dictionary;
         }
 
-        private bool CanMatchPotentialGeneric(IAstTypeReference parameterType, IAstTypeReference argumentType, IDictionary<IAstTypeReference, int> argumentCompatibleTypes, Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories) {
+        private bool CanMatchPotentialGeneric(
+            IAstTypeReference parameterType,
+            IAstTypeReference argumentType,
+            Func<IDictionary<IAstTypeReference, int>> getArgumentCompatibleTypes,
+            Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories
+        ) {
             if (parameterType is AstGenericPlaceholderType) {
-                AddGenericTheory(genericTheories, parameterType, argumentType);
+                if (!(argumentType is AstGenericPlaceholderType))
+                    AddGenericTheory(genericTheories, parameterType, argumentType);
                 return true;
             }
 
@@ -149,7 +162,7 @@ namespace Light.Processing.Helpers {
 
             var parameterTypeArguments = parameterTypeDeconstructed.TypeArguments;
             var anyMatchesFound = false;
-            foreach (var type in argumentCompatibleTypes.Keys) {
+            foreach (var type in getArgumentCompatibleTypes().Keys) {
                 if (!parameterTypeDeconstructed.Matches(type))
                     continue;
 
@@ -158,7 +171,7 @@ namespace Light.Processing.Helpers {
                     if (Equals(typeArguments[i], parameterTypeArguments[i]))
                         continue;
 
-                    if (!CanMatchPotentialGeneric(parameterTypeArguments[i], typeArguments[i], GetCompatibleTypes(typeArguments[i]), genericTheories))
+                    if (!CanMatchPotentialGeneric(parameterTypeArguments[i], typeArguments[i], () => GetCompatibleTypes(typeArguments[i]), genericTheories))
                         return false;
 
                     anyMatchesFound = true;

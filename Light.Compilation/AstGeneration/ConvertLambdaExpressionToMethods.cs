@@ -5,6 +5,7 @@ using AshMind.Extensions;
 using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.Expressions;
+using Light.Ast.References;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
 using Light.Ast.Statements;
@@ -21,21 +22,22 @@ namespace Light.Compilation.AstGeneration {
             var type = context.ElementStack.OfType<AstTypeDefinition>().First();
             var lastLambdaIndex = (int?)context.FreeData.GetValueOrDefault(LastLambdaIndexKey) ?? 0;
 
-            var method = new AstFunctionDefinition(
-                "lambda#" + (lastLambdaIndex + 1),
-                lambda.Parameters,
-                new[] { new AstReturnStatement((IAstExpression)lambda.Body) },
-                ((IAstExpression)lambda.Body).ExpressionType
-            ) { Compilation = { Static = true } };
+            var method = ConvertLambdaToMethod("lambda#" + (lastLambdaIndex + 1), lambda);
             type.Members.Add(method);
 
-            var rewritten = new AstFunctionReferenceExpression(
+            return new AstFunctionReferenceExpression(
                 new AstDefinedType(type),
                 new AstDefinedMethod(method)
             );
-            rewritten.ExpressionType = lambda.ExpressionType;
+        }
 
-            return rewritten;
+        private static AstFunctionDefinition ConvertLambdaToMethod(string name, AstLambdaExpression lambda) {
+            return new AstFunctionDefinition(
+                name,
+                lambda.Parameters,
+                new[] {new AstReturnStatement((IAstExpression)lambda.Body)},
+                lambda.ReturnType
+            ) {Compilation = {Static = true}};
         }
     }
 }

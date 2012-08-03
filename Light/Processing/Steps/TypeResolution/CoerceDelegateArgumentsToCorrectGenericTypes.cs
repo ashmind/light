@@ -4,10 +4,15 @@ using System.Linq;
 using Light.Ast;
 using Light.Ast.Expressions;
 using Light.Ast.References;
+using Light.Ast.References.Methods;
+using Light.Processing.Helpers;
 
 namespace Light.Processing.Steps.TypeResolution {
     public class CoerceDelegateArgumentsToCorrectGenericTypes : ProcessingStepBase<CallExpression> {
-        public CoerceDelegateArgumentsToCorrectGenericTypes() : base(ProcessingStage.TypeResolution) {
+        private readonly GenericTypeHelper genericHelper;
+
+        public CoerceDelegateArgumentsToCorrectGenericTypes(GenericTypeHelper genericHelper) : base(ProcessingStage.TypeResolution) {
+            this.genericHelper = genericHelper;
         }
 
         public override IAstElement ProcessAfterChildren(CallExpression call, ProcessingContext context) {
@@ -26,14 +31,15 @@ namespace Light.Processing.Steps.TypeResolution {
         }
 
         private IAstMethodReference CoerceToType(IAstMethodReference function, IAstFunctionTypeReference functionType) {
-            var genericArgumentTypes = new IAstTypeReference[function.GenericParameterTypes.Count];
+            var genericParameterTypes = function.GetGenericParameterTypes().ToArray();
+            var genericArgumentTypes = new IAstTypeReference[genericParameterTypes.Length];
             var functionTypeParameterTypes = functionType.GetParameterTypes().ToArray();
             for (var i = 0; i < genericArgumentTypes.Length; i++) {
-                var parameterIndex = function.ParameterTypes.IndexOf(function.GenericParameterTypes[i]);
+                var parameterIndex = function.ParameterTypes.IndexOf(genericParameterTypes[i]);
                 genericArgumentTypes[i] = functionTypeParameterTypes[parameterIndex];
             }
 
-            return function.WithGenericArguments(genericArgumentTypes);
+            return new AstGenericMethodWithTypeArguments(function, genericArgumentTypes, this.genericHelper);
         }
     }
 }

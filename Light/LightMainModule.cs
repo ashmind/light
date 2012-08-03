@@ -28,6 +28,7 @@ namespace Light {
         private void RegisterProcessing(ContainerBuilder builder) {
             builder.RegisterAssemblyTypes(ThisAssembly).As<IProcessingStep>();
 
+            builder.RegisterType<GenericTypeHelper>().AsSelf();
             builder.RegisterType<MemberResolver>().AsSelf();
             builder.RegisterType<MethodCallResolver>().AsSelf();
 

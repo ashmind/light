@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Light.Ast.Errors;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Properties;
 using Light.Internal;

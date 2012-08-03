@@ -31,8 +31,8 @@ namespace Light.Ast.References.Methods {
             get { return false; }
         }
 
-        public ReadOnlyCollection<IAstTypeReference> GenericParameterTypes {
-            get { return No.Types; }
+        public IEnumerable<IAstTypeReference> GetGenericParameterTypes() {
+            return No.Types;
         }
 
         #region IAstReference Members
@@ -51,10 +51,6 @@ namespace Light.Ast.References.Methods {
 
         MethodLocation IAstMethodReference.Location {
             get { return MethodLocation.Special; }
-        }
-
-        IAstMethodReference IAstMethodReference.WithGenericArguments(IEnumerable<IAstTypeReference> genericArguments) {
-            throw new NotImplementedException("AstBuiltInOperator.WithGenericArguments");
         }
 
         #endregion

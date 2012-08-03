@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Light.Ast.Definitions;
 
 namespace Light.Ast.References.Types {
-    public class AstGenericPlaceholderType : AstElementBase, IAstTypeReference {
+    public class AstGenericPlaceholderType : AstElementBase, IAstTypeReference, IAstDefinition {
+        private readonly object identity;
         public string Name { get; private set; }
 
-        public AstGenericPlaceholderType(string name) {
+        public AstGenericPlaceholderType(string name, object identity = null) {
             Argument.RequireNotNullAndNotEmpty("name", name);
+            this.identity = identity;
             this.Name = name;
         }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
-            throw new NotImplementedException();
+            return No.Elements;
         }
 
         #region IAstTypeReference Members
@@ -35,7 +37,7 @@ namespace Light.Ast.References.Types {
         }
 
         IEnumerable<IAstTypeReference> IAstTypeReference.GetTypeParameters() {
-            throw new NotImplementedException("AstGenericPlaceholderType: GetInterfaces");
+            throw new NotImplementedException("AstGenericPlaceholderType: GetTypeParameters");
         }
 
         #endregion
@@ -56,11 +58,12 @@ namespace Light.Ast.References.Types {
             if (placeholder == null)
                 return false;
 
-            return Equals(this.Name, placeholder.Name);
+            return this.identity == placeholder.identity
+                || this == placeholder;
         }
 
         public override int GetHashCode() {
-            return string.Intern(this.Name).GetHashCode();
+            return this.identity != null ? this.identity.GetHashCode() : base.GetHashCode();
         }
     }
 }

@@ -4,14 +4,17 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using AshMind.Extensions;
 using Light.Ast.Definitions;
+using Light.Ast.References.Types;
 
 namespace Light.Ast.References.Methods {
     public class AstDefinedMethod : AstElementBase, IAstMethodReference {
         public AstFunctionDefinition Definition { get; private set; }
+        public IList<IAstTypeReference> GenericArgumentTypes { get; private set; }
         private readonly ReadOnlyCollection<IAstTypeReference> parameterTypes;
 
         public AstDefinedMethod(AstFunctionDefinition definition) {
             this.Definition = definition;
+            this.GenericArgumentTypes = new List<IAstTypeReference>();
             this.parameterTypes = definition.Parameters.Select(p => p.Type).ToArray().AsReadOnly();
         }
 
@@ -20,11 +23,11 @@ namespace Light.Ast.References.Methods {
         }
 
         public bool IsGeneric {
-            get { return false; } // not supported yet
+            get { return this.GetGenericParameterTypes().Any(); }
         }
 
-        public ReadOnlyCollection<IAstTypeReference> GenericParameterTypes {
-            get { return No.Types; } // not supported yet
+        public IEnumerable<IAstTypeReference> GetGenericParameterTypes() {
+            return this.Definition.Parameters.Select(p => p.Type).Where(p => p is AstGenericPlaceholderType);
         }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
@@ -51,10 +54,6 @@ namespace Light.Ast.References.Methods {
 
         ReadOnlyCollection<IAstTypeReference> IAstMethodReference.ParameterTypes {
             get { return this.parameterTypes; }
-        }
-
-        IAstMethodReference IAstMethodReference.WithGenericArguments(IEnumerable<IAstTypeReference> genericArguments) {
-            throw new NotImplementedException("AstDefinedMethod.WithGenericArguments");
         }
 
         #endregion

@@ -23,7 +23,7 @@ var classes = files.Select(f => parser.Parse(File.ReadAllText(f), f))
                    .Where(t => t.ClassType == ClassType.Class
                             && !t.HasModifier(Modifiers.Abstract));
 
-var astElementTypes = classes.Where(c => c.BaseTypes.OfType<SimpleType>().Any(t => t.Identifier.Contains("AstElement")));
+var astElementTypes = classes.Where(c => c.BaseTypes.OfType<SimpleType>().Any(t => t.Identifier.StartsWith("IAst") || t.Identifier == "AstElementBase"));
 
 var namespaces = astElementTypes.Select(t => t.Ancestors.OfType<NamespaceDeclaration>().First().FullName).Distinct();
 

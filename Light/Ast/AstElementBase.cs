@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Light.Description;
 using Light.Parsing;
 
 namespace Light.Ast {
@@ -6,12 +7,8 @@ namespace Light.Ast {
         protected abstract IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform);
         public SourceSpan SourceSpan { get; set; }
 
-        #region IAstElement Members
-
         IEnumerable<IAstElement> IAstElement.VisitOrTransformChildren(AstElementTransform transform) {
             return this.VisitOrTransformChildren(transform);
         }
-
-        #endregion
     }
 }

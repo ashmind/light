@@ -15,6 +15,13 @@ namespace Light.Description {
             AppendAll(builder, Environment.NewLine, root.Elements);
         }
 
+        protected override void AppendTypeDefinition(StringBuilder builder, AstTypeDefinition type) {
+            builder.AppendLine("public class " + type.Name);
+            AppendAll(builder, Environment.NewLine, type.Members);
+            builder.AppendLine();
+            builder.AppendLine("end");
+        }
+
         protected override void AppendBinaryExpression(StringBuilder builder, BinaryExpression binaryExpression) {
             var useSpacesAroundOperator  = binaryExpression.Operator.Name != "..";
             if (this.UseParenthesesInAllExpressions)

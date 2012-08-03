@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AshMind.Extensions;
 using Light.Ast.References;
 
 namespace Light.Ast.Definitions {
@@ -30,6 +29,10 @@ namespace Light.Ast.Definitions {
                 yield return child;
             }
             yield return this.ReturnType = (IAstTypeReference)transform(this.ReturnType);
+        }
+
+        public override string ToString() {
+            return string.Format("{{Defined: {0} {1}({2})}}", this.ReturnType, this.Name, string.Join(", ", this.Parameters));
         }
     }
 }

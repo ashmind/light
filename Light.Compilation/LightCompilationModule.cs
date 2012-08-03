@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using Light.Compilation.Cil;
 using Light.Compilation.Definitions;
+using Light.Compilation.Definitions.Builders;
 using Light.Compilation.References;
 using Light.Processing;
 
@@ -13,6 +14,8 @@ namespace Light.Compilation {
             builder.RegisterAssemblyTypes(ThisAssembly).As<IReferenceProvider>()
                    .Except<ReferenceContext>()
                    .Except<DefinitionBuildingContext>();
+
+            builder.RegisterType<MethodDefinitionHelper>().AsSelf();
 
             builder.RegisterAssemblyTypes(ThisAssembly).As<IProcessingStep>();
             builder.RegisterAssemblyTypes(ThisAssembly).As<IDefinitionBuilder>();

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Light.Ast;
 using Light.Ast.Expressions;
 using Light.Ast.Literals;
@@ -15,6 +14,11 @@ using MbUnit.Framework;
 namespace Light.Tests.OfProcessing {
     [TestFixture]
     public class MethodCallResolverTests {
+        private static readonly Reflector Reflector = new Reflector();
+
+        #region TestClass Class
+        // ReSharper disable ClassNeverInstantiated.Local
+        // ReSharper disable UnusedTypeParameter
         // ReSharper disable UnusedMember.Local
         // ReSharper disable UnusedParameter.Local
         private class TestClass {
@@ -33,6 +37,7 @@ namespace Light.Tests.OfProcessing {
 
             public static void GenericWithEnumerable<T>(IEnumerable<T> x) { }
 
+
             public class X<T> { }
             public class Y<T> { }
 
@@ -41,6 +46,9 @@ namespace Light.Tests.OfProcessing {
         }
         // ReSharper restore UnusedParameter.Local
         // ReSharper restore UnusedMember.Local
+        // ReSharper restore UnusedTypeParameter
+        // ReSharper restore ClassNeverInstantiated.Local
+        #endregion
 
         [Test]
         public void StaticNonGenericMethod_WithNoOverloads_PassingExactType() {
@@ -57,7 +65,7 @@ namespace Light.Tests.OfProcessing {
             ));
 
             Assert.AreEqual("NoOverloadsEnumerable", result.Name);
-            Assert.AreEqual(typeof(int), result.GetGenericArguments()[0]);
+            Assert.AreEqual(Reflector.Reflect(typeof(int)), GetGenericArgumentType(result, 0));
         }
 
         [Test]
@@ -65,7 +73,7 @@ namespace Light.Tests.OfProcessing {
             var result = Resolve("TwoOverloadsStringObject", null, "x");
 
             Assert.AreEqual("TwoOverloadsStringObject", result.Name);
-            Assert.AreEqual(typeof(string), result.GetParameters()[0].ParameterType);
+            Assert.AreEqual(Reflector.Reflect(typeof(string)), result.ParameterTypes[0]);
         }
 
         [Test]
@@ -73,7 +81,7 @@ namespace Light.Tests.OfProcessing {
             var result = Resolve("TwoOverloadsGenericXYAndDelegate", null, new TestClass.X<int>(), (Func<int, bool>)(x => x > 5));
 
             Assert.AreEqual("TwoOverloadsGenericXYAndDelegate", result.Name);
-            Assert.AreEqual(typeof(TestClass.X<int>), result.GetParameters()[0].ParameterType);
+            Assert.AreEqual(Reflector.Reflect(typeof(TestClass.X<int>)), result.ParameterTypes[0]);
         }
 
         [Test]
@@ -82,7 +90,7 @@ namespace Light.Tests.OfProcessing {
             var result = Resolve("TwoOverloadsAB", null, new TestClass.C());
 
             Assert.AreEqual("TwoOverloadsAB", result.Name);
-            Assert.AreEqual(typeof(TestClass.B), result.GetParameters()[0].ParameterType);
+            Assert.AreEqual(Reflector.Reflect(typeof(TestClass.B)), result.ParameterTypes[0]);
         }
 
         [Test]
@@ -90,11 +98,11 @@ namespace Light.Tests.OfProcessing {
             var result = Resolve("GenericWithEnumerable", null, new[] { 1, 2 });
 
             Assert.AreEqual("GenericWithEnumerable", result.Name);
-            Assert.AreEqual(typeof(int), result.GetGenericArguments()[0]);
+            Assert.AreEqual(Reflector.Reflect(typeof(int)), GetGenericArgumentType(result, 0));
         }
 
-        private MethodInfo Resolve(string name, object target, params object[] arguments) {
-            var resolver = new MethodCallResolver();
+        private IAstMethodReference Resolve(string name, object target, params object[] arguments) {
+            var resolver = new MethodCallResolver(new GenericTypeHelper());
             var methods = typeof(TestClass).GetMethods().Where(m => m.Name == name);
             var reflector = new Reflector();
             var result = resolver.Resolve(
@@ -103,7 +111,11 @@ namespace Light.Tests.OfProcessing {
                 arguments.Select(a => (a as IAstExpression) ?? new PrimitiveValue(a)).ToArray()
             );
 
-            return ((AstReflectedMethod)result).Method;
+            return result;
+        }
+
+        private IAstTypeReference GetGenericArgumentType(IAstMethodReference methodReference, int index) {
+            return ((AstGenericMethodWithTypeArguments)methodReference).GenericArgumentTypes[index];
         }
     }
 }

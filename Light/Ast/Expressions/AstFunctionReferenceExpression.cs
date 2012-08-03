@@ -1,27 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Light.Ast.Incomplete;
 using Light.Ast.References;
+using Light.Ast.References.Types;
 
 namespace Light.Ast.Expressions {
     public class AstFunctionReferenceExpression : AstElementBase, IAstExpression, IAstCallable {
         private IAstMethodReference function;
         public IAstElement Target { get; set; }
-        private IAstTypeReference expressionType;
+        public IAstTypeReference ExpressionType { get; private set; }
 
         public AstFunctionReferenceExpression(IAstElement target, IAstMethodReference reference) {
             this.Target = target;
             this.Function = reference;
-            this.ExpressionType = AstUnknownType.WithNoName;
-        }
-
-        public IAstTypeReference ExpressionType {
-            get { return this.expressionType; }
-            set {
-                Argument.RequireNotNull("value", value);
-                this.expressionType = value;
-            }
+            this.ExpressionType = new AstInferredFunctionType(
+                () => this.Function.ParameterTypes,
+                () => this.Function.ReturnType
+            );
         }
 
         public IAstMethodReference Function {
@@ -46,5 +41,9 @@ namespace Light.Ast.Expressions {
         }
 
         #endregion
+
+        public override string ToString() {
+            return this.Function.ToString();
+        }
     }
 }

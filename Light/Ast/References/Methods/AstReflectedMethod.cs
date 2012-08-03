@@ -54,17 +54,12 @@ namespace Light.Ast.References.Methods {
             get { return this.Method.IsGenericMethodDefinition || this.Method.IsGenericMethod; }
         }
 
-        public ReadOnlyCollection<IAstTypeReference> GenericParameterTypes {
-            get { return this.genericParameterTypes.Value; }
+        public IEnumerable<IAstTypeReference> GetGenericParameterTypes() {
+            return this.genericParameterTypes.Value;
         }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             return No.Elements;
-        }
-
-        public IAstMethodReference WithGenericArguments(IEnumerable<IAstTypeReference> genericArguments) {
-            var argumentsAsTypes = genericArguments.Select(a => ((AstReflectedType)a).ActualType).ToArray();
-            return new AstReflectedMethod(this.Method.MakeGenericMethod(argumentsAsTypes), this.reflector);
         }
 
         #region IAstReference Members

@@ -34,6 +34,7 @@ namespace Light.Tests.OfCompilation {
 
         [Test]
         [Row("(integer x) => x")]
+        [Row("x => x")]
         public void LambdaExpression_Identity_InMethodCall(string lambda) {
             var result = CompilationHelper.CompileAndEvaluate("TestMethods.AcceptsGenericTToT(7, " + lambda + ")");
             Assert.IsInstanceOfType<Func<Integer, Integer>>(result);

@@ -34,12 +34,8 @@ namespace Light.Ast.Incomplete {
             get { throw new NotImplementedException("AstUnknownMethod.IsGeneric"); }
         }
 
-        ReadOnlyCollection<IAstTypeReference> IAstMethodReference.GenericParameterTypes {
-            get { throw new NotImplementedException("AstUnknownMethod.GenericParameterTypes"); }
-        }
-
-        IAstMethodReference IAstMethodReference.WithGenericArguments(IEnumerable<IAstTypeReference> genericArguments) {
-            throw new NotImplementedException("AstUnknownMethod.WithGenericArguments");
+        IEnumerable<IAstTypeReference> IAstMethodReference.GetGenericParameterTypes() {
+            throw new NotImplementedException("AstUnknownMethod.GenericParameterTypes");
         }
 
         #endregion

@@ -79,16 +79,18 @@
     <Compile Include="Cil\Compilers\PrimitiveValueCompiler.cs" />
     <Compile Include="Cil\Compilers\ReturnCompiler.cs" />
     <Compile Include="CompilationArguments.cs" />
+    <Compile Include="Definitions\Builders\ConstructorDefinitionBuilder.cs" />
+    <Compile Include="Definitions\Builders\MethodDefinitionHelper.cs" />
     <Compile Include="Definitions\DefinitionBuilderBase.cs" />
     <Compile Include="Definitions\DefinitionBuildingContext.cs" />
+    <Compile Include="Definitions\Builders\FunctionDefinitionBuilder.cs" />
     <Compile Include="Definitions\IDefinitionBuilder.cs" />
-    <Compile Include="Definitions\PropertyOrFieldDefinitionBuilder.cs" />
+    <Compile Include="Definitions\Builders\PropertyOrFieldDefinitionBuilder.cs" />
     <Compile Include="Internal\ILProcessorExtensions.cs" />
     <Compile Include="Internal\Either.cs" />
     <Compile Include="References\PropertyReferenceContainer.cs" />
     <Compile Include="LightCompilationModule.cs" />
     <Compile Include="CompilationTarget.cs" />
-    <Compile Include="Internal\CecilHelper.cs" />
     <Compile Include="LightCompiler.cs" />
     <Compile Include="AstGeneration\GenerateBaseConstructorCalls.cs" />
     <Compile Include="AstGeneration\GenerateDefaultConstructors.cs" />
@@ -104,6 +106,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="References\Providers\AnyTypeProvider.cs" />
+    <Compile Include="References\Providers\GenericMethodWithArgumentsProvider.cs" />
     <Compile Include="References\Providers\GenericTypeProvider.cs" />
     <Compile Include="References\Providers\DelegateProvider.cs" />
     <Compile Include="References\Providers\ReflectedProvider.cs">

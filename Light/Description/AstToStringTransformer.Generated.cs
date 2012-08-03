@@ -8,8 +8,8 @@ using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
 using Light.Ast.Literals;
 using Light.Ast.References;
-using Light.Ast.References.Properties;
 using Light.Ast.References.Methods;
+using Light.Ast.References.Properties;
 using Light.Ast.References.Types;
 using Light.Ast.Statements;
 
@@ -21,295 +21,313 @@ namespace Light.Description {
                 AppendAssignmentStatement(builder, assignmentStatement);
                 return;
             }
-            
+			
             var anyType = element as AstAnyType;
             if (anyType != null) {
                 AppendAnyType(builder, anyType);
                 return;
             }
-            
+			
             var baseConstructorCall = element as AstBaseConstructorCall;
             if (baseConstructorCall != null) {
                 AppendBaseConstructorCall(builder, baseConstructorCall);
                 return;
             }
-            
+			
             var builtInOperator = element as AstBuiltInOperator;
             if (builtInOperator != null) {
                 AppendBuiltInOperator(builder, builtInOperator);
                 return;
             }
-            
+			
+            var constructorDefinition = element as AstConstructorDefinition;
+            if (constructorDefinition != null) {
+                AppendConstructorDefinition(builder, constructorDefinition);
+                return;
+            }
+			
             var definedConstructor = element as AstDefinedConstructor;
             if (definedConstructor != null) {
                 AppendDefinedConstructor(builder, definedConstructor);
                 return;
             }
-            
+			
             var definedMethod = element as AstDefinedMethod;
             if (definedMethod != null) {
                 AppendDefinedMethod(builder, definedMethod);
                 return;
             }
-            
+			
             var definedProperty = element as AstDefinedProperty;
             if (definedProperty != null) {
                 AppendDefinedProperty(builder, definedProperty);
                 return;
             }
-            
+			
             var definedType = element as AstDefinedType;
             if (definedType != null) {
                 AppendDefinedType(builder, definedType);
                 return;
             }
-            
+			
+            var functionDefinition = element as AstFunctionDefinition;
+            if (functionDefinition != null) {
+                AppendFunctionDefinition(builder, functionDefinition);
+                return;
+            }
+			
             var functionReferenceExpression = element as AstFunctionReferenceExpression;
             if (functionReferenceExpression != null) {
                 AppendFunctionReferenceExpression(builder, functionReferenceExpression);
                 return;
             }
-            
+			
+            var genericMethodWithTypeArguments = element as AstGenericMethodWithTypeArguments;
+            if (genericMethodWithTypeArguments != null) {
+                AppendGenericMethodWithTypeArguments(builder, genericMethodWithTypeArguments);
+                return;
+            }
+			
             var genericPlaceholderType = element as AstGenericPlaceholderType;
             if (genericPlaceholderType != null) {
                 AppendGenericPlaceholderType(builder, genericPlaceholderType);
                 return;
             }
-            
+			
             var genericTypeWithArguments = element as AstGenericTypeWithArguments;
             if (genericTypeWithArguments != null) {
                 AppendGenericTypeWithArguments(builder, genericTypeWithArguments);
                 return;
             }
-            
+			
             var implicitType = element as AstImplicitType;
             if (implicitType != null) {
                 AppendImplicitType(builder, implicitType);
                 return;
             }
-            
+			
             var inferredFunctionType = element as AstInferredFunctionType;
             if (inferredFunctionType != null) {
                 AppendInferredFunctionType(builder, inferredFunctionType);
                 return;
             }
-            
+			
             var lambdaExpression = element as AstLambdaExpression;
             if (lambdaExpression != null) {
                 AppendLambdaExpression(builder, lambdaExpression);
                 return;
             }
-            
+			
             var listInitializer = element as AstListInitializer;
             if (listInitializer != null) {
                 AppendListInitializer(builder, listInitializer);
                 return;
             }
-            
+			
             var methodGroup = element as AstMethodGroup;
             if (methodGroup != null) {
                 AppendMethodGroup(builder, methodGroup);
                 return;
             }
-            
+			
             var missingMethod = element as AstMissingMethod;
             if (missingMethod != null) {
                 AppendMissingMethod(builder, missingMethod);
                 return;
             }
-            
+			
             var newExpression = element as AstNewExpression;
             if (newExpression != null) {
                 AppendNewExpression(builder, newExpression);
                 return;
             }
-            
+			
             var parameterDefinition = element as AstParameterDefinition;
             if (parameterDefinition != null) {
                 AppendParameterDefinition(builder, parameterDefinition);
                 return;
             }
-            
+			
             var parameterReference = element as AstParameterReference;
             if (parameterReference != null) {
                 AppendParameterReference(builder, parameterReference);
                 return;
             }
-            
+			
             var propertyDefinition = element as AstPropertyDefinition;
             if (propertyDefinition != null) {
                 AppendPropertyDefinition(builder, propertyDefinition);
                 return;
             }
-            
+			
             var propertyExpression = element as AstPropertyExpression;
             if (propertyExpression != null) {
                 AppendPropertyExpression(builder, propertyExpression);
                 return;
             }
-            
+			
             var reflectedConstructor = element as AstReflectedConstructor;
             if (reflectedConstructor != null) {
                 AppendReflectedConstructor(builder, reflectedConstructor);
                 return;
             }
-            
+			
             var reflectedMethod = element as AstReflectedMethod;
             if (reflectedMethod != null) {
                 AppendReflectedMethod(builder, reflectedMethod);
                 return;
             }
-            
+			
             var reflectedProperty = element as AstReflectedProperty;
             if (reflectedProperty != null) {
                 AppendReflectedProperty(builder, reflectedProperty);
                 return;
             }
-            
+			
             var reflectedType = element as AstReflectedType;
             if (reflectedType != null) {
                 AppendReflectedType(builder, reflectedType);
                 return;
             }
-            
+			
             var returnStatement = element as AstReturnStatement;
             if (returnStatement != null) {
                 AppendReturnStatement(builder, returnStatement);
                 return;
             }
-            
+			
             var root = element as AstRoot;
             if (root != null) {
                 AppendRoot(builder, root);
                 return;
             }
-            
+			
             var specifiedFunctionType = element as AstSpecifiedFunctionType;
             if (specifiedFunctionType != null) {
                 AppendSpecifiedFunctionType(builder, specifiedFunctionType);
                 return;
             }
-            
+			
             var thisExpression = element as AstThisExpression;
             if (thisExpression != null) {
                 AppendThisExpression(builder, thisExpression);
                 return;
             }
-            
+			
             var typeDefinition = element as AstTypeDefinition;
             if (typeDefinition != null) {
                 AppendTypeDefinition(builder, typeDefinition);
                 return;
             }
-            
+			
             var unknownMethod = element as AstUnknownMethod;
             if (unknownMethod != null) {
                 AppendUnknownMethod(builder, unknownMethod);
                 return;
             }
-            
+			
             var unknownType = element as AstUnknownType;
             if (unknownType != null) {
                 AppendUnknownType(builder, unknownType);
                 return;
             }
-            
+			
             var variableDefinition = element as AstVariableDefinition;
             if (variableDefinition != null) {
                 AppendVariableDefinition(builder, variableDefinition);
                 return;
             }
-            
+			
             var variableReference = element as AstVariableReference;
             if (variableReference != null) {
                 AppendVariableReference(builder, variableReference);
                 return;
             }
-            
+			
             var voidType = element as AstVoidType;
             if (voidType != null) {
                 AppendVoidType(builder, voidType);
                 return;
             }
-            
+			
             var binaryExpression = element as BinaryExpression;
             if (binaryExpression != null) {
                 AppendBinaryExpression(builder, binaryExpression);
                 return;
             }
-            
+			
             var callExpression = element as CallExpression;
             if (callExpression != null) {
                 AppendCallExpression(builder, callExpression);
                 return;
             }
-            
+			
             var continueStatement = element as ContinueStatement;
             if (continueStatement != null) {
                 AppendContinueStatement(builder, continueStatement);
                 return;
             }
-            
+			
             var forStatement = element as ForStatement;
             if (forStatement != null) {
                 AppendForStatement(builder, forStatement);
                 return;
             }
-            
+			
             var identifierExpression = element as IdentifierExpression;
             if (identifierExpression != null) {
                 AppendIdentifierExpression(builder, identifierExpression);
                 return;
             }
-            
+			
             var ifOrUnlessStatement = element as IfOrUnlessStatement;
             if (ifOrUnlessStatement != null) {
                 AppendIfOrUnlessStatement(builder, ifOrUnlessStatement);
                 return;
             }
-            
+			
             var importDefinition = element as ImportDefinition;
             if (importDefinition != null) {
                 AppendImportDefinition(builder, importDefinition);
                 return;
             }
-            
+			
             var indexerExpression = element as IndexerExpression;
             if (indexerExpression != null) {
                 AppendIndexerExpression(builder, indexerExpression);
                 return;
             }
-            
+			
             var memberExpression = element as MemberExpression;
             if (memberExpression != null) {
                 AppendMemberExpression(builder, memberExpression);
                 return;
             }
-            
+			
             var objectInitializer = element as ObjectInitializer;
             if (objectInitializer != null) {
                 AppendObjectInitializer(builder, objectInitializer);
                 return;
             }
-            
+			
             var objectInitializerEntry = element as ObjectInitializerEntry;
             if (objectInitializerEntry != null) {
                 AppendObjectInitializerEntry(builder, objectInitializerEntry);
                 return;
             }
-            
+			
             var primitiveValue = element as PrimitiveValue;
             if (primitiveValue != null) {
                 AppendPrimitiveValue(builder, primitiveValue);
                 return;
             }
-            
+			
             var stringWithInterpolation = element as StringWithInterpolation;
             if (stringWithInterpolation != null) {
                 AppendStringWithInterpolation(builder, stringWithInterpolation);
                 return;
             }
-            
+			
             builder.Append(element);
         }
 
@@ -329,6 +347,10 @@ namespace Light.Description {
             builder.Append(builtInOperator);
         }
 
+        protected virtual void AppendConstructorDefinition(StringBuilder builder, AstConstructorDefinition constructorDefinition) {
+            builder.Append(constructorDefinition);
+        }
+
         protected virtual void AppendDefinedConstructor(StringBuilder builder, AstDefinedConstructor definedConstructor) {
             builder.Append(definedConstructor);
         }
@@ -345,8 +367,16 @@ namespace Light.Description {
             builder.Append(definedType);
         }
 
+        protected virtual void AppendFunctionDefinition(StringBuilder builder, AstFunctionDefinition functionDefinition) {
+            builder.Append(functionDefinition);
+        }
+
         protected virtual void AppendFunctionReferenceExpression(StringBuilder builder, AstFunctionReferenceExpression functionReferenceExpression) {
             builder.Append(functionReferenceExpression);
+        }
+
+        protected virtual void AppendGenericMethodWithTypeArguments(StringBuilder builder, AstGenericMethodWithTypeArguments genericMethodWithTypeArguments) {
+            builder.Append(genericMethodWithTypeArguments);
         }
 
         protected virtual void AppendGenericPlaceholderType(StringBuilder builder, AstGenericPlaceholderType genericPlaceholderType) {

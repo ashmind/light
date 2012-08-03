@@ -14,6 +14,10 @@ namespace Light.Ast.References {
             return type == AstImplicitType.Instance;
         }
 
+        public static bool IsUnknown(this IAstTypeReference type) {
+            return type is AstUnknownType;
+        }
+
         public static IEnumerable<IAstTypeReference> GetAncestors(this IAstTypeReference type) {
             var @base = type.BaseType;
             while (@base != null) {

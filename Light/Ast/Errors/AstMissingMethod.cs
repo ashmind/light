@@ -46,12 +46,8 @@ namespace Light.Ast.Errors {
             get { throw new NotImplementedException("AstMissingMethod.IsGeneric"); }
         }
 
-        ReadOnlyCollection<IAstTypeReference> IAstMethodReference.GenericParameterTypes {
-            get { throw new NotImplementedException("AstMissingMethod.GenericParameterTypes"); }
-        }
-
-        IAstMethodReference IAstMethodReference.WithGenericArguments(IEnumerable<IAstTypeReference> genericArguments) {
-            throw new NotImplementedException("AstMissingMethod.WithGenericArguments");
+        IEnumerable<IAstTypeReference> IAstMethodReference.GetGenericParameterTypes() {
+            throw new NotImplementedException("AstMissingMethod.GenericParameterTypes");
         }
 
         #endregion
