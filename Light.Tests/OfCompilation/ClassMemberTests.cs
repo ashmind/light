@@ -13,7 +13,7 @@ namespace Light.Tests.OfCompilation {
         [Row(typeof(Integer), "integer", 3)]
         [Row(typeof(bool),    "boolean", true)]
         public void WriteAndReadPropertyThroughMethods<T>(string propertyType, object rawValue) {
-            var value = (T)ExpectedValueConverter.Convert(rawValue);
+            var value = (T)TestArgumentConverter.Convert(rawValue);
             var code = string.Format(@"
                 public class Test
                     private {0} x

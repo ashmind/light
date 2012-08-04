@@ -38,7 +38,7 @@ namespace Light.Tests.OfCompilation {
                     end
                 end
             ", parameters, arguments, returnValue).Trim(), "Caller");
-            Assert.AreEqual(ExpectedValueConverter.Convert(expectedValue), caller.GetValueFromCallee());
+            Assert.AreEqual(TestArgumentConverter.Convert(expectedValue), caller.GetValueFromCallee());
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace Light.Tests.OfCompilation {
 
             var callee = (dynamic)Activator.CreateInstance(compiled.GetType("Callee"));
             var caller = (dynamic)Activator.CreateInstance(compiled.GetType("Caller"));
-            Assert.AreEqual(ExpectedValueConverter.Convert(expectedValue), caller.GetValueFromCallee(callee));
+            Assert.AreEqual(TestArgumentConverter.Convert(expectedValue), caller.GetValueFromCallee(callee));
         }
 
         [Test]

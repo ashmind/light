@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Framework;
 using Light.Tests.Helpers;
 using MbUnit.Framework;
 
@@ -8,16 +9,30 @@ namespace Light.Tests.OfCompilation {
     [TestFixture]
     public class FunctionTests {
         [Test]
-        [Row(typeof(string), "string", "x")]
-        public void ReturnArgument<T>(string argumentType, T value) {
+        [Row(typeof(string), "string ", "a")]
+        [Row(typeof(string), "", "a")]
+        public void ReturnArgument<T>(string parameterTypeAndSpace, T value) {
             var compiled = CompileAndGetClassWith(@"
-                public function Return(" + argumentType + @" x)
+                public function Return(" + parameterTypeAndSpace + @"x)
                     return x
                 end
             ");
 
             var returned = compiled.Return(value);
             Assert.AreEqual(returned, value);
+        }
+
+        [Test]
+        [Row("integer x", "x < 10", 5)]
+        public void CompareArgument(string parameter, string condition, object value) {
+            var compiled = CompileAndGetClassWith(@"
+                public function Compare(" + parameter + @")
+                    return " + condition + @"
+                end
+            ");
+
+            var returned = compiled.Compare(TestArgumentConverter.Convert(value));
+            Assert.IsTrue(returned);
         }
 
         [Test]

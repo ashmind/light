@@ -18,7 +18,7 @@ namespace Light.Tests.OfCompilation {
         [Row("[[1], [2]]", new object[] { new[] {1}, new[] {2} })]
         public void Simple(string expressionString, object[] expectedValues) {
             var compiled = ((Array)CompilationHelper.CompileAndEvaluate(expressionString)).Cast<object>().ToArray();
-            Assert.AreElementsEqual(ExpectedValueConverter.Convert(expectedValues), compiled);
+            Assert.AreElementsEqual(TestArgumentConverter.Convert(expectedValues), compiled);
         }
     }
 }

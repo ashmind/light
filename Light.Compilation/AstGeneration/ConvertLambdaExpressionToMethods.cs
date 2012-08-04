@@ -5,7 +5,6 @@ using AshMind.Extensions;
 using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Ast.Expressions;
-using Light.Ast.References;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
 using Light.Ast.Statements;

@@ -5,8 +5,8 @@ using System.Text;
 using Light.Framework;
 
 namespace Light.Tests.Helpers {
-    public static class ExpectedValueConverter {
-        public static object Convert(object value) {
+    public static class TestArgumentConverter {
+        public static dynamic Convert(object value) {
             if (value is int)
                 return new Integer((int)value);
 
@@ -21,7 +21,7 @@ namespace Light.Tests.Helpers {
             return value;
         }
 
-        public static object[] Convert(object[] values) {
+        public static dynamic[] Convert(object[] values) {
             for (var i = 0; i < values.Length; i++) {
                 values[i] = Convert(values[i]);
             }

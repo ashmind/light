@@ -81,7 +81,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers\ExpectedValueConverter.cs" />
+    <Compile Include="Helpers\TestArgumentConverter.cs" />
     <Compile Include="OfCompilation\ClassMemberTests.cs" />
     <Compile Include="OfCompilation\RangeTests.cs" />
     <Compile Include="OfCompilation\ExtensionMethodTests.cs" />
