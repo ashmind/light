@@ -22,7 +22,7 @@ namespace Light.Ast.Incomplete {
             get { return AstUnknownType.WithNoName; }
         }
 
-        ReadOnlyCollection<IAstTypeReference> IAstMethodReference.ParameterTypes {
+        IEnumerable<IAstTypeReference> IAstMethodReference.ParameterTypes {
             get { throw new NotImplementedException("AstUnknownMethod.ParameterTypes"); }
         }
 

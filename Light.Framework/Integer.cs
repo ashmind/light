@@ -7,15 +7,7 @@ using Light.Framework.OperatorInterfaces;
 namespace Light.Framework {
     // This is quite stupid for now with regards to operator support, for example
     // But it is a simplest abstraction that works
-    public struct Integer : IEquatable<Integer>,
-                            IComparable<Integer>,
-                            IWithMinus<Integer>,
-                            IWithPlus<Integer>,
-                            IWithDivideBy<Integer>,
-                            IWithMultiplyBy<Integer>,
-                            IWithModulus<Integer>,
-                            IWithRangeTo<Integer>
-    {
+    public struct Integer : INumber<Integer>, IWithRangeTo<Integer> {
         public IntegerKind Kind { get; private set; }
         public int Int32Value { get; private set; }
         public BigInteger BigIntegerValue { get; private set; }
@@ -97,6 +89,16 @@ namespace Light.Framework {
 
             return new Integer(this.BigIntegerValue / other.BigIntegerValue);
         }
+        
+        public Integer Exponent(Integer other) {
+            if (this.Kind != other.Kind)
+                throw new NotImplementedException("Integer: operations on integers of different kinds are not supported.");
+
+            if (this.Kind == IntegerKind.Int32)
+                return new Integer((int)Math.Pow(this.Int32Value, other.Int32Value));
+
+            throw new NotImplementedException();
+        }
 
         public static Integer Parse(string value) {
             return new Integer(BigInteger.Parse(value));
@@ -107,6 +109,13 @@ namespace Light.Framework {
                 return this.Int32Value;
 
             return (int)this.BigIntegerValue;
+        }
+
+        public Decimal ToDecimal() {
+            if (this.Kind == IntegerKind.Int32)
+                return new Decimal(this.Int32Value);
+
+            throw new NotImplementedException();
         }
 
         public override bool Equals(object obj) {

@@ -11,6 +11,7 @@ using Light.Compilation.Internal;
 using Light.Framework;
 using Light.Internal;
 using Mono.Cecil.Cil;
+using Decimal = Light.Framework.Decimal;
 
 namespace Light.Compilation.Cil.Compilers {
     public class PrimitiveValueCompiler : CilCompilerBase<PrimitiveValue> {
@@ -18,12 +19,16 @@ namespace Light.Compilation.Cil.Compilers {
 
         private static readonly IAstConstructorReference NewIntegerFromInt32 = new AstReflectedConstructor(typeof(Integer).GetConstructor(new[] { typeof(int) }), Reflector);
         private static readonly IAstConstructorReference NewIntegerFromBytes = new AstReflectedConstructor(typeof(Integer).GetConstructor(new[] { typeof(byte[]) }), Reflector);
+        private static readonly IAstConstructorReference NewDecimalFromBits  = new AstReflectedConstructor(typeof(Decimal).GetConstructor(new[] { typeof(int[]) }), Reflector);
+        
         private static readonly IAstTypeReference Byte = Reflector.Reflect(typeof(byte));
         private static readonly IAstTypeReference ByteArray = Reflector.Reflect(typeof(byte[]));
+        private static readonly IAstTypeReference Int32 = Reflector.Reflect(typeof(int));
+        private static readonly IAstTypeReference Int32Array = Reflector.Reflect(typeof(int[]));
 
         private static readonly IDictionary<Type, Action<ILProcessor, PrimitiveValue, CilCompilationContext>> typeBasedCompilers = new Dictionary<Type, Action<ILProcessor, PrimitiveValue, CilCompilationContext>> {
             { typeof(Integer),    CompileInteger },
-            { typeof(double),     CompileDouble },
+            { typeof(Decimal),    CompileDecimal },
             { typeof(string),     CompileString },
             { typeof(bool),       CompileBoolean }
         };
@@ -65,8 +70,23 @@ namespace Light.Compilation.Cil.Compilers {
             processor.Emit(OpCodes.Ldloc, bytesVariable);
         }
 
-        private static void CompileDouble(ILProcessor processor, PrimitiveValue value, CilCompilationContext context) {
-            processor.Emit(OpCodes.Ldc_R8, (double)value.Value);
+        private static void CompileDecimal(ILProcessor processor, PrimitiveValue value, CilCompilationContext context) {
+            var @decimal = (Decimal)value.Value;
+            var bits = @decimal.GetBits();
+
+            var bitsVariable = context.DefineVariable("t", Int32Array); // temporary cheating
+
+            processor.EmitLdcI4(bits.Length);
+            processor.Emit(OpCodes.Newarr, context.ConvertReference(Int32));
+            processor.Emit(OpCodes.Stloc, bitsVariable);
+            for (var i = 0; i < bits.Length; i++) {
+                processor.Emit(OpCodes.Ldloc, bitsVariable);
+                processor.EmitLdcI4(i);
+                processor.EmitLdcI4(bits[i]);
+                processor.Emit(OpCodes.Stelem_I4);
+            }
+            processor.Emit(OpCodes.Ldloc, bitsVariable);
+            processor.Emit(OpCodes.Newobj, context.ConvertReference(NewDecimalFromBits));
         }
 
         private static void CompileString(ILProcessor processor, PrimitiveValue value, CilCompilationContext context) {

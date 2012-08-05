@@ -10,7 +10,6 @@ using Light.Internal;
 
 namespace Light.Ast.References.Methods {
     public class AstReflectedMethod : AstElementBase, IAstMethodReference {
-        private readonly Reflector reflector;
         public MethodInfo Method { get; private set; }
         public IAstTypeReference ReturnType { get; private set; }
         public MethodLocation Location { get; private set; }
@@ -22,7 +21,6 @@ namespace Light.Ast.References.Methods {
             Argument.RequireNotNull("reflector", reflector);
             Argument.RequireNotNull("method", method);
 
-            this.reflector = reflector;
             this.Method = method;
             this.ReturnType = method.ReturnType != typeof(void)
                             ? reflector.Reflect(method.ReturnType)
@@ -66,6 +64,14 @@ namespace Light.Ast.References.Methods {
 
         object IAstReference.Target {
             get { return this.Method; }
+        }
+
+        #endregion
+
+        #region IAstMethodReference Members
+
+        IEnumerable<IAstTypeReference> IAstMethodReference.ParameterTypes {
+            get { return this.ParameterTypes; }
         }
 
         #endregion

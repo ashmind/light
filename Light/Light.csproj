@@ -81,7 +81,6 @@
     <Compile Include="Ast\Definitions\AstFunctionDefinition.cs" />
     <Compile Include="Ast\Definitions\IAstMemberDefinition.cs" />
     <Compile Include="Ast\Definitions\TypeDefintionTypes.cs" />
-    <Compile Include="Ast\Errors\AstMissingMethod.cs" />
     <Compile Include="Ast\Expressions\AstFunctionReferenceExpression.cs" />
     <Compile Include="Ast\Expressions\AstPropertyExpression.cs" />
     <Compile Include="Ast\Expressions\AstThisExpression.cs" />
@@ -184,7 +183,6 @@
     <Compile Include="Processing\Steps\TypeResolution\InferListLiteralTypes.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveMethodGroupsAndGenericsInCalls.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddImportToScope.cs" />
-    <Compile Include="Processing\Steps\ScopeDefinition\AddPropertyToScope.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddVariableToScope.cs" />
     <Compile Include="Processing\Steps\ReferenceResolution\ResolveOperatorReferences.cs" />
     <Compile Include="Processing\Steps\ScopeDefinition\AddTypeToScope.cs" />

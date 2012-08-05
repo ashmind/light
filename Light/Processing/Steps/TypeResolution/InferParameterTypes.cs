@@ -58,7 +58,7 @@ namespace Light.Processing.Steps.TypeResolution {
             var binary = parent as BinaryExpression;
             if (binary != null) {
                 var argumentIndex = binary.Left == parameter ? 0 : 1;
-                return binary.Operator.ParameterTypes[argumentIndex];
+                return binary.Operator.ParameterTypes.ElementAt(argumentIndex);
             }
 
             var call = parent as CallExpression;

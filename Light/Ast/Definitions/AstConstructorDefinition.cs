@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Light.Ast.References;
+using Light.Ast.References.Methods;
 
 namespace Light.Ast.Definitions {
     public class AstConstructorDefinition : AstMethodDefinitionBase, IAstMemberDefinition {
@@ -18,5 +20,9 @@ namespace Light.Ast.Definitions {
         }
 
         #endregion
+
+        public IAstReference ToReference() {
+            return new AstDefinedConstructor(this);
+        }
     }
 }

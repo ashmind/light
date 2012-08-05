@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Irony.Parsing;
 using Light.Ast;
@@ -30,7 +31,9 @@ namespace Light.Parsing {
             MarkPunctuation("[", "]", "(", ")", "{", "}", ":", "=>", ".", "=");
 
             RegisterOperators(1, "==");
-            RegisterOperators(2, "mod");
+            RegisterOperators(2, "-");
+            RegisterOperators(3, "mod");
+            RegisterOperators(4, "**");
 
             this.Root = TopLevelRoot;
             this.LanguageFlags = LanguageFlags.CreateAst;
@@ -71,15 +74,32 @@ namespace Light.Parsing {
         public NonTerminal<IAstTypeReference> TypeReference { get; private set; }
         public NonTerminal TypeReferenceListPlus { get; private set; }
 
-        public void ConstructNameAndTypeRules() {
+        protected virtual void ConstructNameAndTypeRules() {
             Name = new IdentifierTerminal("Name");
+            Name.StartCharCategories.AddRange(new[] {
+                 UnicodeCategory.UppercaseLetter,
+                 UnicodeCategory.LowercaseLetter,
+                 UnicodeCategory.TitlecaseLetter,
+                 UnicodeCategory.ModifierLetter,
+                 UnicodeCategory.OtherLetter,
+                 UnicodeCategory.LetterNumber
+            });
+            Name.CharCategories.AddRange(Name.StartCharCategories);
+            Name.CharCategories.AddRange(new[] {
+                UnicodeCategory.DecimalDigitNumber,
+                UnicodeCategory.ConnectorPunctuation,
+                UnicodeCategory.SpacingCombiningMark,
+                UnicodeCategory.NonSpacingMark,
+                UnicodeCategory.Format
+              });
+
             DotSeparatedName = NonTerminalThatIsNotAstElement("DotSeparatedName", n => new CompositeName(n.ChildNodes.Select(c => c.Token.Text).ToArray()));
 
             TypeReference = NonTerminalWithSpecificType("TypeReference", n => (IAstTypeReference)new AstUnknownType(n.Child(Name).Token.Text)); // WIP
             TypeReferenceListPlus = new NonTerminal("TypeReferenceListPlus");
         }
 
-        public void SetNameAndTypeRules() {
+        protected virtual void SetNameAndTypeRules() {
             DotSeparatedName.Rule = MakePlusRule(DotSeparatedName, ToTerm("."), Name);
 
             TypeReference.Rule = Name + ("<" + TypeReferenceListPlus + ">" | Empty);
@@ -121,7 +141,7 @@ namespace Light.Parsing {
 
         public NonTerminal<IAstExpression> LambdaExpression { get; private set; }
 
-        private void ConstructExpressions() {
+        protected virtual void ConstructExpressions() {
             Number = new NumberLiteral("Number", NumberOptions.Default, (c, node) => node.AstNode = new PrimitiveValue(ConvertNumber(node.Token.Value))) {
                 DefaultIntTypes = new[] { TypeCode.Int32, TypeCode.Int64, NumberLiteral.TypeCodeBigInt }
             };
@@ -213,7 +233,7 @@ namespace Light.Parsing {
             });
         }
 
-        private void SetExpressionRules() {
+        protected virtual void SetExpressionRules() {
             Literal.Rule = SingleQuotedString | DoubleQuotedString | Number | Boolean | ListInitializer | ObjectInitializer;
             Boolean.Rule = ToTerm("true") | "false";
 
@@ -225,7 +245,7 @@ namespace Light.Parsing {
             ThisExpression.Rule = ToTerm("this");
 
             BinaryExpression.Rule = Expression + BinaryOperator + NewLineStar + Expression;
-            BinaryOperator.Rule = new[] {"+", "-", "*", "/", "mod", "==", "===", "..", "<", ">", "|", "&", "or", "and"}.Select(k => {
+            BinaryOperator.Rule = new[] {"+", "-", "*", "**", "/", "mod", "==", "===", "..", "<", ">", "|", "&", "or", "and"}.Select(k => {
                 var @operator = (BnfExpression)ToTerm(k);
                 @operator.SetFlag(TermFlags.IsOperator);
                 return @operator;
@@ -345,7 +365,7 @@ namespace Light.Parsing {
             TypeDefinition = NonTerminal("TypeDefinition", node => new AstTypeDefinition(
                 node.ChildBefore(Name).FindTokenAndGetText(),
                 node.Child(Name).Token.Text,
-                node.ChildAst(OptionalTypeContent)
+                node.ChildAst(OptionalTypeContent).Cast<IAstMemberDefinition>()
             ));
             TypeMember = Transient<IAstDefinition>("TypeMember");
             TypeMemberList = NonTerminal("TypeMemberList", node => node.ChildAsts<IAstDefinition>());
@@ -463,6 +483,9 @@ namespace Light.Parsing {
 
             if (value is int)
                 return new Integer((int)value);
+
+            if (value is double)
+                return new Light.Framework.Decimal((decimal)(double)value);
 
             return value;
         }

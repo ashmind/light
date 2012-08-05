@@ -61,5 +61,13 @@ namespace Light.Ast.References.Methods {
         }
 
         #endregion
+
+        #region IAstMethodReference Members
+
+        IEnumerable<IAstTypeReference> IAstMethodReference.ParameterTypes {
+            get { return this.ParameterTypes; }
+        }
+
+        #endregion
     }
 }

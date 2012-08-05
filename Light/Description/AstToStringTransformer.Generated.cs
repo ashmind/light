@@ -3,7 +3,6 @@
 using System.Text;
 using Light.Ast;
 using Light.Ast.Definitions;
-using Light.Ast.Errors;
 using Light.Ast.Expressions;
 using Light.Ast.Incomplete;
 using Light.Ast.Literals;
@@ -127,12 +126,6 @@ namespace Light.Description {
             var methodGroup = element as AstMethodGroup;
             if (methodGroup != null) {
                 AppendMethodGroup(builder, methodGroup);
-                return;
-            }
-			
-            var missingMethod = element as AstMissingMethod;
-            if (missingMethod != null) {
-                AppendMissingMethod(builder, missingMethod);
                 return;
             }
 			
@@ -405,10 +398,6 @@ namespace Light.Description {
 
         protected virtual void AppendMethodGroup(StringBuilder builder, AstMethodGroup methodGroup) {
             builder.Append(methodGroup);
-        }
-
-        protected virtual void AppendMissingMethod(StringBuilder builder, AstMissingMethod missingMethod) {
-            builder.Append(missingMethod);
         }
 
         protected virtual void AppendNewExpression(StringBuilder builder, AstNewExpression newExpression) {

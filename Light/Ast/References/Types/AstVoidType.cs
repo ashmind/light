@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Light.Ast.Errors;
-using Light.Ast.Expressions;
 
 namespace Light.Ast.References.Types {
     public class AstVoidType : AstElementBase, IAstTypeReference {

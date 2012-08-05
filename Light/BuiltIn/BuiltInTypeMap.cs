@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using AshMind.Extensions;
 using Light.Framework;
+using Decimal = Light.Framework.Decimal;
 
 namespace Light.BuiltIn {
     public class BuiltInTypeMap {
@@ -13,6 +13,7 @@ namespace Light.BuiltIn {
             Types = new Dictionary<string, Type> {
                 {"string",  typeof(string) },
                 {"integer", typeof(Integer) },
+                {"decimal", typeof(Decimal) },
                 {"boolean", typeof(bool) }
             };
         }

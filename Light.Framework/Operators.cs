@@ -28,6 +28,12 @@ namespace Light.Framework {
             return left.MultiplyBy(right);
         }
 
+        public static T Exponent<T>(T left, T right)
+            where T : IWithExponent<T>
+        {
+            return left.Exponent(right);
+        }
+
         public static Range<T> Range<T>(T left, T right)
             where T : IWithRangeTo<T>
         {

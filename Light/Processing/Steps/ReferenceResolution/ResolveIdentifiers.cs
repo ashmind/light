@@ -21,6 +21,10 @@ namespace Light.Processing.Steps.ReferenceResolution {
             if (property != null)
                 result = new AstPropertyExpression(new AstThisExpression(), property);
 
+            var function = result as IAstMethodReference;
+            if (function != null)
+                result = new AstFunctionReferenceExpression(new AstThisExpression(), function);
+
             result.SourceSpan = identifier.SourceSpan;
             return result;
         }

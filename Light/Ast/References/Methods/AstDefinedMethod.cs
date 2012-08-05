@@ -10,12 +10,10 @@ namespace Light.Ast.References.Methods {
     public class AstDefinedMethod : AstElementBase, IAstMethodReference {
         public AstFunctionDefinition Definition { get; private set; }
         public IList<IAstTypeReference> GenericArgumentTypes { get; private set; }
-        private readonly ReadOnlyCollection<IAstTypeReference> parameterTypes;
 
         public AstDefinedMethod(AstFunctionDefinition definition) {
             this.Definition = definition;
             this.GenericArgumentTypes = new List<IAstTypeReference>();
-            this.parameterTypes = definition.Parameters.Select(p => p.Type).ToArray().AsReadOnly();
         }
 
         public string Name {
@@ -52,8 +50,8 @@ namespace Light.Ast.References.Methods {
             get { return MethodLocation.Target; }
         }
 
-        ReadOnlyCollection<IAstTypeReference> IAstMethodReference.ParameterTypes {
-            get { return this.parameterTypes; }
+        IEnumerable<IAstTypeReference> IAstMethodReference.ParameterTypes {
+            get { return this.Definition.Parameters.Select(p => p.Type).ToArray().AsReadOnly(); }
         }
 
         #endregion

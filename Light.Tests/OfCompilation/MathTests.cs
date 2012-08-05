@@ -10,7 +10,7 @@ namespace Light.Tests.OfCompilation {
         [Test]
         [Row(10, 10)]
         public void MathPow(double x, double y) {
-            var result = CompilationHelper.CompileAndEvaluate(string.Format("Math.Pow({0:0.00}, {1:0.00})", x, y));
+            var result = CompilationHelper.CompileAndEvaluate(string.Format("Math.Pow(({0:0.00}).ToDouble(), ({1:0.00}).ToDouble())", x, y));
             Assert.AreEqual(Math.Pow(10, 10), result);
         }
     }

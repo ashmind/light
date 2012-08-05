@@ -45,7 +45,7 @@ namespace Light.Ast.References.Methods {
 
         #region IAstMethodReference Members
 
-        ReadOnlyCollection<IAstTypeReference> IAstMethodReference.ParameterTypes {
+        IEnumerable<IAstTypeReference> IAstMethodReference.ParameterTypes {
             get { return this.parameterTypes; }
         }
 

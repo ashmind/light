@@ -5,13 +5,18 @@ using Light.Ast;
 using Light.Ast.Definitions;
 using Light.Processing.Scoping;
 
-namespace Light.Processing.Steps {
+namespace Light.Processing.Steps.ScopeDefinition {
     public class DefineTypeScope : ProcessingStepBase<AstTypeDefinition> {
         public DefineTypeScope() : base(ProcessingStage.ScopeDefinition) {
         }
 
         public override IAstElement ProcessBeforeChildren(AstTypeDefinition type, ProcessingContext context) {
-            context.ScopeStack.Push(new Scope());
+            var scope = new Scope();
+            foreach (var member in type.Members) {
+                scope.Add(member.Name, member.ToReference());
+            }
+
+            context.ScopeStack.Push(scope);
             return type;
         }
 

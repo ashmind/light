@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.References;
+using Light.Ast.References.Methods;
+using Light.Ast.References.Properties;
 
 namespace Light.Ast.Definitions {
     public class AstPropertyDefinition : AstElementBase, IAstMemberDefinition {
@@ -30,6 +32,10 @@ namespace Light.Ast.Definitions {
             yield return this.Type = (IAstTypeReference)transform(this.Type);
             if (this.AssignedValue != null)
                 yield return this.AssignedValue = (IAstExpression)transform(this.AssignedValue);
+        }
+
+        public IAstReference ToReference() {
+            return new AstDefinedProperty(this);
         }
     }
 }

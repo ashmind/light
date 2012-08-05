@@ -29,6 +29,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
             { "+",   "Plus"      },
             { "-",   "Minus"     },
             { "*",   "Multiply"  },
+            { "**",  "Exponent"  },
             { "/",   "Divide"    },
             { "mod", "Modulus"   },
 
@@ -81,7 +82,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
             var resolved = (IAstMethodReference)OperatorsType.ResolveMember(operatorName);
 
             if (resolved == null)
-                throw new NotImplementedException("ResolveOperatorReferences: Failed to resolve " + binary.Operator.Name);
+                throw new NotImplementedException("ResolveOperatorReferences: Failed to resolve operator '" + binary.Operator.Name + "' (" + operatorName + ").");
 
             return methodCallResolver.Resolve(resolved, OperatorsType, new[] { binary.Left, binary.Right });
         }

@@ -14,7 +14,7 @@ namespace Light.Compilation.Cil.Compilers {
                 throw new NotImplementedException("CallCompiler: " + call.Callee.GetType().Name + " is not yet supported as call.Callee.");
 
             if (function.Target != null && !(function.Target is IAstTypeReference))
-                CallCompilerHelper.CompileTarget(processor, (IAstExpression)function.Target, context);
+                CallCompilerHelper.CompileTarget(processor,  (IAstExpression)function.Target, function.Function, context);
 
             foreach (var argument in call.Arguments) {
                 context.Compile(argument);

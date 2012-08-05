@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.Ast.References;
+using Light.Ast.References.Methods;
 
 namespace Light.Ast.Definitions {
     public class AstFunctionDefinition : AstMethodDefinitionBase, IAstMemberDefinition {
@@ -37,6 +38,10 @@ namespace Light.Ast.Definitions {
             }
             if (this.fixedReturnType != null)
                 yield return this.fixedReturnType = (IAstTypeReference)transform(this.fixedReturnType);
+        }
+
+        public IAstReference ToReference() {
+            return new AstDefinedMethod(this);
         }
 
         public override string ToString() {

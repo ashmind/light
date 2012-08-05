@@ -45,7 +45,7 @@ namespace Light.Processing.Helpers {
                 .FirstOrDefault();
 
             if (candidates == null)
-                throw new NotImplementedException("MethodCallResolver: Could not adapt " + methods[0].Name + " to this call.");
+                throw new NotImplementedException(string.Format("MethodCallResolver: Could not adapt {0} to call with: {1}.", methods[0].Name, string.Join(", ", arguments.Select(a => a.ExpressionType))));
 
             var candidatesAsArray = candidates.ToArray();
             if (candidatesAsArray.Length > 1)
@@ -81,7 +81,7 @@ namespace Light.Processing.Helpers {
                     if (theories == null)
                         return null;
 
-                    var aggregate = ReconcileGenericTheories(theories);
+                    var aggregate = ReconcileGenericTheories(theories, method);
                     if (aggregate == null)
                         return null;
 
@@ -221,9 +221,9 @@ namespace Light.Processing.Helpers {
             set.Add(argumentType);
         }
 
-        private IAstTypeReference ReconcileGenericTheories(ISet<IAstTypeReference> theories) {
+        private IAstTypeReference ReconcileGenericTheories(ISet<IAstTypeReference> theories, IAstMethodReference method) {
             if (theories.Count > 1)
-                throw new NotImplementedException("OverloadResolver: Generic theory aggregation is not yet supported (theories:" + string.Join(", ", theories) + ")");
+                throw new NotImplementedException(string.Format("OverloadResolver: Generic theory aggregation is not yet supported. Method: {0}, theories: {1}.", method, string.Join(", ", theories)));
 
             return theories.First();
         }

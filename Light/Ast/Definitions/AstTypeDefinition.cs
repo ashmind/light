@@ -15,14 +15,14 @@ namespace Light.Ast.Definitions {
             }
         }
 
-        public IList<IAstDefinition> Members { get; private set; }
+        public IList<IAstMemberDefinition> Members { get; private set; }
 
-        public AstTypeDefinition(string definitionType, string name, params IAstDefinition[] members)
-            : this(definitionType, name, (IEnumerable<IAstDefinition>)members)
+        public AstTypeDefinition(string definitionType, string name, params IAstMemberDefinition[] members)
+            : this(definitionType, name, (IEnumerable<IAstMemberDefinition>)members)
         {
         }
 
-        public AstTypeDefinition(string definitionType, string name, IEnumerable<IAstDefinition> members) {
+        public AstTypeDefinition(string definitionType, string name, IEnumerable<IAstMemberDefinition> members) {
             var membersList = members.ToList();
             Argument.RequireNotNullAndNotEmpty("name", name);
             Argument.RequireNotNullAndNotContainsNull("members", membersList);

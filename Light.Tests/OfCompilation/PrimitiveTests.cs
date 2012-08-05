@@ -11,18 +11,12 @@ namespace Light.Tests.OfCompilation {
     public class PrimitiveTests {
         [Test]
         [Row("1.1", 1.1)]
+        [Row("1", 1)]
         [Row("'x'", "x")]
         [Row("true", true)]
         public void Simple(string valueString, object expectedValue) {
             var value = CompilationHelper.CompileAndEvaluate(valueString);
-            Assert.AreEqual(expectedValue, value);
-        }
-
-        [Test]
-        [Row("1", 1)]
-        public void Integer(string valueString, int expectedValue) {
-            var value = CompilationHelper.CompileAndEvaluate(valueString);
-            Assert.AreEqual(new Integer(expectedValue), value);
+            Assert.AreEqual(TestArgumentConverter.Convert(expectedValue), value);
         }
 
         [Test]

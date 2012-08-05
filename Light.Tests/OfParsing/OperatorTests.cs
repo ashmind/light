@@ -30,7 +30,8 @@ namespace Light.Tests.OfParsing {
         }
 
         [Test]
-        [Row("10 mod 5 == 2", "((10 mod 5) == 2)")]
+        [Row("10 mod 5 == 2",   "((10 mod 5) == 2)")]
+        [Row("2 ** 4 - 2 ** 3", "((2 ** 4) - (2 ** 3))")]
         public void Binary_Precedence(string code, string expectedResult) {
             ParseAssert.IsParsedTo(code, expectedResult, parenthiseAll: true);
         }

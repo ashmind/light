@@ -73,7 +73,7 @@ namespace Light.Tests.OfProcessing {
             var result = Resolve("TwoOverloadsStringObject", null, "x");
 
             Assert.AreEqual("TwoOverloadsStringObject", result.Name);
-            Assert.AreEqual(Reflector.Reflect(typeof(string)), result.ParameterTypes[0]);
+            Assert.AreEqual(Reflector.Reflect(typeof(string)), result.ParameterTypes.First());
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace Light.Tests.OfProcessing {
             var result = Resolve("TwoOverloadsGenericXYAndDelegate", null, new TestClass.X<int>(), (Func<int, bool>)(x => x > 5));
 
             Assert.AreEqual("TwoOverloadsGenericXYAndDelegate", result.Name);
-            Assert.AreEqual(Reflector.Reflect(typeof(TestClass.X<int>)), result.ParameterTypes[0]);
+            Assert.AreEqual(Reflector.Reflect(typeof(TestClass.X<int>)), result.ParameterTypes.First());
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace Light.Tests.OfProcessing {
             var result = Resolve("TwoOverloadsAB", null, new TestClass.C());
 
             Assert.AreEqual("TwoOverloadsAB", result.Name);
-            Assert.AreEqual(Reflector.Reflect(typeof(TestClass.B)), result.ParameterTypes[0]);
+            Assert.AreEqual(Reflector.Reflect(typeof(TestClass.B)), result.ParameterTypes.First());
         }
 
         [Test]

@@ -53,10 +53,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Decimal.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="IntegerKind.cs" />
+    <Compile Include="INumber.cs" />
     <Compile Include="IRange.cs" />
     <Compile Include="Integer.cs" />
+    <Compile Include="NumberExtensions.cs" />
+    <Compile Include="OperatorInterfaces\IWithExponent.cs" />
     <Compile Include="OperatorInterfaces\IWithMultiplyBy.cs" />
     <Compile Include="OperatorInterfaces\IWithMinus.cs" />
     <Compile Include="OperatorInterfaces\IWithDivideBy.cs" />

@@ -24,6 +24,8 @@ namespace Light.Compilation.AstGeneration {
             var method = ConvertLambdaToMethod("lambda#" + (lastLambdaIndex + 1), lambda);
             type.Members.Add(method);
 
+            context.FreeData[LastLambdaIndexKey] = lastLambdaIndex + 1;
+
             return new AstFunctionReferenceExpression(
                 new AstDefinedType(type),
                 new AstDefinedMethod(method)
