@@ -42,7 +42,7 @@ namespace Light.Tests.OfCompilation {
 
         [Test]
         [Row("(integer x) => x > 3")]
-        //[Row("x => x > 3")]
+        [Row("x => x > 3")]
         public void LambdaExpression_Condition_InMethodCall(string lambda) {
             var result = CompilationHelper.CompileAndEvaluate("[1, 2, 3, 4, 5].Where(" + lambda + ")");
             Assert.AreElementsEqual(new[] { new Integer(4), new Integer(5) }, result);
