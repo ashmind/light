@@ -25,18 +25,18 @@ namespace Light.Processing.Steps.TypeResolution {
         }
 
         private IAstTypeReference InferType(AstParameterDefinition parameter, IAstFunctionDefinition function, ref int genericIndex) {
-            var types = new List<IAstTypeReference>();
+            var types = new HashSet<IAstTypeReference>();
             CollectTypesFromUsages(function, parameter, types);
 
             if (types.Count == 1)
-                return types[0];
+                return types.Single();
 
             var placeholder = new AstGenericPlaceholderType("T" + genericIndex, p => types);
             genericIndex += 1;
             return placeholder;
         }
 
-        private void CollectTypesFromUsages(IAstElement parent, AstParameterDefinition parameter, IList<IAstTypeReference> collectedTypes) {
+        private void CollectTypesFromUsages(IAstElement parent, AstParameterDefinition parameter, ISet<IAstTypeReference> collectedTypes) {
             foreach (var child in parent.Children()) {
                 var reference = child as AstParameterReference;
                 if (reference != null && reference.Parameter == parameter) {

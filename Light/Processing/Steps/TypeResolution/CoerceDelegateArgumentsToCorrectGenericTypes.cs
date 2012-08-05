@@ -22,8 +22,8 @@ namespace Light.Processing.Steps.TypeResolution {
                     continue;
 
                 var callee = (AstFunctionReferenceExpression)call.Callee;
-
-                var parameterType = (IAstFunctionTypeReference)callee.Function.ParameterTypes[i];
+                var parameterIndex = callee.Function.Location == MethodLocation.Target ? i : i + 1;
+                var parameterType = (IAstFunctionTypeReference)callee.Function.ParameterTypes[parameterIndex];
 
                 functionArgument.Function = CoerceToType(functionArgument.Function, parameterType);
             }
