@@ -100,7 +100,10 @@ namespace Light.Ast {
             Argument.RequireNotNull("transform", transform);
 
             for (var i = 0; i < elements.Count; i++) {
-                elements[i] = (TAstElement)transform(elements[i]);
+                var transformed = (TAstElement)transform(elements[i]);
+                if (!object.ReferenceEquals(transformed, elements[i]))
+                    elements[i] = transformed;
+
                 yield return elements[i];
             }
         }

@@ -5,14 +5,15 @@ using Light.Ast.References;
 
 namespace Light.Ast.Definitions {
     public class AstFunctionDefinition : AstMethodDefinitionBase, IAstMemberDefinition {
-        private IAstTypeReference returnType;
+        private IAstTypeReference fixedReturnType;
+        private Func<IAstTypeReference> dependentReturnType;
 
         public string Name { get; private set; }
         public IAstTypeReference ReturnType {
-            get { return this.returnType; }
+            get { return this.fixedReturnType ?? this.dependentReturnType(); }
             set {
                 Argument.RequireNotNull("value", value);
-                this.returnType = value;
+                this.fixedReturnType = value;
             }
         }
 
@@ -21,14 +22,21 @@ namespace Light.Ast.Definitions {
         {
             Argument.RequireNotNullAndNotEmpty("name", name);
             this.Name = name;
-            this.ReturnType = returnType;
+            this.fixedReturnType = returnType;
+        }
+
+        public void SetDependentReturnType(Func<IAstTypeReference> dependentReturnType) {
+            Argument.RequireNotNull("dependentReturnType", dependentReturnType);
+            this.fixedReturnType = null;
+            this.dependentReturnType = dependentReturnType;
         }
 
         protected override IEnumerable<IAstElement> VisitOrTransformChildren(AstElementTransform transform) {
             foreach (var child in base.VisitOrTransformChildren(transform)) {
                 yield return child;
             }
-            yield return this.ReturnType = (IAstTypeReference)transform(this.ReturnType);
+            if (this.fixedReturnType != null)
+                yield return this.fixedReturnType = (IAstTypeReference)transform(this.fixedReturnType);
         }
 
         public override string ToString() {

@@ -30,7 +30,7 @@ namespace Light.Compilation.Cil.Compilers {
                 return;
             }
 
-            CallCompilerHelper.CompileTarget(processor, binary.Left, context);
+            context.Compile(binary.Left);
             context.Compile(binary.Right);
 
             processor.Emit(OpCodes.Call, context.ConvertReference(binary.Operator));

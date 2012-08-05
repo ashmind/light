@@ -18,7 +18,7 @@ namespace Light {
         }
 
         [DebuggerHidden]
-        public static void RequireNotEmpty<T>(string name, IEnumerable<T> collection) {
+        public static void RequireNotEmpty<T>(string name, ICollection<T> collection) {
             if (!collection.Any())
                 throw new ArgumentException("Value can not be empty.", name);
         }
@@ -30,13 +30,13 @@ namespace Light {
         }
 
         [DebuggerHidden]
-        public static void RequireNotNullAndNotEmpty<T>(string name, IEnumerable<T> collection) {
+        public static void RequireNotNullAndNotEmpty<T>(string name, ICollection<T> collection) {
             Argument.RequireNotNull(name, collection);
             Argument.RequireNotEmpty(name, collection);
         }
 
         [DebuggerHidden]
-        public static void RequireNotContainsNull<T>(string name, IEnumerable<T> collection) 
+        public static void RequireNotContainsNull<T>(string name, ICollection<T> collection) 
             where T : class
         {
             if (collection.Contains(null))
@@ -44,7 +44,7 @@ namespace Light {
         }
 
         [DebuggerHidden]
-        public static void RequireNotNullAndNotContainsNull<T>(string name, IEnumerable<T> collection)
+        public static void RequireNotNullAndNotContainsNull<T>(string name, ICollection<T> collection)
             where T : class
         {
             RequireNotNull(name, collection);

@@ -35,6 +35,10 @@ namespace Light.Ast.Incomplete {
             get { return AstUnknownType.WithNoName; }
         }
 
+        IEnumerable<IAstTypeReference> IAstCallable.ParameterTypes {
+            get { throw new NotImplementedException("MemberExpression: IAstCallable.ParameterTypes"); }
+        }
+
         #endregion
     }
 }

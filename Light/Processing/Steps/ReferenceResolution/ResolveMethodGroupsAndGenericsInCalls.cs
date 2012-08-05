@@ -20,20 +20,8 @@ namespace Light.Processing.Steps.ReferenceResolution {
             if (function == null)
                 return call;
 
-            IAstMethodReference[] methods;
-            var group = function.Function as AstMethodGroup;
-            if (group == null) {
-                if (!function.Function.IsGeneric)
-                    return call;
-
-                methods = new[] { function.Function };
-            }
-            else {
-                methods = group.Methods;
-            }
-
             var sourceSpan = function.Function.SourceSpan;
-            function.Function = this.callResolver.Resolve(methods, function.Target, call.Arguments);
+            function.Function = this.callResolver.Resolve(function.Function, function.Target, call.Arguments);
             function.Function.SourceSpan = sourceSpan;
 
             return call;

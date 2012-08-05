@@ -24,6 +24,7 @@ namespace Light.Tests.OfCompilation {
 
         [Test]
         [Row("integer x", "x < 10", 5)]
+        [Row("x", "x < 10", 5)]
         public void CompareArgument(string parameter, string condition, object value) {
             var compiled = CompileAndGetClassWith(@"
                 public function Compare(" + parameter + @")

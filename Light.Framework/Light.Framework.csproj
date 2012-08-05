@@ -57,12 +57,20 @@
     <Compile Include="IntegerKind.cs" />
     <Compile Include="IRange.cs" />
     <Compile Include="Integer.cs" />
+    <Compile Include="OperatorInterfaces\IWithMultiplyBy.cs" />
+    <Compile Include="OperatorInterfaces\IWithMinus.cs" />
+    <Compile Include="OperatorInterfaces\IWithDivideBy.cs" />
+    <Compile Include="OperatorInterfaces\IWithModulus.cs" />
+    <Compile Include="OperatorInterfaces\IWithRangeTo.cs" />
+    <Compile Include="OperatorInterfaces\IWithPlus.cs" />
+    <Compile Include="Operators.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

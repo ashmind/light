@@ -8,7 +8,7 @@ using Light.Ast.References;
 using Light.Ast.References.Types;
 
 namespace Light.Ast.Expressions {
-    public class AstLambdaExpression : AstElementBase, IAstExpression {
+    public class AstLambdaExpression : AstElementBase, IAstExpression, IAstFunctionDefinition {
         private IAstElement body;
         public IList<AstParameterDefinition> Parameters { get; private set; }
         public IAstTypeReference ExpressionType { get; private set; }

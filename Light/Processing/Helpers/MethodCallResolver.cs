@@ -33,11 +33,16 @@ namespace Light.Processing.Helpers {
             this.genericHelper = genericHelper;
         }
 
-        public IAstMethodReference Resolve(IList<IAstMethodReference> methods, IAstElement target, IList<IAstExpression> arguments) {
+        public IAstMethodReference Resolve(IAstMethodReference method, IAstElement target, IList<IAstExpression> arguments) {
+            var group = method as AstMethodGroup;
+            return InnerResolve(group != null ? group.Methods : new[] { method }, target, arguments);
+        }
+
+        private IAstMethodReference InnerResolve(IList<IAstMethodReference> methods, IAstElement target, IList<IAstExpression> arguments) {
             var candidates = GetCandidates(methods, target, arguments)
-                                    .GroupBy(c => c.Item2)
-                                    .OrderBy(g => g.Key)
-                                    .FirstOrDefault();
+                .GroupBy(c => c.Item2)
+                .OrderBy(g => g.Key)
+                .FirstOrDefault();
 
             if (candidates == null)
                 throw new NotImplementedException("MethodCallResolver: Could not adapt " + methods[0].Name + " to this call.");
@@ -114,6 +119,9 @@ namespace Light.Processing.Helpers {
         }
 
         private int GetDistance(IAstTypeReference parameterType, IAstTypeReference argumentType, IAstMethodReference method, Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories) {
+            if (argumentType.IsImplicit())
+                return 0;
+
             var argumentCompatibleTypes = GetCompatibleTypes(argumentType);
             var distance = argumentCompatibleTypes.GetValueOrDefault(parameterType, -1);
             if (distance != -1)
@@ -151,8 +159,7 @@ namespace Light.Processing.Helpers {
             Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories
         ) {
             if (parameterType is AstGenericPlaceholderType) {
-                if (!(argumentType is AstGenericPlaceholderType))
-                    AddGenericTheory(genericTheories, parameterType, argumentType);
+                AddGenericTheory(genericTheories, parameterType, argumentType);
                 return true;
             }
 
@@ -201,14 +208,17 @@ namespace Light.Processing.Helpers {
             return null;
         }
 
-        private void AddGenericTheory(Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories, IAstTypeReference genericType, IAstTypeReference actualType) {
+        private void AddGenericTheory(Dictionary<IAstTypeReference, ISet<IAstTypeReference>> genericTheories, IAstTypeReference genericType, IAstTypeReference argumentType) {
+            if (argumentType is AstGenericPlaceholderType || argumentType.IsImplicit())
+                return;
+
             var set = genericTheories.GetValueOrDefault(genericType);
             if (set == null) {
-                genericTheories.Add(genericType, new HashSet<IAstTypeReference> { actualType });
+                genericTheories.Add(genericType, new HashSet<IAstTypeReference> { argumentType });
                 return;
             }
 
-            set.Add(actualType);
+            set.Add(argumentType);
         }
 
         private IAstTypeReference ReconcileGenericTheories(ISet<IAstTypeReference> theories) {

@@ -209,7 +209,7 @@ namespace Light.Parsing {
                 var parameters = parametersRaw as IEnumerable<AstParameterDefinition>
                               ?? new[] { (AstParameterDefinition)parametersRaw };
 
-                return new AstLambdaExpression(parameters, (IAstElement)node.ChildAst(1));
+                return (IAstExpression)new AstLambdaExpression(parameters, (IAstElement)node.ChildAst(1));
             });
         }
 

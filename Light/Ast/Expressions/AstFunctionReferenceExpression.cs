@@ -40,6 +40,10 @@ namespace Light.Ast.Expressions {
             get { return this.Function.ReturnType; }
         }
 
+        IEnumerable<IAstTypeReference> IAstCallable.ParameterTypes {
+            get { return this.Function.ParameterTypes; }
+        }
+
         #endregion
 
         public override string ToString() {

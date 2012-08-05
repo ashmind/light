@@ -49,7 +49,7 @@ namespace Light.Ast.References.Methods {
         }
 
         MethodLocation IAstMethodReference.Location {
-            get { throw new NotImplementedException("AstDefinedMethod.IsExtension"); }
+            get { return MethodLocation.Target; }
         }
 
         ReadOnlyCollection<IAstTypeReference> IAstMethodReference.ParameterTypes {

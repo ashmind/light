@@ -91,6 +91,7 @@
     <Compile Include="Ast\IAstExpression.cs" />
     <Compile Include="Ast\Expressions\IndexerExpression.cs" />
     <Compile Include="Ast\Expressions\AstLambdaExpression.cs" />
+    <Compile Include="Ast\IAstFunctionDefinition.cs" />
     <Compile Include="Ast\Incomplete\MemberExpression.cs" />
     <Compile Include="Ast\IAstElement.cs" />
     <Compile Include="Ast\Incomplete\AstUnknownMethod.cs" />

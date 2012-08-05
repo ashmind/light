@@ -2,11 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Light.Framework.OperatorInterfaces;
 
 namespace Light.Framework {
     // This is quite stupid for now with regards to operator support, for example
     // But it is a simplest abstraction that works
-    public struct Integer : IEquatable<Integer> {
+    public struct Integer : IEquatable<Integer>,
+                            IComparable<Integer>,
+                            IWithMinus<Integer>,
+                            IWithPlus<Integer>,
+                            IWithDivideBy<Integer>,
+                            IWithMultiplyBy<Integer>,
+                            IWithModulus<Integer>,
+                            IWithRangeTo<Integer>
+    {
         public IntegerKind Kind { get; private set; }
         public int Int32Value { get; private set; }
         public BigInteger BigIntegerValue { get; private set; }
@@ -37,26 +46,6 @@ namespace Light.Framework {
                 throw new NotImplementedException();
 
             return new Range<Integer>(this, to, Enumerable.Range(this.Int32Value, to.Int32Value - this.Int32Value).Select(i => new Integer(i)));
-        }
-
-        public bool IsGreaterThan(Integer other) {
-            if (this.Kind != other.Kind)
-                throw new NotImplementedException("Integer: comparing integers of different kinds is not supported.");
-
-            if (this.Kind == IntegerKind.Int32)
-                return this.Int32Value > other.Int32Value;
-
-            return this.BigIntegerValue > other.BigIntegerValue;
-        }
-
-        public bool IsLessThan(Integer other) {
-            if (this.Kind != other.Kind)
-                throw new NotImplementedException("Integer: comparing integers of different kinds is not supported.");
-
-            if (this.Kind == IntegerKind.Int32)
-                return this.Int32Value < other.Int32Value;
-
-            return this.BigIntegerValue < other.BigIntegerValue;
         }
 
         public Integer Modulus(Integer other) {
@@ -143,5 +132,19 @@ namespace Light.Framework {
 
             return this.BigIntegerValue.GetHashCode();
         }
+
+        #region IComparable<Integer> Members
+
+        public int CompareTo(Integer other) {
+            if (this.Kind != other.Kind)
+                throw new NotImplementedException("Integer: comparing integers of different kinds is not supported.");
+
+            if (this.Kind == IntegerKind.Int32)
+                return this.Int32Value.CompareTo(other.Int32Value);
+
+            return this.BigIntegerValue.CompareTo(other.BigIntegerValue);
+        }
+
+        #endregion
     }
 }

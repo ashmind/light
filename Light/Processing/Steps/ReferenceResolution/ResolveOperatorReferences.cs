@@ -8,6 +8,7 @@ using Light.Ast.Incomplete;
 using Light.Ast.References;
 using Light.Ast.References.Methods;
 using Light.Ast.References.Types;
+using Light.Framework;
 using Light.Internal;
 using Light.Processing.Helpers;
 
@@ -17,25 +18,25 @@ namespace Light.Processing.Steps.ReferenceResolution {
 
         private static readonly Reflector Reflector = new Reflector(); // temporary
 
+        private static readonly IAstTypeReference OperatorsType = new AstReflectedType(typeof(Operators), Reflector);
+
         private static class KnownTypes {
             public static readonly IAstTypeReference Boolean = new AstReflectedType(typeof(bool), Reflector);
             public static readonly IAstTypeReference String = new AstReflectedType(typeof(string), Reflector);
         }
 
-        private static readonly string[] NotMapped = new string[0];
-        private static readonly IDictionary<string, string[]> NameMap = new Dictionary<string, string[]> {
-            { "+",   new[] { "Plus",       "op_Addition" } },
-            { "-",   new[] { "Minus",      "op_Subtraction" } },
-            { "*",   new[] { "MultiplyBy", "op_Multiply" } },
-            { "/",   new[] { "DivideBy",   "op_Division" } },
-            { "mod", new[] { "Modulus" } },
+        private static readonly IDictionary<string, string> NameMap = new Dictionary<string, string> {
+            { "+",   "Plus"      },
+            { "-",   "Minus"     },
+            { "*",   "Multiply"  },
+            { "/",   "Divide"    },
+            { "mod", "Modulus"   },
 
-            { "==",  new[] { "Equals" } },
+            { "==",  "Equals"    },
+            { ">",   "IsGreater" },
+            { "<",   "IsLess"    },
 
-            { ">",   new[] { "IsGreaterThan" } },
-            { "<",   new[] { "IsLessThan" } },
-
-            { "..",  new[] { "RangeTo" } },
+            { "..",  "Range"     },
         };
 
         private readonly AstBuiltInOperator[] BuiltInOperators = {
@@ -43,7 +44,7 @@ namespace Light.Processing.Steps.ReferenceResolution {
         };
 
         private static readonly IAstMethodReference StringConcat = new AstReflectedMethod(
-            typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) }), Reflector); // new Reflector() is temporary here
+            typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) }), Reflector);
 
         #endregion
 
@@ -76,23 +77,13 @@ namespace Light.Processing.Steps.ReferenceResolution {
         }
 
         private IAstMethodReference ResolveOperatorAsMethod(BinaryExpression binary) {
-            var operatorName = binary.Operator.Name;
-            var names = NameMap.GetValueOrDefault(operatorName, NotMapped).Concat(operatorName);
-            var declaringType = binary.Left.ExpressionType;
-
-            var resolved = names.Select(declaringType.ResolveMember)
-                                .Cast<IAstMethodReference>()
-                                .FirstOrDefault(r => r != null);
+            var operatorName = NameMap[binary.Operator.Name];
+            var resolved = (IAstMethodReference)OperatorsType.ResolveMember(operatorName);
 
             if (resolved == null)
                 throw new NotImplementedException("ResolveOperatorReferences: Failed to resolve " + binary.Operator.Name);
 
-            var group = resolved as AstMethodGroup;
-            if (group != null)
-                resolved = methodCallResolver.Resolve(group.Methods, binary.Left, new[] {binary.Right});
-
-            //resolved = resolved ?? new AstMissingMethod(operatorName, new[] { binary.Left.ExpressionType, binary.Right.ExpressionType });
-            return resolved;
+            return methodCallResolver.Resolve(resolved, OperatorsType, new[] { binary.Left, binary.Right });
         }
     }
 }

@@ -106,7 +106,7 @@ namespace Light.Tests.OfProcessing {
             var methods = typeof(TestClass).GetMethods().Where(m => m.Name == name);
             var reflector = new Reflector();
             var result = resolver.Resolve(
-                methods.Select(m => new AstReflectedMethod(m, reflector)).ToArray(),
+                new AstMethodGroup(name, methods.Select(m => new AstReflectedMethod(m, reflector)).ToArray()),
                 target != null ? (IAstElement)new PrimitiveValue(target) : new AstReflectedType(typeof(TestClass), reflector),
                 arguments.Select(a => (a as IAstExpression) ?? new PrimitiveValue(a)).ToArray()
             );

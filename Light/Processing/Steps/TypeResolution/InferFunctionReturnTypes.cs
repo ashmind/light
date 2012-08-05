@@ -17,7 +17,7 @@ namespace Light.Processing.Steps.TypeResolution {
             if (function.ReturnType != AstImplicitType.Instance)
                 return function;
 
-            function.ReturnType = InferReturnType(function);
+            function.SetDependentReturnType(() => InferReturnType(function));
             return function;
         }
 
